@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-
+1
 #define SIZE 14
 
 void qSort(int array[], int stopIndex, int startIndex)
