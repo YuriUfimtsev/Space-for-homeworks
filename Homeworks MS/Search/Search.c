@@ -7,7 +7,7 @@ int* makeAnArray(int lengthOfArray)
 {
     return calloc(lengthOfArray, sizeof(int));
 }
-
+ 
 void makeAnArrayOfRandomNumbers(int array[], int lengthOfArray)
 {
     srand(time(NULL));
