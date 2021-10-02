@@ -85,12 +85,10 @@ bool binSearch(int array[], int lengthOfArray, int numberForSearch)
         {
             return true;
         }
-
         if (numberForSearch < array[middle])
         {
             rightBorder = middle - 1;
         }
-
         if (numberForSearch > array[middle])
         {
             leftBorder = middle + 1;
@@ -99,13 +97,53 @@ bool binSearch(int array[], int lengthOfArray, int numberForSearch)
     return false;
 }
 
+bool checkOfSearch(int array[], int lengthOfArray, int numberForSearch, bool expectedResult)
+{
+    qSort(array, 0, lengthOfArray - 1);
+    return binSearch(array, lengthOfArray, numberForSearch) == expectedResult;
+}
+
+bool standartTrueTest()
+{
+    int array[8] = { -10, 100, 0, 33, 48, 76, 5, 15 };
+    return checkOfSearch(array, 8, 15, true);
+}
+
+bool standartFalseTest()
+{
+    int array[10] = { -30, 45, 66, -28, 9, 15, 0, 99, 83, 10000 };
+    return checkOfSearch(array, 10, 21, false);
+}
+
+bool equalElementsFalseTest()
+{
+    int array[5] = { 9, 9, 9, 9, 9 };
+    return checkOfSearch(array, 5, 8, false);
+}
+
+bool equalElementsTrueTest()
+{
+    int array[4] = { 0, 0, 0, 0 };
+    return checkOfSearch(array, 4, 0, true);
+}
+
 int main()
 {
+    if (!standartTrueTest() || !standartFalseTest() || !equalElementsTrueTest() || !equalElementsFalseTest())
+    {
+        printf("Tests failed");
+        return -1;
+    }
 	printf("Enter n (length of array) and k (quantity of random numbers): ");
 	int lengthOfArray = 0;
 	int checkScanf = scanf("%d", &lengthOfArray);
 	int quantityOfRandomNumbers = 0;
 	checkScanf = scanf("%d", &quantityOfRandomNumbers);
+    if (lengthOfArray <= 0 || quantityOfRandomNumbers <= 0)
+    {
+        printf("Incorrect input!");
+        return -1;
+    }
 	int *array = calloc(lengthOfArray, sizeof(int));
 	if (array == NULL)
 	{
