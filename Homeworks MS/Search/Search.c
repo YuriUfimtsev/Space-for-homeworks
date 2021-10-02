@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+int* makeAnArray(int lengthOfArray)
+{
+    return calloc(lengthOfArray, sizeof(int));
+}
+
 void makeAnArrayOfRandomNumbers(int array[], int lengthOfArray)
 {
     srand(time(NULL));
@@ -144,7 +149,7 @@ int main()
         printf("Incorrect input!");
         return -1;
     }
-    int *array = calloc(lengthOfArray, sizeof(int));
+    int* array = makeAnArray(lengthOfArray);
     if (array == NULL)
     {
         printf("bad");
