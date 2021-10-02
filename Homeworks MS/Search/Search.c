@@ -10,7 +10,7 @@ void makeAnArrayOFRandomNumbers(int array[], int lengthOfArray)
 		array[i] = -100 + rand() % 200;
 	}
 }
-
+//
 void qSort(int array[], int startIndex, int stopIndex)
 {
     if (stopIndex - startIndex == 0)
