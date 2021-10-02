@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void makeAnArrayOFRandomNumbers(int array[], int lengthOfArray)
+void makeAnArrayOfRandomNumbers(int array[], int lengthOfArray)
 {
-	srand(time(NULL));
-	for (int i = 0; i < lengthOfArray; ++i)
-	{
-		array[i] = -100 + rand() % 200;
-	}
+    srand(time(NULL));
+    for (int i = 0; i < lengthOfArray; ++i)
+    {
+        array[i] = -100 + rand() % 200;
+    }
 }
 
 void qSort(int array[], int startIndex, int stopIndex)
@@ -134,33 +134,33 @@ int main()
         printf("Tests failed");
         return -1;
     }
-	printf("Enter n (length of array) and k (quantity of random numbers): ");
-	int lengthOfArray = 0;
-	int checkScanf = scanf("%d", &lengthOfArray);
-	int quantityOfRandomNumbers = 0;
-	checkScanf = scanf("%d", &quantityOfRandomNumbers);
+    printf("Enter n (length of array) and k (quantity of random numbers): ");
+    int lengthOfArray = 0;
+    int checkScanf = scanf("%d", &lengthOfArray);
+    int quantityOfRandomNumbers = 0;
+    checkScanf = scanf("%d", &quantityOfRandomNumbers);
     if (lengthOfArray <= 0 || quantityOfRandomNumbers <= 0)
     {
         printf("Incorrect input!");
         return -1;
     }
-	int *array = calloc(lengthOfArray, sizeof(int));
-	if (array == NULL)
-	{
-		printf("bad");
-		return -1;
-	}
-	makeAnArrayOFRandomNumbers(array, lengthOfArray);
-	printf("Array of random elements: ");
-	for (int i = 0; i < lengthOfArray; ++i)
-	{
-		printf("%d ", array[i]);
-	}
+    int *array = calloc(lengthOfArray, sizeof(int));
+    if (array == NULL)
+    {
+        printf("bad");
+        return -1;
+    }
+    makeAnArrayOfRandomNumbers(array, lengthOfArray);
+    printf("array of random elements: ");
+    for (int i = 0; i < lengthOfArray; ++i)
+    {
+        printf("%d ", array[i]);
+    }
     printf("\n");
     qSort(array, 0, lengthOfArray - 1);
     for (int i = 0; i < quantityOfRandomNumbers; ++i)
-	{
-		int randomNumber = -200 + rand() % 250;
+    {
+        int randomNumber = -200 + rand() % 250;
         if (binSearch(array, lengthOfArray, randomNumber))
         {
             printf("The element %d is in array\n", randomNumber);
@@ -169,6 +169,6 @@ int main()
         {
             printf("The array doesn't contain element % d\n", randomNumber);
         }
-	}
+    }
     free(array);
 }
