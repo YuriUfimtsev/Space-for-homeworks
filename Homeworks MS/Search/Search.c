@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 void makeAnArrayOFRandomNumbers(int array[], int lengthOfArray)
 {
@@ -10,7 +11,7 @@ void makeAnArrayOFRandomNumbers(int array[], int lengthOfArray)
 		array[i] = -100 + rand() % 200;
 	}
 }
-//
+
 void qSort(int array[], int startIndex, int stopIndex)
 {
     if (stopIndex - startIndex == 0)
@@ -73,9 +74,29 @@ void qSort(int array[], int startIndex, int stopIndex)
     qSort(array, i, stopIndex);
 }
 
-int binSearch()
+bool binSearch(int array[], int lengthOfArray, int numberForSearch)
 {
+    int leftBorder = 0;
+    int rightBorder = lengthOfArray - 1;
+    while (leftBorder <= rightBorder)
+    {
+        int middle = (leftBorder + rightBorder) / 2;
+        if (numberForSearch == array[middle])
+        {
+            return true;
+        }
 
+        if (numberForSearch < array[middle])
+        {
+            rightBorder = middle - 1;
+        }
+
+        if (numberForSearch > array[middle])
+        {
+            leftBorder = middle + 1;
+        }
+    }
+    return false;
 }
 
 int main()
@@ -97,9 +118,19 @@ int main()
 	{
 		printf("%d ", array[i]);
 	}
+    printf("\n");
     qSort(array, 0, lengthOfArray - 1);
     for (int i = 0; i < quantityOfRandomNumbers; ++i)
 	{
 		int randomNumber = -200 + rand() % 250;
+        if (binSearch(array, lengthOfArray, randomNumber))
+        {
+            printf("The element %d is in array\n", randomNumber);
+        }
+        else
+        {
+            printf("The array doesn't contain element % d\n", randomNumber);
+        }
 	}
+    free(array);
 }
