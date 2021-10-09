@@ -174,6 +174,7 @@ bool standartTestWithNegativeSummand()
 {
     return checkOfSum(-58, 12, -46);
 }
+
 bool testWithNegativeNumbers()
 {
     return checkOfSum(-35, -100, -135);
@@ -191,12 +192,12 @@ bool testWithNull()
 
 int main()
 {
+    setlocale(LC_ALL, "Rus");
     if (!standartTestWithNegativeSummand() || !standartTestWithPositiveSummand() || !testWithNegativeNumbers() || !testWithNegativeNumbers || !testWithNull())
     {
         printf("Tests failed");
         return -1;
     }
-    setlocale(LC_ALL, "Rus");
     int summand = 0;
     int addend = 0;
     printf("Введите два числа, сумма которых вас интересует: ");
@@ -220,7 +221,6 @@ int main()
     {
         printf(" %d", additionalArrayForSummand[i]);
     }
-    printf("\n");
 
     int lengthOfAdditionalArrayForAddend = lengthOfAdditionalArrayForSummand;
     int* additionalArrayForAddend = makeAnArray(lengthOfAdditionalArrayForAddend);
@@ -230,7 +230,7 @@ int main()
         return -1;
     }
     makeAnAdditionalCode(addend, additionalArrayForAddend, lengthOfAdditionalArrayForAddend);
-    printf("Меньшее слагаемое в двоичном представлении в дополнительном коде: ");
+    printf("\nМеньшее слагаемое в двоичном представлении в дополнительном коде: ");
     for (int i = lengthOfAdditionalArrayForAddend - 1; i >= 0; --i)
     {
         printf(" %d", additionalArrayForAddend[i]);
