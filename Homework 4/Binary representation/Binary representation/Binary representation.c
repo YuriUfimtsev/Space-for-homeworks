@@ -5,12 +5,12 @@
 
 #define SIZE (sizeof(int) * 8)
 
-void sumOfBinaryNumbers(int additionalArrayForSummand[], int lengthOfAdditionalArrayForSummand, int additionalArrayForAddend[], int sumArray[])
+void sumOfBinaryNumbers(int arrayForSummand[], int lengthOfArrayForSummand, int arrayForAddend[], int sumArray[])
 {
     int numbersOfUnits = 0;
-    for (int i = lengthOfAdditionalArrayForSummand - 1; i >= 0; --i)
+    for (int i = lengthOfArrayForSummand - 1; i >= 0; --i)
     {
-        int sum = (additionalArrayForAddend[i] + additionalArrayForSummand[i]);
+        int sum = arrayForAddend[i] + arrayForSummand[i];
         if (sum == 0 && numbersOfUnits > 0)
         {
             sumArray[i] = 1;
@@ -36,34 +36,24 @@ void sumOfBinaryNumbers(int additionalArrayForSummand[], int lengthOfAdditionalA
     }
 }
 
-void readTwosComplementCode(int startNumber, int additionalArray[], int lengthOfArray)
+void readTwosComplementCode(int startNumber, int array[], int lengthOfArray)
 {
     int bit = 1;
     for (int i = lengthOfArray - 1; i >= 0; --i)
     {
-        if ((startNumber & bit) == 0)
-        {
-            additionalArray[i] = 0;
-        }
-        else
-        {
-            additionalArray[i] = 1;
-        }
+        array[i] = (startNumber & bit) == 0 ? 0 : 1;
         bit = bit << 1;
     }
 }
 
-int makeDecimalFromBinary(int additionalArray[], int lengthOfAdditionalArray)
+int makeDecimalFromBinary(int array[], int lengthOfArray)
 {
     int result = 0;
-    int bit = 0;
-    for (int i = lengthOfAdditionalArray - 1; i >= 0; --i)
+    for (int i = lengthOfArray - 1; i >= 0; --i)
     {
-        if ((additionalArray[i] | bit) == 1)
+        if (array[i] == 1)
         {
-            ++bit;
-            result += (bit << (lengthOfAdditionalArray - i - 1));
-            bit = 0;
+            result += (1 << (lengthOfArray - i - 1));
         }
     }
     return result;
@@ -71,19 +61,13 @@ int makeDecimalFromBinary(int additionalArray[], int lengthOfAdditionalArray)
 
 bool checkOfSum(int summand, int addend, int expectedResult)
 {
-    if (abs(addend) > abs(summand))
-    {
-        int buffer = summand;
-        summand = addend;
-        addend = buffer;
-    }
-    int additionalArrayForSummand[SIZE] = { 0 };
-    readTwosComplementCode(summand, additionalArrayForSummand, SIZE);
-    int additionalArrayForAddend[SIZE] = { 0 };
-    readTwosComplementCode(addend, additionalArrayForAddend, SIZE);
+    int arrayForSummand[SIZE] = { 0 };
+    readTwosComplementCode(summand, arrayForSummand, SIZE);
+    int arrayForAddend[SIZE] = { 0 };
+    readTwosComplementCode(addend, arrayForAddend, SIZE);
 
     int sumArray[SIZE] = { 0 };
-    sumOfBinaryNumbers(additionalArrayForSummand, SIZE, additionalArrayForAddend, sumArray);
+    sumOfBinaryNumbers(arrayForSummand, SIZE, arrayForAddend, sumArray);
     int result = makeDecimalFromBinary(sumArray, SIZE);
     return (expectedResult == result);
 }
@@ -125,30 +109,24 @@ int main()
     int addend = 0;
     printf("Введите два числа, сумма которых вас интересует: ");
     scanf("%d %d", &summand, &addend);
-    if (abs(addend) > abs(summand))
-    {
-        int buffer = summand;
-        summand = addend;
-        addend = buffer;
-    }
-    int additionalArrayForSummand[SIZE] = { 0 };
-    readTwosComplementCode(summand, additionalArrayForSummand, SIZE);
-    printf("Большее слагаемое в двоичном представлении в дополнительном коде: ");
+    int arrayForSummand[SIZE] = { 0 };
+    readTwosComplementCode(summand, arrayForSummand, SIZE);
+    printf("Первое слагаемое в двоичном представлении в дополнительном коде: ");
     for (int i = 0; i < SIZE; ++i)
     {
-        printf(" %d", additionalArrayForSummand[i]);
+        printf(" %d", arrayForSummand[i]);
     }
-    int additionalArrayForAddend[SIZE] = { 0 };
-    readTwosComplementCode(addend, additionalArrayForAddend, SIZE);
-    printf("\nМеньшее слагаемое в двоичном представлении в дополнительном коде: ");
+    int arrayForAddend[SIZE] = { 0 };
+    readTwosComplementCode(addend, arrayForAddend, SIZE);
+    printf("\nВторое слагаемое в двоичном представлении в дополнительном коде: ");
     for (int i = 0; i < SIZE; ++i)
     {
-        printf(" %d", additionalArrayForAddend[i]);
+        printf(" %d", arrayForAddend[i]);
     }
     printf("\n");
 
     int sumArray[SIZE] = { 0 };
-    sumOfBinaryNumbers(additionalArrayForSummand, SIZE, additionalArrayForAddend, sumArray);
+    sumOfBinaryNumbers(arrayForSummand, SIZE, arrayForAddend, sumArray);
     printf("Сумма в двоичной системе счисления: ");
     for (int i = 1; i < SIZE; ++i)
     {
