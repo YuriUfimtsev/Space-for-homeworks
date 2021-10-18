@@ -172,74 +172,65 @@ int main()
     int indexOfEntries = readEntriesFromFile(data, array);
     fclose(data);
     int entriesInFile = indexOfEntries;
-    int command = 1;
+    int command = -1;
     while (command != 0)
     {
-        printf("Enter the next case: ");
+        printf("Enter the next command: ");
         scanf("%d", &command);
-        
-        if (command == 1)
+        switch (command)
         {
-            printf("You will make a new entry. Enter the name and phone: ");
-            char name[20] = { '\0' };
-            scanf("%s", name);
-            char phone[15] = { '\0' };
-            scanf("%s", phone);
-            newEntry(&indexOfEntries, array, name, phone);
-            printf("\n");
-        }
-
-        if (command == 2)
-        {
-            printf("\nEntries which we have now: \n");
-            for (int j = 0; j < indexOfEntries; ++j)
-            {
-                printf("%s - %s", array[j].name, array[j].phone);
+            case 1:
+                printf("You will make a new entry. Enter the name and phone: ");
+                char name[20] = { '\0' };
+                scanf("%s", name);
+                char phone[15] = { '\0' };
+                scanf("%s", phone);
+                newEntry(&indexOfEntries, array, name, phone);
                 printf("\n");
-            }
-            printf("\n\n");
-        }
-
-        if (command == 3)
-        {
-            printf("\nEnter the name and I find the phone number of this person: ");
-            char name[20] = { '\0' };
-            scanf("%s", name);
-            int const requiredIndex = findPhoneNumber(indexOfEntries, array, name);
-            if (requiredIndex != -1)
-            {
-                printf("The phone number: %s\n", array[requiredIndex].phone);
-            }
-            else
-            {
-                printf("Entry with this name doesn't exist in phone book.\n");
-            }
-            printf("\n");
-        }
-
-        if (command == 4)
-        {
-            printf("\nEnter the phone number and I find the name of person with this phone number: ");
-            char phone[15] = { '\0' };
-            scanf("%s", phone);
-            int const requiredIndex = findName(indexOfEntries, array, phone);
-            if (requiredIndex != -1)
-            {
-                printf("Name: %s\n", array[requiredIndex].name);
-            }
-            else
-            {
-                printf("Entry with this phone number doesn't exist in phone book.\n");
-            }
-            printf("\n");
-        }
-
-        if (command == 5)
-        {
-            data = fopen("Data.txt", "a");
-            saveInFile(data, entriesInFile, indexOfEntries, array);
-            fclose(data);
-            printf("\nEntries have saved in file.\n");
+                break;
+            case 2:
+                printf("\nEntries which we have now: \n");
+                for (int j = 0; j < indexOfEntries; ++j)
+                {
+                    printf("%s - %s", array[j].name, array[j].phone);
+                    printf("\n");
+                }
+                printf("\n\n");
+                break;
+            case 3:
+                printf("\nEnter the name and I find the phone number of this person: ");
+                scanf("%s", name);
+                int requiredIndex = findPhoneNumber(indexOfEntries, array, name);
+                if (requiredIndex != -1)
+                {
+                    printf("The phone number: %s\n", array[requiredIndex].phone);
+                }
+                else
+                {
+                    printf("Entry with this name doesn't exist in phone book.\n");
+                }
+                printf("\n");
+                break;
+            case 4:
+                printf("\nEnter the phone number and I find the name of person with this phone number: ");
+                scanf("%s", phone);
+                requiredIndex = findName(indexOfEntries, array, phone);
+                if (requiredIndex != -1)
+                {
+                    printf("Name: %s\n", array[requiredIndex].name);
+                }
+                else
+                {
+                    printf("Entry with this phone number doesn't exist in phone book.\n");
+                }
+                printf("\n");
+                break;
+            case 5:
+                data = fopen("Data.txt", "a");
+                saveInFile(data, entriesInFile, indexOfEntries, array);
+                fclose(data);
+                printf("\nEntries have saved in file.\n");
+                break;
         }
     }
 }
