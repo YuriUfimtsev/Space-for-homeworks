@@ -10,7 +10,7 @@ int* makeAnArray(int lengthOfArray)
 
 int findTheMostCommonElement(int array[], int lengthOfArray)
 {
-    qSort(array, lengthOfArray - 1, 0);
+    qSort(array, 0, lengthOfArray - 1);
     int maxCountOfEqualElements = 0;
     int countOfEqualElements = 1;
     int theMostCommonElement = array[0];
@@ -31,6 +31,19 @@ int findTheMostCommonElement(int array[], int lengthOfArray)
         }
     }
     return theMostCommonElement;
+}
+
+int countNumberOfEntries(FILE *file)
+{
+    fseek(file, 0, SEEK_SET);
+    int counter = 0;
+    while (!feof(file))
+    {
+        fscanf(file, "%*d");
+        ++counter;
+    }
+    fseek(file, 0, SEEK_SET);
+    return counter;
 }
 
 bool checkOfFindTheMostCommonElement(int array[], int lengthOfArray, int result)
@@ -64,26 +77,19 @@ int main()
         return 1;
     }
     FILE* file = fopen("Set of Numbers.txt", "r");
-    fseek(file, 0, SEEK_SET);
     if (file == NULL)
     {
         printf("File not found!");
         return -1;
     }
-    int counter = 0;
-    while (!feof(file))
-    {
-        int buffer = 0;
-        fscanf(file, "%d", &buffer);
-        ++counter;
-    }
+    int counter = countNumberOfEntries(file);
     int* array = makeAnArray(counter + 1);
     if (array == NULL)
     {
         printf("bad");
+        fclose(file);
         return -1;
     }
-    fseek(file, 0, SEEK_SET);
     for (int i = 0; i < counter + 1; ++i)
     {
         fscanf(file, "%d", &array[i]);

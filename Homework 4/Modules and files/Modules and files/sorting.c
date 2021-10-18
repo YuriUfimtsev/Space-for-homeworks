@@ -1,7 +1,33 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include "Sorting.h"
 
-void qSort(int array[], int stopIndex, int startIndex)
+int findTheSupportElement(int array[], int startIndex, int stopIndex)
+{
+    int i = startIndex + 1;
+    while (array[i - 1] == array[i] && i <= stopIndex)
+    {
+        ++i;
+    }
+    int supportElement = array[i] > array[i - 1] ? array[i] : array[i - 1];
+    return supportElement;
+}
+
+bool checkOfSupportElement(int array[], int startIndex, int stopIndex)
+{
+    int i = startIndex + 1;
+    while (array[i - 1] == array[i] && i <= stopIndex)
+    {
+        ++i;
+    }
+    if (i == stopIndex + 1 || array[i] == array[i - 1])
+    {
+        return false;
+    }
+    return true;
+}
+
+void qSort(int array[], int startIndex, int stopIndex)
 {
     if (stopIndex - startIndex == 0)
     {
@@ -17,24 +43,11 @@ void qSort(int array[], int stopIndex, int startIndex)
         }
         return;
     }
-    int i = startIndex + 1;
-    while (array[i - 1] == array[i] && i <= stopIndex)
-    {
-        ++i;
-    }
-    if (i == stopIndex + 1 || array[i] == array[i - 1])
+    if (!checkOfSupportElement(array, startIndex, stopIndex))
     {
         return;
     }
-    int supportElement = 0;
-    if (array[i] > array[i - 1])
-    {
-        supportElement = array[i];
-    }
-    else
-    {
-        supportElement = array[i - 1];
-    }
+    int supportElement = findTheSupportElement(array, startIndex, stopIndex);
     int lessThanSupportElement = startIndex;
     int largerThanSupportElement = stopIndex;
     while (lessThanSupportElement < largerThanSupportElement)
@@ -54,11 +67,6 @@ void qSort(int array[], int stopIndex, int startIndex)
             array[largerThanSupportElement] = buffer;
         }
     }
-    i = startIndex;
-    while (array[i] < supportElement)
-    {
-        ++i;
-    }
-    qSort(array, i - 1, startIndex);
-    qSort(array, stopIndex, i);
+    qSort(array, startIndex, lessThanSupportElement - 1);
+    qSort(array, lessThanSupportElement, stopIndex);
 }
