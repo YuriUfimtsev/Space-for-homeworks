@@ -101,7 +101,7 @@ void checkMakingEntryInFile(int indexOfEntries, PhoneBookEntry array[], char* re
         }
     }
     fclose(testForEntry);
-    remove(testForEntry);
+    remove("TestForEntry.txt");
     strcpy(result, checkOfEqual ? "ok" : "not ok");
 }
 
