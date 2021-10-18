@@ -10,11 +10,36 @@ int* makeAnArray(int lengthOfArray)
  
 void makeAnArrayOfRandomNumbers(int array[], int lengthOfArray)
 {
-    srand(time(NULL));
+    srand((unsigned)time(0));
     for (int i = 0; i < lengthOfArray; ++i)
     {
         array[i] = -100 + rand() % 200;
     }
+}
+
+int findTheSupportElement(int array[], int stopIndex, int startIndex)
+{
+    int i = startIndex + 1;
+    while (array[i - 1] == array[i] && i <= stopIndex)
+    {
+        ++i;
+    }
+    int supportElement = array[i] > array[i - 1] ? array[i] : array[i - 1];
+    return supportElement;
+}
+
+bool checkOfSupportElement(int array[], int stopIndex, int startIndex)
+{
+    int i = startIndex + 1;
+    while (array[i - 1] == array[i] && i <= stopIndex)
+    {
+        ++i;
+    }
+    if (i == stopIndex + 1 || array[i] == array[i - 1])
+    {
+        return false;
+    }
+    return true;
 }
 
 void qSort(int array[], int startIndex, int stopIndex)
@@ -33,24 +58,11 @@ void qSort(int array[], int startIndex, int stopIndex)
         }
         return;
     }
-    int i = startIndex + 1;
-    while (array[i - 1] == array[i] && i <= stopIndex)
-    {
-        ++i;
-    }
-    if (i == stopIndex + 1 || array[i] == array[i - 1])
+    if (!checkOfSupportElement(array, stopIndex, startIndex))
     {
         return;
     }
-    int supportElement = 0;
-    if (array[i] > array[i - 1])
-    {
-        supportElement = array[i];
-    }
-    else
-    {
-        supportElement = array[i - 1];
-    }
+    int supportElement = findTheSupportElement(array, stopIndex, startIndex);
     int lessThanSupportElement = startIndex;
     int largerThanSupportElement = stopIndex;
     while (lessThanSupportElement < largerThanSupportElement)
@@ -70,13 +82,8 @@ void qSort(int array[], int startIndex, int stopIndex)
             array[largerThanSupportElement] = buffer;
         }
     }
-    i = startIndex;
-    while (array[i] < supportElement)
-    {
-        ++i;
-    }
-    qSort(array, startIndex, i - 1);
-    qSort(array, i, stopIndex);
+    qSort(array, startIndex, lessThanSupportElement - 1);
+    qSort(array, lessThanSupportElement, stopIndex);
 }
 
 bool binSearch(int array[], int lengthOfArray, int numberForSearch)
@@ -85,7 +92,7 @@ bool binSearch(int array[], int lengthOfArray, int numberForSearch)
     int rightBorder = lengthOfArray - 1;
     while (leftBorder <= rightBorder)
     {
-        int middle = (leftBorder + rightBorder) / 2;
+        const int middle = (leftBorder + rightBorder) / 2;
         if (numberForSearch == array[middle])
         {
             return true;
@@ -143,7 +150,7 @@ int main()
     int lengthOfArray = 0;
     int checkScanf = scanf("%d", &lengthOfArray);
     int quantityOfRandomNumbers = 0;
-    checkScanf = scanf("%d", &quantityOfRandomNumbers);
+    scanf("%d", &quantityOfRandomNumbers);
     if (lengthOfArray <= 0 || quantityOfRandomNumbers <= 0)
     {
         printf("Incorrect input!");
@@ -165,7 +172,7 @@ int main()
     qSort(array, 0, lengthOfArray - 1);
     for (int i = 0; i < quantityOfRandomNumbers; ++i)
     {
-        int randomNumber = -200 + rand() % 250;
+        const int randomNumber = -200 + rand() % 250;
         if (binSearch(array, lengthOfArray, randomNumber))
         {
             printf("The element %d is in array\n", randomNumber);
