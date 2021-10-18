@@ -8,30 +8,24 @@ typedef struct
     char phone[15];
 } PhoneBookEntry;
 
-void newEntry(FILE* data, int indexForArray, PhoneBookEntry array[], char* name, char* phone)
+void newEntry(int* indexForArray, PhoneBookEntry array[], const char* name, const char* phone)
 {
-    strcpy(array[indexForArray].name, name);
-    strcpy(array[indexForArray].phone, phone);
+    strcpy(array[*indexForArray].name, name);
+    strcpy(array[*indexForArray].phone, phone);
+    ++*indexForArray;
 }
 
-int findPhoneNumber(FILE* data, int numberOfEntries, PhoneBookEntry array[], char* name)
+int findPhoneNumber(int numberOfEntries, PhoneBookEntry array[], char* name)
 {
     int j = 0;
     while (strcmp(array[j].name, name) != 0 && j < numberOfEntries)
     {
         ++j;
     }
-    if (strcmp(array[j].name, name) == 0)
-    {
-        return j;
-    }
-    else
-    {
-        return -1;
-    }
+    return strcmp(array[j].name, name) == 0 ? j : -1;
 }
 
-int findName(FILE* data, int numberOfEntries, PhoneBookEntry array[], char* phone)
+int findName(int numberOfEntries, PhoneBookEntry array[], char* phone)
 {
     int j = 0;
     while (strncmp(array[j].phone, phone, strlen(phone)) != 0 && j < numberOfEntries)
@@ -69,72 +63,46 @@ int readEntriesFromFile(FILE* data, PhoneBookEntry array[])
         fseek(data, 0, SEEK_SET);
         while (!feof(data))
         {
-            char buffer[35] = { '\0' };
-            fgets(buffer, 35, data);
-            if (strlen(buffer) != 0)
+            int const checkOfEof = fscanf(data, "%s", array[i].name);
+            if (checkOfEof == EOF)
             {
-                int j = 0;
-                char name[20] = { '\0' };
-                while (buffer[j] != ' ')
-                {
-                    name[j] = buffer[j];
-                    ++j;
-                }
-                ++j;
-                char phone[15] = { '\0' };
-                int counterForPhone = 0;
-                while (buffer[j] != '\0')
-                {
-                    phone[counterForPhone] = buffer[j];
-                    ++j;
-                    ++counterForPhone;
-                }
-                strcpy(array[i].name, name);
-                strcpy(array[i].phone, phone);
-                ++i;
+                break;
             }
+            fscanf(data, "%s", array[i].phone);
+            ++i;
         }
     }
     return i;
 }
 
-void checkMakingEntryInFile(int indexOfEntries, PhoneBookEntry array[], FILE* test, char* result)
+void checkMakingEntryInFile(int indexOfEntries, PhoneBookEntry array[], char* result)
 {
+    FILE* testForEntry = fopen("TestForEntry.txt", "a");
     int const entriesInFile = indexOfEntries;
-    newEntry(test, indexOfEntries, array, "Kirill", "20202018");
-    newEntry(test, indexOfEntries + 1, array, "Sasha", "890055555");
-    saveInFile(test, entriesInFile, indexOfEntries + 2, array);
-    fclose(test);
-    test = fopen("Test.txt", "r");
+    newEntry(&indexOfEntries, array, "Kirill", "20202018");
+    newEntry(&indexOfEntries, array, "Sasha", "890055555");
+    saveInFile(testForEntry, entriesInFile, indexOfEntries, array);
+    fclose(testForEntry);
+    testForEntry = fopen("TestForEntry.txt", "r");
     bool checkOfEqual = true;
     char resultOfName[20] = { '\0' };
     char resultOfPhoneNumber[15] = { '\0' };
-    for (int i = 0; i < indexOfEntries; ++i)
+    for (int i = 0; i < entriesInFile; ++i)
     {
-        fscanf(test, "%s %s", resultOfName, resultOfPhoneNumber);
+        fscanf(testForEntry, "%s %s", resultOfName, resultOfPhoneNumber);
     }
-    for (int j = indexOfEntries; j < indexOfEntries + 2; ++j)
+    for (int j = entriesInFile; j < indexOfEntries; ++j)
     {
-        fscanf(test, "%s %s", resultOfName, resultOfPhoneNumber);
-        if (strcmp(array[j].name, resultOfName) != 0)
-        {
-            checkOfEqual = false;
-            break;
-        }
-        if (strcmp(array[j].phone, resultOfPhoneNumber) != 0)
+        fscanf(testForEntry, "%s %s", resultOfName, resultOfPhoneNumber);
+        if (strcmp(array[j].name, resultOfName) != 0 || strcmp(array[j].phone, resultOfPhoneNumber) != 0)
         {
             checkOfEqual = false;
             break;
         }
     }
-    if (checkOfEqual)
-    {
-        strcpy(result, "ok");
-    }
-    else
-    {
-        strcpy(result, "not ok");
-    }
+    fclose(testForEntry);
+    remove(testForEntry);
+    strcpy(result, checkOfEqual ? "ok" : "not ok");
 }
 
 bool checkPhoneBook(int command, char* expectedResult, char* nameOrNumber)
@@ -147,10 +115,11 @@ bool checkPhoneBook(int command, char* expectedResult, char* nameOrNumber)
     }
     PhoneBookEntry array[20] = { '\0' };
     int indexOfEntries = readEntriesFromFile(test, array);
+    fclose(test);
     char result[20] = { '\0' };
     if (command == 3)
     {
-        int const requiredIndex = findPhoneNumber(test, indexOfEntries, array, nameOrNumber);
+        int const requiredIndex = findPhoneNumber(indexOfEntries, array, nameOrNumber);
         if (requiredIndex != -1)
         {
             strcpy(result, array[requiredIndex].phone);
@@ -158,7 +127,7 @@ bool checkPhoneBook(int command, char* expectedResult, char* nameOrNumber)
     }
     if (command == 4)
     {
-        int const requiredIndex = findName(test, indexOfEntries, array, nameOrNumber);
+        int const requiredIndex = findName(indexOfEntries, array, nameOrNumber);
         if (requiredIndex != -1)
         {
             strcpy(result, array[requiredIndex].name);
@@ -166,10 +135,9 @@ bool checkPhoneBook(int command, char* expectedResult, char* nameOrNumber)
     }
     if (command == 5)
     {
-        checkMakingEntryInFile(indexOfEntries, array, test, result);
+        checkMakingEntryInFile(0, array, result);
     }
-    fclose(test);
-    return(strncmp(expectedResult, result, strlen(expectedResult)) == 0);
+    return strncmp(expectedResult, result, strlen(expectedResult)) == 0;
 }
 
 bool testOfSearchingName()
@@ -202,11 +170,12 @@ int main()
         return -1;
     }
     int indexOfEntries = readEntriesFromFile(data, array);
+    fclose(data);
     int entriesInFile = indexOfEntries;
     int command = 1;
     while (command != 0)
     {
-        printf("Enter the next command: ");
+        printf("Enter the next case: ");
         scanf("%d", &command);
         
         if (command == 1)
@@ -216,8 +185,7 @@ int main()
             scanf("%s", name);
             char phone[15] = { '\0' };
             scanf("%s", phone);
-            newEntry(data, indexOfEntries, array, name, phone);
-            ++indexOfEntries;
+            newEntry(&indexOfEntries, array, name, phone);
             printf("\n");
         }
 
@@ -227,6 +195,7 @@ int main()
             for (int j = 0; j < indexOfEntries; ++j)
             {
                 printf("%s - %s", array[j].name, array[j].phone);
+                printf("\n");
             }
             printf("\n\n");
         }
@@ -236,7 +205,7 @@ int main()
             printf("\nEnter the name and I find the phone number of this person: ");
             char name[20] = { '\0' };
             scanf("%s", name);
-            int const requiredIndex = findPhoneNumber(data, indexOfEntries, array, name);
+            int const requiredIndex = findPhoneNumber(indexOfEntries, array, name);
             if (requiredIndex != -1)
             {
                 printf("The phone number: %s\n", array[requiredIndex].phone);
@@ -253,7 +222,7 @@ int main()
             printf("\nEnter the phone number and I find the name of person with this phone number: ");
             char phone[15] = { '\0' };
             scanf("%s", phone);
-            int const requiredIndex = findName(data, indexOfEntries, array, phone);
+            int const requiredIndex = findName(indexOfEntries, array, phone);
             if (requiredIndex != -1)
             {
                 printf("Name: %s\n", array[requiredIndex].name);
@@ -267,9 +236,10 @@ int main()
 
         if (command == 5)
         {
+            data = fopen("Data.txt", "a");
             saveInFile(data, entriesInFile, indexOfEntries, array);
+            fclose(data);
             printf("\nEntries have saved in file.\n");
         }
     }
-    fclose(data);
 }
