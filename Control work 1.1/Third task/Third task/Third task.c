@@ -36,7 +36,7 @@ void checkOfTask()
 	{
 		printf("File not found");
 		fclose(fileOfElement);
-		fclose(fileOfResult);
+		fclose(fileOfNumbers);
 		return -1;
 	}
 	rewrite(fileOfNumbers, fileOfElement, fileOfResult);
