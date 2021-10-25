@@ -24,7 +24,7 @@ int pop(StackElement** head)
 {
     if (*head == NULL || head == NULL)
     {
-        return;
+        return 0;
     }
     StackElement* temporary = *head;
     int value = temporary->value;
