@@ -27,8 +27,12 @@ int calculateInPostfixForm(char commandSequence[], StackElement** head)
         case '/':
             firstElement = pop(head);
             secondElement = pop(head);
+            if (firstElement == 0)
+            {
+                printf("Incorrect form: division by zero\n");
+                return -1;
+            }
             firstElement = secondElement / firstElement;
-            printf("%d", firstElement);
             push(head, firstElement);
             break;
         case '-':
@@ -62,6 +66,12 @@ int main()
         return -1;
     }
     char commandSequence[30] = { '\0' };
+    printf("Enter the sequence of digits and operations (in postfix form): ");
     gets_s(commandSequence, 30);
-    printf("%d", calculateInPostfixForm(commandSequence, &head));
+    int const resultOfCalculation = calculateInPostfixForm(commandSequence, &head);
+    if (resultOfCalculation == -1)
+    {
+        return -1;
+    }
+    printf("\nThe calculation result: %d\n", resultOfCalculation);
 }
