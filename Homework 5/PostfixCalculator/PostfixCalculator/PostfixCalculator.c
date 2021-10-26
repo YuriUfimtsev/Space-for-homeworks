@@ -106,6 +106,11 @@ int main()
     gets_s(commandSequence, 30);
     bool checkOfDivisionByZero = false;
     bool* pointerToCheckOfDivisionByZero = &checkOfDivisionByZero;
+    if (pointerToCheckOfDivisionByZero == NULL)
+    {
+        printf("Pointer is null");
+        return -1;
+    }
     int const resultOfCalculation = calculateInPostfixForm(commandSequence, &head, pointerToCheckOfDivisionByZero);
     if (checkOfDivisionByZero)
     {
