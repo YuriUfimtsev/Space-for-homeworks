@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PostfixCalculator.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Stack\Stack\TestsForStack.c">
+    <ClCompile Include="AdvancedBalanceOfBrackets.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Stack\Stack\Stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Stack\Stack\TestsForStack.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
