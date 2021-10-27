@@ -10,7 +10,7 @@ int* makeAnArray(int lengthOfArray)
  
 void makeAnArrayOfRandomNumbers(int array[], int lengthOfArray)
 {
-    srand((unsigned)time(0));
+    srand((unsigned)time(NULL));
     for (int i = 0; i < lengthOfArray; ++i)
     {
         array[i] = -100 + rand() % 200;
@@ -24,8 +24,7 @@ int findTheSupportElement(int array[], int stopIndex, int startIndex)
     {
         ++i;
     }
-    int supportElement = array[i] > array[i - 1] ? array[i] : array[i - 1];
-    return supportElement;
+    return array[i] > array[i - 1] ? array[i] : array[i - 1];
 }
 
 bool checkOfSupportElement(int array[], int stopIndex, int startIndex)
@@ -35,11 +34,7 @@ bool checkOfSupportElement(int array[], int stopIndex, int startIndex)
     {
         ++i;
     }
-    if (i == stopIndex + 1 || array[i] == array[i - 1])
-    {
-        return false;
-    }
-    return true;
+    return !(i == stopIndex + 1 || array[i] == array[i - 1]);
 }
 
 void qSort(int array[], int startIndex, int stopIndex)
@@ -62,7 +57,7 @@ void qSort(int array[], int startIndex, int stopIndex)
     {
         return;
     }
-    int supportElement = findTheSupportElement(array, stopIndex, startIndex);
+    int const supportElement = findTheSupportElement(array, stopIndex, startIndex);
     int lessThanSupportElement = startIndex;
     int largerThanSupportElement = stopIndex;
     while (lessThanSupportElement < largerThanSupportElement)
@@ -148,7 +143,7 @@ int main()
     }
     printf("Enter n (length of array) and k (quantity of random numbers): ");
     int lengthOfArray = 0;
-    int checkScanf = scanf("%d", &lengthOfArray);
+    scanf("%d", &lengthOfArray);
     int quantityOfRandomNumbers = 0;
     scanf("%d", &quantityOfRandomNumbers);
     if (lengthOfArray <= 0 || quantityOfRandomNumbers <= 0)
