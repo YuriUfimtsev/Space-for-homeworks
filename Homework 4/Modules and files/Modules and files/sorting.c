@@ -9,8 +9,7 @@ int findTheSupportElement(int array[], int startIndex, int stopIndex)
     {
         ++i;
     }
-    int supportElement = array[i] > array[i - 1] ? array[i] : array[i - 1];
-    return supportElement;
+    return array[i] > array[i - 1] ? array[i] : array[i - 1];
 }
 
 bool checkOfSupportElement(int array[], int startIndex, int stopIndex)
@@ -20,11 +19,7 @@ bool checkOfSupportElement(int array[], int startIndex, int stopIndex)
     {
         ++i;
     }
-    if (i == stopIndex + 1 || array[i] == array[i - 1])
-    {
-        return false;
-    }
-    return true;
+    return !(i == stopIndex + 1 || array[i] == array[i - 1]);
 }
 
 void qSort(int array[], int startIndex, int stopIndex)
