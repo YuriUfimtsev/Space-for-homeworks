@@ -65,7 +65,6 @@ bool checkOfSum(int summand, int addend, int expectedResult)
     readTwosComplementCode(summand, arrayForSummand, SIZE);
     int arrayForAddend[SIZE] = { 0 };
     readTwosComplementCode(addend, arrayForAddend, SIZE);
-
     int sumArray[SIZE] = { 0 };
     sumOfBinaryNumbers(arrayForSummand, SIZE, arrayForAddend, sumArray);
     int result = makeDecimalFromBinary(sumArray, SIZE);
