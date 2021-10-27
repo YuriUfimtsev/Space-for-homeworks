@@ -18,7 +18,7 @@ void newEntry(int* indexForArray, PhoneBookEntry array[], const char* name, cons
 int findPhoneNumber(int numberOfEntries, PhoneBookEntry array[], char* name)
 {
     int j = 0;
-    while (strcmp(array[j].name, name) != 0 && j < numberOfEntries)
+    while (j < numberOfEntries && strcmp(array[j].name, name))
     {
         ++j;
     }
@@ -28,18 +28,11 @@ int findPhoneNumber(int numberOfEntries, PhoneBookEntry array[], char* name)
 int findName(int numberOfEntries, PhoneBookEntry array[], char* phone)
 {
     int j = 0;
-    while (strncmp(array[j].phone, phone, strlen(phone)) != 0 && j < numberOfEntries)
+    while (j < numberOfEntries && strncmp(array[j].phone, phone, strlen(phone)) != 0)
     {
         ++j;
     }
-    if (strncmp(array[j].phone, phone, strlen(phone)) == 0)
-    {
-        return j;
-    }
-    else
-    {
-        return -1;
-    }
+    return strncmp(array[j].phone, phone, strlen(phone)) == 0 ? j : -1;
 }
 
 void saveInFile(FILE* data, int entriesInFile, int numberOfEntries, PhoneBookEntry array[])
@@ -173,9 +166,15 @@ int main()
     fclose(data);
     int entriesInFile = indexOfEntries;
     int command = -1;
+    printf("You can use following commands.\n");
+    printf("1 - exit the programme.\n");
+    printf("2 - make a new entry (write number and phone).\n");
+    printf("3 - find the phone of person (write the person's name).\n");
+    printf("4 - find the name of person, which phone number we known (write the person's telephone number)\n");
+    printf("5 - save all entries in file.\n");
     while (command != 0)
     {
-        printf("Enter the next command: ");
+        printf("\nEnter the next command: ");
         scanf("%d", &command);
         switch (command)
         {
