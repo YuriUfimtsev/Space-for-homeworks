@@ -25,6 +25,12 @@ bool checkOfPushAndPop(StackElement** head)
     return true;
 }
 
+bool checkOfTop(StackElement** head)
+{
+    push(&head, 300);
+    return top(&head) == 300;
+}
+
 bool checkOfPopFromEmptyStack(StackElement** head)
 {
     return pop(head) == 0;
@@ -45,7 +51,8 @@ bool checkOfDeletingStack(StackElement** head)
 
 bool areTestsPassing(StackElement** head)
 {
-    if (!checkOfPushAndPop(head) || !checkOfPopFromEmptyStack(head) || !checkOfIsEmpty(head) || !checkOfDeletingStack(head))
+    if (!checkOfPushAndPop(head) || !checkOfPopFromEmptyStack(head) 
+        || !checkOfIsEmpty(head) || !checkOfDeletingStack(head) || !checkOfTop(head))
     {
         return false;
     }
