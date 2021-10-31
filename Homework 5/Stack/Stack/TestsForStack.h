@@ -20,5 +20,3 @@ bool checkOfIsEmpty(StackElement** head);
 // Функция проверяет корректность работы функции стэка delete.
 bool checkOfDeletingStack(StackElement** head);
 
-// Функция проверяет корректность всех функций-тестов для стэка, написанных выше.
-bool areTestsPassing(StackElement** head);

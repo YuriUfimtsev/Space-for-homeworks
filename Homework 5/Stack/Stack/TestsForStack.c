@@ -51,9 +51,8 @@ bool checkOfDeletingStack(StackElement** head)
 
 bool areTestsPassing(StackElement** head)
 {
-    if (!checkOfPushAndPop(head) || !checkOfPopFromEmptyStack(head) 
-        || !checkOfIsEmpty(head) || !checkOfDeletingStack(head) || !checkOfTop(head))
-    {
+    if (!checkOfPushAndPop(head) || !checkOfPopFromEmptyStack(head) || !checkOfIsEmpty(head) 
+        || !checkOfDeletingStack(head) || !checkOfPopFromEmptyStack(head))     {
         return false;
     }
     return true;
