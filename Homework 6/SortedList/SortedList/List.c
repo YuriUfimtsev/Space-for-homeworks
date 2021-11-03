@@ -76,6 +76,18 @@ int getValue(List* list, Position* position)
     return position->position->value;
 }
 
+bool valueInList(List* list, int value)
+{
+    for (Position* i = first(list); !last(i); i = next(i))
+    {
+        if (getValue(list, i) == value)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void addTheValueInSortedList(List* list, int value)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
@@ -116,14 +128,18 @@ void addTheValueInSortedList(List* list, int value)
     i->position->next = newElement;
 }
 
-void delete(List* list, int value)
+bool delete(List* list, int value)
 {
+    if (!valueInList(list, value))
+    {
+        return false;
+    }
     Position* i = first(list);
     if (getValue(list, i) == value)
     {
         list->head = i->position->next;
         deletePosition(i);
-        return;
+        return true;
     }
     Position* j = next(i);
     while (!last(j) && getValue(list, j) != value)
@@ -135,8 +151,9 @@ void delete(List* list, int value)
     {
         i->position->next = NULL;
         deletePosition(j);
-        return;
+        return true;
     }
     i->position->next = j->position->next;
     deletePosition(j);
+    return true;
 }

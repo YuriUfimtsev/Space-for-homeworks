@@ -3,13 +3,87 @@
 
 #include "List.h"
 
+bool checkOfAddInSortedList(int arrayOfResult[], int array[], int lengthOfArray)
+{
+    List* sortedList = createList();
+    for (int i = 0; i < lengthOfArray; ++i)
+    {
+        addTheValueInSortedList(sortedList, array[i]);
+    }
+    int j = 0;
+    for (Position* i = first(sortedList); !(last(i)); i = next(i))
+    {
+        if (getValue(sortedList, i) != arrayOfResult[j])
+        {
+            deleteList(sortedList);
+            return false;
+        }
+        ++j;
+    }
+    deleteList(sortedList);
+    return true;
+}
+
+bool checkOfDeleteFromTheSortedList(int arrayOfResult[], int array[], int lengthOfArray, int elementForRemove)
+{
+    List* sortedList = createList();
+    for (int i = 0; i < lengthOfArray; ++i)
+    {
+        addTheValueInSortedList(sortedList, array[i]);
+    }
+    delete(sortedList, elementForRemove);
+    int j = 0;
+    for (Position* i = first(sortedList); !(last(i)); i = next(i))
+    {
+        if (getValue(sortedList, i) != arrayOfResult[j])
+        {
+            deleteList(sortedList);
+            return false;
+        }
+        ++j;
+    }
+    deleteList(sortedList);
+    return true;
+}
+
+bool standartTestOfAdding()
+{
+    int array[4] = { 59, 80, 1, 0 };
+    int arrayOfResult[4] = { 0, 1, 59, 80 };
+    return checkOfAddInSortedList(arrayOfResult, array, 4);
+}
+
+bool testWithSortedElementsOfAdding()
+{
+    int array[6] = { 1, 7, 8, 99, 130, 250 };
+    int arrayOfResult[6] = { 1, 7, 8, 99, 130, 250 };
+    return checkOfAddInSortedList(arrayOfResult, array, 6);
+}
+
+bool standartTestOfDeleting()
+{
+    int array[6] = { 18, 34, 20, 48, 60, 1 };
+    int arrayOfResult[5] = { 1, 20, 34, 48, 60 };
+    return checkOfDeleteFromTheSortedList(arrayOfResult, array, 6, 18);
+}
+
+bool testOfDeletingFromHead()
+{
+    int array[4] = { 25, 44, 90, 8 };
+    int arrayOfResult[3] = { 25, 44, 90 };
+    return checkOfDeleteFromTheSortedList(arrayOfResult, array, 4, 8);
+}
+
 int main()
 {
     List* sortedList = createList();
-    //if (!Test)
-    //{
-    //    return -1;
-    //}
+    if (!standartTestOfAdding() || !testWithSortedElementsOfAdding()
+        || !standartTestOfDeleting() || !testOfDeletingFromHead())
+    {
+        printf("Tests failed");
+        deleteList(sortedList);
+        return -1;
+    }
     int command = 1;
     printf("You can use following commands.\n");
     printf("0 - exit the programme.\n");
@@ -28,12 +102,15 @@ int main()
         case 1:
             scanf("%d", &value);
             addTheValueInSortedList(sortedList, value);
+            printf("\n%d was added in the sorted list\n", value);
             break;
         case 2:
             scanf("%d", &value);
-            delete(sortedList, value);
+            printf(delete(sortedList, value) == true ? "\n%d was deleted from the sorted list"
+                : "\nSorted list doesn't contain this element", value);
             break;
         case 3:
+            printf("Sorted list contains this elements: ");
             for (Position* i = first(sortedList); !(last(i)); i = next(i))
             {
                 printf("%d ", getValue(sortedList, i));

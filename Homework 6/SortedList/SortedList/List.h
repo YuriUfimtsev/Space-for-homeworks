@@ -23,4 +23,4 @@ int getValue(List* list, Position* position);
 
 void addTheValueInSortedList(List* list, int value);
 
-void delete(List* list, int value);
+bool delete(List* list, int value);
