@@ -60,7 +60,7 @@ bool last(Position* position, List* list)
     return position->position->next == list->head;
 }
 
-void add(List* list, Position* position, int value)
+void addByPosition(List* list, Position* position, int value)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
     newElement->value = value;
@@ -84,6 +84,25 @@ void add(List* list, Position* position, int value)
     }
     newElement->next = position->position->next;
     position->position->next = newElement;
+}
+
+void add(List* list, int value)
+{
+    ListElement* newElement = calloc(1, sizeof(ListElement));
+    newElement->value = value;
+    if (list->head == NULL)
+    {
+        list->head = newElement;
+        newElement->next = list->head;
+        return;
+    }
+    Position* i = first(list);
+    while (!last(i, list))
+    {
+        i = next(i);
+    }
+    newElement->next = list->head;
+    i->position->next = newElement;
 }
 
 int getValue(List* list, Position* position)

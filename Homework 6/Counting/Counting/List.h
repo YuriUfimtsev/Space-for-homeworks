@@ -12,7 +12,9 @@ void deleteList(List* list);
 
 void deletePosition(Position* position);
 
-void add(List* list, Position* position, int value);
+void add(List* list, int value);
+
+void addByPosition(List* list, Position* position, int value);
 
 Position* first(List* list);
 
