@@ -73,6 +73,11 @@ int main()
     int quantityOfWarriors = 0;
     int numberOfUnluckyWarriors = 0;
     scanf("%d %d", &quantityOfWarriors, &numberOfUnluckyWarriors);
+    if (quantityOfWarriors == 0 || numberOfUnluckyWarriors == 0)
+    {
+        printf("\nIncorrect input\n");
+        return -1;
+    }
     List* cyclicList = makeListOfWarriors(quantityOfWarriors);
     int const numberOfLastWarrior = deleteListElements(cyclicList, numberOfUnluckyWarriors);
     printf("\nThe number of last warrior: %d\n", numberOfLastWarrior);
