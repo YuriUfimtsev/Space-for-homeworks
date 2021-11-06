@@ -19,7 +19,9 @@ void deletePosition(Position* position);
 // Функция добавляет значение value в список. 
 // Принимает на вход указатель на элемент списка , добавляемое значение value и указатель на голову списка.
 // Ничего не возвращает.
-void add(List* list, Position* position, int value);
+void add(List* list,  int value);
+
+void addByPosition(List* list, Position* position, int value);
 
 // Функция возвращает указатель на первый элемент списка. Принимает указатель на голову списка.
 Position* first(List* list);
@@ -57,4 +59,14 @@ bool deleteElement(List* list, int value);
 // Возвращает размер списка.
 int sizeOfList(List* list);
 
-//List* divideList(List* list);
+bool isEmpty(List* list);
+
+void addInHead(List* list, int value);
+
+int indexFromPosition(List* list, Position* position);
+
+void deleteElementByPosition(List* list, Position* position);
+
+Position* getPositionFromValue(List* list, int value);
+
+Position* getPositionFromIndex(List* list, int index);

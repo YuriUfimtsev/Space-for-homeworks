@@ -18,11 +18,11 @@
     <ClCompile Include="MergeSort.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="List.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="List.c">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
