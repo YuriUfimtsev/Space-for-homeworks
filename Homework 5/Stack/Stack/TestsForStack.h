@@ -1,10 +1,10 @@
 #pragma once
 #include <stdbool.h>
 
-typedef struct StackElement StackElement;
+#include "Stack.h"
 
 // Данная функция, как и все, расположенные ниже, принимает адрес указателя на голову стека 
-// (указатель на указатель на голову стэка).
+// (указатель на указатель на голову стека).
 // Функция проверяет корректность работы функций стэка push и pop.
 bool checkOfPushAndPop(StackElement** head);
 
