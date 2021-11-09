@@ -29,6 +29,7 @@ int calculateInPostfixForm(char commandSequence[],
             if (!checkOfCorrectWorkOfStackFunctions)
             {
                 *checkOfCorrectWork = false;
+                deleteStack(&head, &checkOfCorrectWork);
                 return  -1;
             }
         }
@@ -48,6 +49,7 @@ int calculateInPostfixForm(char commandSequence[],
                 if (firstElement == 0)
                 {
                     *ñheckOfDivisionByZero = true;
+                    deleteStack(&head, &checkOfCorrectWork);
                     return -1;
                 }
                 number = secondElement / firstElement;
@@ -66,6 +68,7 @@ int calculateInPostfixForm(char commandSequence[],
             if (!checkOfCorrectWorkOfStackFunctions)
             {
                 *checkOfCorrectWork = false;
+                deleteStack(&head, &checkOfCorrectWork);
                 return -1;
             }
             break;
