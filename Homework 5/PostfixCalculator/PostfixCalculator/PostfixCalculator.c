@@ -2,11 +2,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "C:\Users\Home\Desktop\Новая папка\Stack\Stack\TestsForStack.h"
-#include "C:\Users\Home\Desktop\Новая папка\Stack\Stack\Stack.h"
+#include "..\..\Stack\Stack\TestsForStack.h"
+#include "..\..\Stack\Stack\Stack.h"
 
-int calculateInPostfixForm(char commandSequence[], StackElement** head, bool* pointerToCheckOfDivisionByZero)
+int calculateInPostfixForm(char commandSequence[],
+    bool* pointerToCheckOfDivisionByZero, bool* checkOfCorrectWork)
 {
+    StackElement* head = NULL;
+    if (!areTestsPassing(&head))
+    {
+        *checkOfCorrectWork = false;
+        return -1;
+    }
+    bool checkOfCorrectWorkOfStackFunctions = true;
     int i = 0;
     while (commandSequence[i] != '\0')
     {
@@ -20,42 +28,43 @@ int calculateInPostfixForm(char commandSequence[], StackElement** head, bool* po
         case '\n':
             break;
         case '*':
-            firstElement = pop(head);
-            secondElement = pop(head);
+            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
             firstElement *= secondElement;
-            push(head, firstElement);
+            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
             break;
         case '/':
-            firstElement = pop(head);
-            secondElement = pop(head);
+            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
             if (firstElement == 0)
             {
                 *pointerToCheckOfDivisionByZero = true;
                 return -1;
             }
             firstElement = secondElement / firstElement;
-            push(head, firstElement);
+            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
             break;
         case '-':
-            firstElement = pop(head);
-            secondElement = pop(head);
+            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
             firstElement = secondElement - firstElement;
-            push(head, firstElement);
+            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
             break;
         case '+':
-            firstElement = pop(head);
-            secondElement = pop(head);
+            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
             firstElement += secondElement;
-            push(head, firstElement);
+            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
             break;
         default:
             number = commandSequence[i] - '0';
-            push(head, number);
+            push(&head, number, &checkOfCorrectWorkOfStackFunctions);
             break;
         }
         ++i;
     }
-    return pop(head);
+    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+    return pop(&head, &checkOfCorrectWorkOfStackFunctions);
 }
 
 bool checkOfCalculation(char commandSequence[], int expectedResult)
@@ -68,7 +77,8 @@ bool checkOfCalculation(char commandSequence[], int expectedResult)
     }
     bool checkOfDivisionByZero = false;
     bool* pointerToCheckOfDivisionByZero = &checkOfDivisionByZero;
-    return calculateInPostfixForm(commandSequence, &head, pointerToCheckOfDivisionByZero) == expectedResult;
+    bool checkOfCorrectWork = true;
+    return calculateInPostfixForm(commandSequence, pointerToCheckOfDivisionByZero, &checkOfCorrectWork) == expectedResult;
 }
 
 bool standartTest()
@@ -91,12 +101,6 @@ bool zeroResultTest()
 
 int main()
 {
-    StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        printf("Stack's tests failed");
-        return -1;
-    }
     if (!standartTest() || !divisionByZeroTest() || !zeroResultTest())
     {
         printf("Tests failed");
@@ -106,11 +110,20 @@ int main()
     printf("Enter the sequence of digits and operations (in postfix form): ");
     gets_s(commandSequence, 30);
     bool checkOfDivisionByZero = false;
-    int const resultOfCalculation = calculateInPostfixForm(commandSequence, &head, &checkOfDivisionByZero);
+    bool checkOfCorrectWork = true;
+    int const resultOfCalculation = calculateInPostfixForm(commandSequence,
+        &checkOfDivisionByZero, &checkOfCorrectWork);
     if (checkOfDivisionByZero)
     {
         printf("\n  Incorrect form: division by zero.\n");
         return -1;
     }
     printf("\nThe calculation result: %d\n", resultOfCalculation);
+
+    //int const result = checkOfBracketsBalance(bracketsSequence, &checkOfCorrectWork);
+    if (!checkOfCorrectWork)
+    {
+        printf("Error from stack's functions");
+        return -1;
+    }
 }
