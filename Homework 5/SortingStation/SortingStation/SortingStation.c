@@ -2,46 +2,21 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "C:\Users\Home\source\repos\Space-for-homeworks\Homework 5\Stack\Stack\TestsForStack.h"
-#include "C:\Users\Home\source\repos\Space-for-homeworks\Homework 5\Stack\Stack\Stack.h"
+#include "..\..\Stack\Stack\Stack.h"
+#include "..\..\Stack\Stack\TestsForStack.h"
 
-bool checkOfBracketsBalance(char bracketsSequence[], StackElement** head)
+void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[],
+    bool* pointerToCheckOfConverting, bool* checkOfCorrectWork)
 {
-    int i = 0;
-    while (bracketsSequence[i] != '\0')
+    StackElement* head = NULL;
+    if (!areTestsPassing(&head))
     {
-        if (bracketsSequence[i] == '(' || bracketsSequence[i] == ')')
-        {
-            if (bracketsSequence[i] == ')')
-            {
-                if (top(head) == '(')
-                {
-                    pop(head);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (bracketsSequence[i] == '(')
-            {
-                push(head, bracketsSequence[i]);
-            }
-        }
-        ++i;
-    }
-    return true;
-}
-
-void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[], StackElement** head, bool* pointerToCheckOfConverting)
-{
-    if (!checkOfBracketsBalance(infixFormSequence, head))
-    {
-        *pointerToCheckOfConverting = false;
+        *checkOfCorrectWork = false;
         return;
     }
     int indexOfInfixFormSequence = 0;
     int indexOfPostfixFormSequence = 0;
+    bool checkOfCorrectWorkOfStackFunctions = true;
     while (infixFormSequence[indexOfInfixFormSequence] != '\0')
     {
         switch (infixFormSequence[indexOfInfixFormSequence])
@@ -51,39 +26,40 @@ void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[], 
         case '\n':
             break;
         case '(':
-            push(head, infixFormSequence[indexOfInfixFormSequence]);
+            push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
             break;
         case ')':
-            while (top(head) != '(')
+            while (top(&head, &checkOfCorrectWorkOfStackFunctions) != '(')
             {
-                postfixFormSequence[indexOfPostfixFormSequence] += pop(head);
+                postfixFormSequence[indexOfPostfixFormSequence] += pop(&head, &checkOfCorrectWorkOfStackFunctions);
                 ++indexOfPostfixFormSequence;
                 postfixFormSequence[indexOfPostfixFormSequence] += ' ';
                 ++indexOfPostfixFormSequence;
             }
-            pop(head);
+            pop(&head, &checkOfCorrectWorkOfStackFunctions);
             break;
         case '*':
         case '/':
-            while (top(head) == ('*' || '/'))
+            while (top(&head, &checkOfCorrectWorkOfStackFunctions) == ('*' || '/'))
             {
-                postfixFormSequence[indexOfPostfixFormSequence] += pop(head);
+                postfixFormSequence[indexOfPostfixFormSequence] += pop(&head, &checkOfCorrectWorkOfStackFunctions);
                 ++indexOfPostfixFormSequence;
                 postfixFormSequence[indexOfPostfixFormSequence] += ' ';
                 ++indexOfPostfixFormSequence;
             }
-            push(head, infixFormSequence[indexOfInfixFormSequence]);
+            push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
             break;
         case '+':
         case '-':
-            while (top(head) == '*' || top(head) == '/' || top(head) == '+' || top(head) == '-')
+            while (top(&head, &checkOfCorrectWorkOfStackFunctions) == '*' || top(&head, &checkOfCorrectWorkOfStackFunctions) == '/' ||
+                top(&head, &checkOfCorrectWorkOfStackFunctions) == '+' || top(&head, &checkOfCorrectWorkOfStackFunctions) == '-')
             {
-                postfixFormSequence[indexOfPostfixFormSequence] += pop(head);
+                postfixFormSequence[indexOfPostfixFormSequence] += pop(&head, &checkOfCorrectWorkOfStackFunctions);
                 ++indexOfPostfixFormSequence;
                 postfixFormSequence[indexOfPostfixFormSequence] += ' ';
                 ++indexOfPostfixFormSequence;
             }
-            push(head, infixFormSequence[indexOfInfixFormSequence]);
+            push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
             break;
         default:
             postfixFormSequence[indexOfPostfixFormSequence] += infixFormSequence[indexOfInfixFormSequence];
@@ -94,9 +70,9 @@ void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[], 
         }
         ++indexOfInfixFormSequence;
     }
-    while (!isEmpty(*head))
+    while (!isEmpty(head))
     {
-        postfixFormSequence[indexOfPostfixFormSequence] += pop(head);
+        postfixFormSequence[indexOfPostfixFormSequence] += pop(&head, &checkOfCorrectWorkOfStackFunctions);
         ++indexOfPostfixFormSequence;
         postfixFormSequence[indexOfPostfixFormSequence] += ' ';
         ++indexOfPostfixFormSequence;
@@ -105,10 +81,10 @@ void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[], 
 
 bool checkOfConverting(char infixFormSequence[], char resultString[])
 {
-    StackElement* head = NULL;
     char postfixFormSequence[30] = { '\0' };
     bool checkOfConverting = true;
-    convertToPostfixForm(infixFormSequence, postfixFormSequence, &head, &checkOfConverting);
+    bool checkOfCorrectWork = true;
+    convertToPostfixForm(infixFormSequence, postfixFormSequence, &checkOfConverting, &checkOfCorrectWork);
     return strcmp(resultString, postfixFormSequence) == 0;
 }
 
@@ -128,12 +104,6 @@ bool testWithDivision()
 
 int main()
 {
-    StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        printf("Stack's tests failed");
-        return -1;
-    }
     if (!standartTest() || !testWithDivision())
     {
         printf("Tests failed");
@@ -144,7 +114,9 @@ int main()
     gets_s(infixFormSequence, 30);
     char postfixFormSequence[30] = { '\0' };
     bool checkOfConverting = true;
-    convertToPostfixForm(infixFormSequence, postfixFormSequence, &head, &checkOfConverting);
+    bool checkOfCorrectWork = true;
+
+    convertToPostfixForm(infixFormSequence, postfixFormSequence, &checkOfConverting, &checkOfCorrectWork);
     if (!checkOfConverting)
     {
         printf("\nIncorrect mathematical expression\n");
