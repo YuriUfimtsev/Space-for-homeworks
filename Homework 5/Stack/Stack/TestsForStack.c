@@ -11,6 +11,7 @@ bool checkOfPushAndPop(StackElement** head)
         push(head, i, &checkOfCorrectWork);
         if (!checkOfCorrectWork)
         {
+            deleteStack(head, &checkOfCorrectWork);
             return false;
         }
     }
@@ -18,10 +19,10 @@ bool checkOfPushAndPop(StackElement** head)
     {
         if (i != pop(head, &checkOfCorrectWork))
         {
+            deleteStack(head, &checkOfCorrectWork);
             return false;
         }
-    }
-    return true;
+    }    return true;
 }
 
 bool checkOfTop(StackElement** head)
@@ -30,9 +31,14 @@ bool checkOfTop(StackElement** head)
     push(head, 300, &checkOfCorrectWork);
     if (!checkOfCorrectWork)
     {
+        deleteStack(head, &checkOfCorrectWork);
         return false;
     }
-    return top(head, &checkOfCorrectWork) == 300;
+    if (top(head, &checkOfCorrectWork) == 300)
+    {
+        deleteStack(head, &checkOfCorrectWork);
+        return true;
+    }
 }
 
 bool checkOfPopFromEmptyStack(StackElement** head)
@@ -53,6 +59,7 @@ bool checkOfDeletingStack(StackElement** head)
     push(head, 33, &checkOfCorrectWork);
     if (!checkOfCorrectWork)
     {
+        deleteStack(head, &checkOfCorrectWork);
         return false;
     }
     deleteStack(head, &checkOfCorrectWork);
