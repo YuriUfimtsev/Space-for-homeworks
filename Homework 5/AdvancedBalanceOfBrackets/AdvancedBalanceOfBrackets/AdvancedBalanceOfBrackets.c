@@ -12,7 +12,7 @@ bool isCorrectSymbol(const char symbolFromBracketsSequence)
         symbolFromBracketsSequence == ']' || symbolFromBracketsSequence == ' ';
 }
 
-bool checkOfBracketBalance(const char bracketsSequence[], bool* checkOfCorrectWork)
+bool checkOfBracketsBalance(const char bracketsSequence[], bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
     if (!areTestsPassing(&head))
@@ -26,6 +26,7 @@ bool checkOfBracketBalance(const char bracketsSequence[], bool* checkOfCorrectWo
     {
         if (!isCorrectSymbol(bracketsSequence[i]))
         {
+            deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
             return false;
         }
         if (bracketsSequence[i] == ' ')
@@ -35,47 +36,38 @@ bool checkOfBracketBalance(const char bracketsSequence[], bool* checkOfCorrectWo
         }
         else if (bracketsSequence[i] == ')')
         {
-            if (isEmpty(head))
+            if (isEmpty(head) || top(&head, &checkOfCorrectWorkOfStackFunctions) != '(')
             {
+                deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
                 return false;
             }
-            if (top(&head, &checkOfCorrectWorkOfStackFunctions) == '(')
+            else 
             {
                 pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            }
-            else
-            {
-                return false;
             }
         }
         else if (bracketsSequence[i] == ']')
         {
-            if (isEmpty(head))
+            if (isEmpty(head) || top(&head, &checkOfCorrectWorkOfStackFunctions) != '[')
             {
+                deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
                 return false;
-            }
-            if (top(&head, &checkOfCorrectWorkOfStackFunctions) == '[')
-            {
-                pop(&head, &checkOfCorrectWorkOfStackFunctions);
             }
             else
             {
-                return false;
+                pop(&head, &checkOfCorrectWorkOfStackFunctions);
             }
         }
         else if (bracketsSequence[i] == '}')
         {
-            if (isEmpty(head))
+            if (isEmpty(head) || top(&head, &checkOfCorrectWorkOfStackFunctions) != '{')
             {
+                deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
                 return false;
-            }
-            if (top(&head, &checkOfCorrectWorkOfStackFunctions) == '{')
-            {
-                pop(&head, &checkOfCorrectWorkOfStackFunctions);
             }
             else
             {
-                return false;
+                pop(&head, &checkOfCorrectWorkOfStackFunctions);
             }
         }
         else
@@ -86,12 +78,14 @@ bool checkOfBracketBalance(const char bracketsSequence[], bool* checkOfCorrectWo
         if (!checkOfCorrectWorkOfStackFunctions)
         {
             *checkOfCorrectWork = false;
+            deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
             return false;
         }
     }
     if (!checkOfCorrectWorkOfStackFunctions)
     {
         *checkOfCorrectWork = false;
+        deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
         return false;
     }
     if (!isEmpty(head))
@@ -99,43 +93,44 @@ bool checkOfBracketBalance(const char bracketsSequence[], bool* checkOfCorrectWo
         deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
         return false;
     }
+    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
     return true;
 }
 
-bool checkOfCheckOfBracketBalance(char bracketsSequence[], bool expectedResult)
+bool checkOfCheckOfBracketsBalance(char bracketsSequence[], bool expectedResult)
 {
     bool checkOfCorrectWork = true;
-    return checkOfBracketBalance(bracketsSequence, &checkOfCorrectWork) == expectedResult;
+    return checkOfBracketsBalance(bracketsSequence, &checkOfCorrectWork) == expectedResult;
 }
 
 bool standartCorrectTest()
 {
     char bracketsSequence[8] = { "({})" };
-    return checkOfCheckOfBracketBalance(bracketsSequence, true);
+    return checkOfCheckOfBracketsBalance(bracketsSequence, true);
 }
 
 bool standartIncorrectTest()
 {
     char bracketsSequence[6] = { "({)} "};
-    return checkOfCheckOfBracketBalance(bracketsSequence, false);
+    return checkOfCheckOfBracketsBalance(bracketsSequence, false);
 }
 
 bool testWithIrrelevantSymbol()
 {
     char bracketsSequence[6] = { "(){5} " };
-    return checkOfCheckOfBracketBalance(bracketsSequence, false);
+    return checkOfCheckOfBracketsBalance(bracketsSequence, false);
 }
 
 bool correctTestWithSpaces()
 {
     char bracketsSequence[10] = { "({[ ]}  )" };
-    return checkOfCheckOfBracketBalance(bracketsSequence, true);
+    return checkOfCheckOfBracketsBalance(bracketsSequence, true);
 }
 
 bool incorrectTestWithOneTypeOfBrackets()
 {
     char bracketsSequence[4] = { "(((" };
-    return checkOfCheckOfBracketBalance(bracketsSequence, false);
+    return checkOfCheckOfBracketsBalance(bracketsSequence, false);
 }
 
 bool areBracketsBalanceTestsPassing()
@@ -156,12 +151,13 @@ int main()
     printf("Enter the bracket sequence: ");
     gets_s(bracketsSequence, 30);
     bool checkOfCorrectWork = true;
-    bool const result = checkOfBracketBalance(bracketsSequence, &checkOfCorrectWork);
+    bool const result = checkOfBracketsBalance(bracketsSequence, &checkOfCorrectWork);
     if (!checkOfCorrectWork)
     {
         printf("Error from stack's functions");
         return -1;
     }
-    result ? printf("\nThe bracket sequence is correct\n")
+    result
+        ? printf("\nThe bracket sequence is correct\n")
         : printf("\nThe bracket sequence is incorrect\n");
 }
