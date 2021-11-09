@@ -69,12 +69,12 @@ int calculateInPostfixForm(char commandSequence[],
 
 bool checkOfCalculation(char commandSequence[], int expectedResult)
 {
-    StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        printf("Stack's tests failed");
-        return -1;
-    }
+    //StackElement* head = NULL;
+    //if (!areTestsPassing(&head))
+    //{
+    //    printf("Stack's tests failed");
+    //    return -1;
+    //}
     bool checkOfDivisionByZero = false;
     bool* pointerToCheckOfDivisionByZero = &checkOfDivisionByZero;
     bool checkOfCorrectWork = true;
