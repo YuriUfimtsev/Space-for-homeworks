@@ -5,7 +5,7 @@
 #include "..\..\Stack\Stack\TestsForStack.h"
 #include "..\..\Stack\Stack\Stack.h"
 
-int calculateInPostfixForm(char commandSequence[],
+int calculateInPostfixForm(const char commandSequence[],
     bool* ñheckOfDivisionByZero, bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
@@ -85,7 +85,7 @@ int calculateInPostfixForm(char commandSequence[],
     return result;
 }
 
-bool checkOfCalculation(char commandSequence[], int expectedResult)
+bool checkOfCalculation(const char commandSequence[], int expectedResult)
 {
     bool checkOfDivisionByZero = false;
     bool checkOfCorrectWork = true;
