@@ -5,8 +5,8 @@
 #include "..\..\Stack\Stack\Stack.h"
 #include "..\..\Stack\Stack\TestsForStack.h"
 
-void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[],
-    bool* pointerToCheckOfConverting, bool* checkOfCorrectWork)
+void convertToPostfixForm(const char infixFormSequence[], char postfixFormSequence[],
+    bool* checkOfConverting, bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
     if (!areTestsPassing(&head))
@@ -77,6 +77,7 @@ void convertToPostfixForm(char infixFormSequence[], char postfixFormSequence[],
         postfixFormSequence[indexOfPostfixFormSequence] += ' ';
         ++indexOfPostfixFormSequence;
     }
+    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
 }
 
 bool checkOfConverting(char infixFormSequence[], char resultString[])
