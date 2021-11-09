@@ -6,7 +6,7 @@
 #include "..\..\Stack\Stack\Stack.h"
 
 int calculateInPostfixForm(char commandSequence[],
-    bool* pointerToCheckOfDivisionByZero, bool* checkOfCorrectWork)
+    bool* ñheckOfDivisionByZero, bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
     if (!areTestsPassing(&head))
@@ -21,64 +21,73 @@ int calculateInPostfixForm(char commandSequence[],
         int firstElement = 0;
         int secondElement = 0;
         int number = 0;
+        if (commandSequence[i] == '*' || commandSequence[i] == '/'
+            || commandSequence[i] == '+' || commandSequence[i] == '-')
+        {
+            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+            if (!checkOfCorrectWorkOfStackFunctions)
+            {
+                *checkOfCorrectWork = false;
+                return  -1;
+            }
+        }
         switch (commandSequence[i])
         {
         case ' ':
             break;
         case '\n':
             break;
-        case '*':
-            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            firstElement *= secondElement;
-            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
-            break;
-        case '/':
-            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            if (firstElement == 0)
+        default:
+            switch (commandSequence[i])
             {
-                *pointerToCheckOfDivisionByZero = true;
+            case '*':
+                number = firstElement * secondElement;
+                break;
+            case '/':
+                if (firstElement == 0)
+                {
+                    *ñheckOfDivisionByZero = true;
+                    return -1;
+                }
+                number = secondElement / firstElement;
+                break;
+            case '-':
+                number = secondElement - firstElement;
+                break;
+            case '+':
+                number = firstElement + secondElement;
+                break;
+            default:
+                number = commandSequence[i] - '0';
+                break;
+            }
+            push(&head, number, &checkOfCorrectWorkOfStackFunctions);
+            if (!checkOfCorrectWorkOfStackFunctions)
+            {
+                *checkOfCorrectWork = false;
                 return -1;
             }
-            firstElement = secondElement / firstElement;
-            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
-            break;
-        case '-':
-            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            firstElement = secondElement - firstElement;
-            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
-            break;
-        case '+':
-            firstElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            secondElement = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-            firstElement += secondElement;
-            push(&head, firstElement, &checkOfCorrectWorkOfStackFunctions);
-            break;
-        default:
-            number = commandSequence[i] - '0';
-            push(&head, number, &checkOfCorrectWorkOfStackFunctions);
             break;
         }
         ++i;
     }
+    int const result = pop(&head, &checkOfCorrectWorkOfStackFunctions);
     deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
-    return pop(&head, &checkOfCorrectWorkOfStackFunctions);
+    if (!checkOfCorrectWorkOfStackFunctions)
+    {
+        *checkOfCorrectWork = false;
+        return -1;
+    }
+    return result;
 }
 
 bool checkOfCalculation(char commandSequence[], int expectedResult)
 {
-    //StackElement* head = NULL;
-    //if (!areTestsPassing(&head))
-    //{
-    //    printf("Stack's tests failed");
-    //    return -1;
-    //}
     bool checkOfDivisionByZero = false;
-    bool* pointerToCheckOfDivisionByZero = &checkOfDivisionByZero;
     bool checkOfCorrectWork = true;
-    return calculateInPostfixForm(commandSequence, pointerToCheckOfDivisionByZero, &checkOfCorrectWork) == expectedResult;
+    return calculateInPostfixForm(commandSequence, &checkOfDivisionByZero, &checkOfCorrectWork)
+        == expectedResult;
 }
 
 bool standartTest()
@@ -99,9 +108,15 @@ bool zeroResultTest()
     return checkOfCalculation(commandSequence, 0);
 }
 
+bool testOfIncorrectSequence()
+{
+    char commandSequence[15] = { "3 * 5 - 8 + 0 *" };
+    return checkOfCalculation(commandSequence, -1);
+}
+
 int main()
 {
-    if (!standartTest() || !divisionByZeroTest() || !zeroResultTest())
+    if (!standartTest() || !divisionByZeroTest() || !zeroResultTest() || !testOfIncorrectSequence())
     {
         printf("Tests failed");
         return -1;
@@ -109,21 +124,19 @@ int main()
     char commandSequence[30] = { '\0' };
     printf("Enter the sequence of digits and operations (in postfix form): ");
     gets_s(commandSequence, 30);
-    bool checkOfDivisionByZero = false;
+    bool isDivisionByZero = false;
     bool checkOfCorrectWork = true;
     int const resultOfCalculation = calculateInPostfixForm(commandSequence,
-        &checkOfDivisionByZero, &checkOfCorrectWork);
-    if (checkOfDivisionByZero)
+        &isDivisionByZero, &checkOfCorrectWork);
+    if (isDivisionByZero)
     {
-        printf("\n  Incorrect form: division by zero.\n");
+        printf("\nIncorrect form: division by zero.\n");
+        return -1;
+    }
+    if (!checkOfCorrectWork)
+    {
+        printf("\nIncorrect sequence.\n");
         return -1;
     }
     printf("\nThe calculation result: %d\n", resultOfCalculation);
-
-    //int const result = checkOfBracketsBalance(bracketsSequence, &checkOfCorrectWork);
-    if (!checkOfCorrectWork)
-    {
-        printf("Error from stack's functions");
-        return -1;
-    }
 }
