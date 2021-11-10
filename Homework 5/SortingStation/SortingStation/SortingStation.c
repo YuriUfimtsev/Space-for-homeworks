@@ -5,24 +5,27 @@
 #include "..\..\Stack\Stack\Stack.h"
 #include "..\..\Stack\Stack\TestsForStack.h"
 
-void addInTheSequence(char sequence[], int* indexOfSequence, const char elementForAdding)
+void addInTheSequenceWithSpace(char sequence[], int* indexOfSequence, const char elementForAdding)
 {
     sequence[*indexOfSequence] += elementForAdding;
     ++(*indexOfSequence);
+    sequence[*indexOfSequence] += ' ';
+    ++(*indexOfSequence);
 }
 
-void convertToPostfixForm(const char infixFormSequence[], char postfixFormSequence[],
-    bool* checkOfConverting, bool* checkOfCorrectWork)
+bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequence[])
 {
     StackElement* head = NULL;
     if (!areTestsPassing(&head))
     {
-        *checkOfCorrectWork = false;
-        return;
+        return false;
     }
     int indexOfInfixFormSequence = 0;
     int indexOfPostfixFormSequence = 0;
+    int counterOfNumbers = 0;
+    int counterOfOperators = 0;
     bool checkOfCorrectWorkOfStackFunctions = true;
+    bool checkOfCorrectWorkOfTop = true;
     while (infixFormSequence[indexOfInfixFormSequence] != '\0')
     {
         switch (infixFormSequence[indexOfInfixFormSequence])
@@ -35,88 +38,118 @@ void convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
             push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
             break;
         case ')':
-            while (checkOfCorrectWorkOfStackFunctions &&
-                top(&head, &checkOfCorrectWorkOfStackFunctions) != '(' )
+            while (checkOfCorrectWorkOfStackFunctions && top(&head, &checkOfCorrectWorkOfTop) != '(' )
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, ' ');
-            }
-            if (!checkOfCorrectWorkOfStackFunctions)
-            {
-                *checkOfCorrectWork = false;
-                return;
+                addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             pop(&head, &checkOfCorrectWorkOfStackFunctions);
             break;
         case '*':
         case '/':
-            while (top(&head, &checkOfCorrectWorkOfStackFunctions) == '*' ||
-                top(&head, &checkOfCorrectWorkOfStackFunctions) == '/')
+            while (top(&head, &checkOfCorrectWorkOfTop) == '*' ||
+                top(&head, &checkOfCorrectWorkOfTop) == '/')
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, ' ');
+                addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
+            ++counterOfOperators;
             break;
         case '+':
         case '-':
-            while (top(&head, &checkOfCorrectWorkOfStackFunctions) == '*' || top(&head, &checkOfCorrectWorkOfStackFunctions) == '/' ||
-                top(&head, &checkOfCorrectWorkOfStackFunctions) == '+' || top(&head, &checkOfCorrectWorkOfStackFunctions) == '-')
+            while (top(&head, &checkOfCorrectWorkOfTop) == '*' || top(&head, &checkOfCorrectWorkOfTop) == '/' ||
+                top(&head, &checkOfCorrectWorkOfTop) == '+' || top(&head, &checkOfCorrectWorkOfTop) == '-')
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
-                addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, ' ');
+                addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
+            ++counterOfOperators;
             break;
         default:
-            addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, infixFormSequence[indexOfInfixFormSequence]);
-            addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, ' ');
+            addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence,
+                infixFormSequence[indexOfInfixFormSequence]);
+            ++counterOfNumbers;
             break;
         }
+        if (!checkOfCorrectWorkOfStackFunctions)
+        {
+            deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+            return false;
+        }
         ++indexOfInfixFormSequence;
+    }
+    if (counterOfNumbers - (counterOfOperators + 1) != 0)
+    {
+        deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+        return false;
     }
     while (!isEmpty(head))
     {
         const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
-        if (elementForAdding == '(')
+        if (elementForAdding == '(' || !checkOfCorrectWorkOfStackFunctions)
         {
-            *checkOfCorrectWork = false;
-            return;
+            deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+            return false;
         }
-        addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
-        addInTheSequence(postfixFormSequence, &indexOfPostfixFormSequence, ' ');
+        addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
     }
     deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+    return true;
 }
 
-bool checkOfConverting(const char infixFormSequence[], const char resultString[])
+bool checkOfConverting(const char infixFormSequence[], const char resultString[], bool* checkOfCorrectnessOfSequence)
 {
     char postfixFormSequence[30] = { '\0' };
-    bool checkOfCorrectWork = true;
-    convertToPostfixForm(infixFormSequence, postfixFormSequence, &checkOfConverting, &checkOfCorrectWork);
+    bool const resultOfConverting = convertToPostfixForm(infixFormSequence, postfixFormSequence);
+    if (!resultOfConverting)
+    {
+        *checkOfCorrectnessOfSequence = false;
+    }
     return strcmp(resultString, postfixFormSequence) == 0;
 }
 
 bool standartTest()
 {
-    char infixFormSequence[20] = "(8 + 5) * 3 6 - 1";
-    char resultString[20] = "8 5 + 3 6 * 1 -";
-    return checkOfConverting(infixFormSequence, resultString) == 0;
+    char infixFormSequence[20] = "(8 + 5) * 6 - 1";
+    char resultString[20] = "8 5 + 6 * 1 - ";
+    bool checkOfCorrectnessOfSequence = true;
+    if (checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence)
+    {
+        return true;
+    }
+    return false;
 }
 
 bool testWithDivision()
 {
     char infixFormSequence[20] = "((9 + 6) + 4) / 8";
-    char resultString[20] = "9 6 + 4 + 8 /";
-    return checkOfConverting(infixFormSequence, resultString) == 0;
+    char resultString[20] = "9 6 + 4 + 8 / ";
+    bool checkOfCorrectnessOfSequence = true;
+    if (checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool testWithIncorrectSequence()
+{
+    char infixFormSequence[20] = "(8 + 5) * 3 6 - 1";
+    char resultString[20] = "8 5 + 3 6 * 1 - ";
+    bool checkOfCorrectnessOfSequence = true;
+    if (checkOfCorrectnessOfSequence && checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence))
+    {
+        printf("66");
+        return false;
+    }
+    return true;;
 }
 
 int main()
 {
-    if (!standartTest() || !testWithDivision())
+    if (!standartTest() || !testWithDivision() || !testWithIncorrectSequence())
     {
         printf("Tests failed");
         return -1;
@@ -125,16 +158,9 @@ int main()
     char infixFormSequence[30] = { '\0' };
     gets_s(infixFormSequence, 30);
     char postfixFormSequence[30] = { '\0' };
-    bool checkOfConverting = true;
-    bool checkOfCorrectWork = true;
-
-    convertToPostfixForm(infixFormSequence, postfixFormSequence, &checkOfConverting, &checkOfCorrectWork);
-    if (!checkOfCorrectWork)
-    {
-        printf("\nIncorrect mathematical expression\n");
-        return -1;
-    }
-    if (!checkOfConverting)
+    bool resultOfConvertingInPostfixForm = true;
+    resultOfConvertingInPostfixForm = convertToPostfixForm(infixFormSequence, postfixFormSequence);
+    if (!resultOfConvertingInPostfixForm)
     {
         printf("\nIncorrect mathematical expression\n");
         return -1;
