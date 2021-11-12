@@ -20,25 +20,18 @@ typedef struct Position
 
 List* createList()
 {
-    return  (List*)calloc(1, sizeof(List));
+    return (List*)calloc(1, sizeof(List));
 }
 
 void deleteList(List* list)
 {
     ListElement* position = list->head;
-    //if (list->head == NULL)
-    //{
-    //    free(position);
-    //    free(list);
-    //    return;
-    //}
     while (position != NULL)
     {
         list->head = list->head->next;
         free(position);
         position = list->head;
     }
-    free(position);
     free(list);
 }
 
@@ -63,7 +56,7 @@ Position* next(Position* position)
 
 bool last(Position* position)
 {
-    return position->position->next == NULL;
+    return position->position == NULL;
 }
 
 void addByPosition(List* list, Position* position, int value)
@@ -75,12 +68,6 @@ void addByPosition(List* list, Position* position, int value)
         list->head = newElement;
         return;
     }
-    //if (position->position == list->head)
-    //{
-    //    newElement->next = list->head;
-    //    list->head = newElement;
-    //    return;
-    //}
     newElement->next = position->position->next;
     position->position->next = newElement;
 }
@@ -110,7 +97,7 @@ void add(List* list, int value)
         return;
     }
     Position* i = first(list);
-    while (!last(i))
+    while (!last(next(i)))
     {
         i = next(i);
     }
@@ -226,7 +213,7 @@ int sizeOfList(List* list)
     {
         ++counter;
     }
-    return counter + 1;
+    return counter;
 }
 
 bool isEmpty(List* list)
