@@ -31,5 +31,11 @@
     <Text Include="Data.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="Test.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="ExpectedResultOfTest1.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

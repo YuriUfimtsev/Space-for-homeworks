@@ -150,6 +150,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data.txt" />
+    <Text Include="ExpectedResultOfTest1.txt" />
+    <Text Include="Test.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
