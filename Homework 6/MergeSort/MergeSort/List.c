@@ -2,9 +2,15 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+typedef struct Entry
+{
+    char name[10];
+    char phone[10];
+}Entry;
+
 typedef struct ListElement
 {
-    int value;
+    Entry data;
     struct ListElement* next;
 } ListElement;
 

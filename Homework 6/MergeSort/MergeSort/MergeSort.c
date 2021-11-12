@@ -64,9 +64,13 @@ List* mergeSort(List* listForSorting)
 
 int main()
 {
+    FILE* data = fopen("Data.txt", "r");
+    if (data == NULL)
+    {
+        printf("File not found");
+        return -1;
+    }
     List* newList = createList();
-    addByPosition(newList, first(newList), 9);
-    addByPosition(newList, first(newList), 10);
     List* sortedList = mergeSort(newList);
     for (Position* i = first(sortedList); !last(i); i = next(i))
     {
@@ -74,4 +78,5 @@ int main()
     }
     deleteList(newList);
     deleteList(sortedList);
+    fclose(data);
 }
