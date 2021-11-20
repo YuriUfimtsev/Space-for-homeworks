@@ -2,22 +2,15 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int key;
-    char* value;
-    struct Node* leftChild;
-    struct Node* rightChild;
-} Node;
+#include "../SearchTree/BinarySearchTree.h"
 
-Node* createTree()
+Node* createNode()
 {
     return calloc(1, sizeof(Node));
 }
 
 void deleteNode(Node* node)
 {
-    free(node->leftChild);
-    free(node->rightChild);
     free(node->value);
     free(node);
 }
@@ -28,35 +21,48 @@ void deleteTree(Node* root)
     {
         return;
     }
-    deleteTree(root->leftChild);
-    deleteTree(root->rightChild);
+    if (root->leftChild != NULL)
+    {
+        deleteTree(root->leftChild);
+    }
+    if (root->rightChild != NULL)
+    {
+        deleteTree(root->rightChild);
+    }
     deleteNode(root);
 }
 
 void insertToTree(Node* tree, const int key, char* value)
 {
-    if (tree == NULL)
+    if (tree->leftChild == NULL && tree->rightChild == NULL
+        && tree->value == NULL)
     {
         tree->key = key;
-        tree->value = value; //????????????
+        tree->value = value;
         return;
     }
     if (key > tree->key)
     {
-        //if (tree->rightChild == NULL)/// можно и без этих частей обойтись?
-        //{///
-        //    insertToTree(tree->rightChild, key, value);//
-        //    return;///
-        //}///
+        if (tree->rightChild == NULL)
+        {
+            Node* newNode = createNode();
+            tree->rightChild = newNode;
+            newNode->key = key;
+            newNode->value = value;
+            return;
+        }
         insertToTree(tree->rightChild, key, value);
     }
     else if (key < tree->key)
     {
-        //if (tree->leftChild == NULL)///
-        //{///
-        //    insertToTree(tree->leftChild, key, value);///
-        //    return;///
-        //}///
+        if (tree->leftChild == NULL)
+        {
+            Node* newNode = createNode();
+            tree->leftChild = newNode;
+            newNode->key = key;
+            newNode->value = value;
+            return;
+        }
         insertToTree(tree->leftChild, key, value);
     }
     else if (key == tree->key)
@@ -95,18 +101,18 @@ bool isKeyInTree(Node* tree, const int key)
 
 char* findInTree(Node* tree, const int key)
 {
-    while (key != tree->key)
+    if (key == tree->key)
     {
-        if (key > tree->key)
-        {
-            findInTree(tree->rightChild, key);
-        }
-        else if (key < tree->key)
-        {
-            findInTree(tree->leftChild, key);
-        }
+        return tree->value;
     }
-    return tree->value;
+    if (key > tree->key)
+    {
+        findInTree(tree->rightChild, key);
+    }
+    else if (key < tree->key)
+    {
+        findInTree(tree->leftChild, key);
+    }
 }
 
 void removeFromTree(Node* tree, Node* root, const int key)
@@ -137,22 +143,35 @@ void removeFromTree(Node* tree, Node* root, const int key)
                 {
                     root->rightChild = NULL;
                 }
+                deleteNode(tree);
             }
-            deleteNode(tree);
+            else if (root == tree)
+            {
+                tree->value = NULL;
+                tree->key = 0;
+            }
         }
         else if (tree->leftChild == NULL || tree->rightChild == NULL)
         {
             if (tree->leftChild == NULL)
             {
                 tree->key = tree->rightChild->key;
+                free(tree->value);
                 tree->value = tree->rightChild->value;
-                deleteNode(tree->rightChild);
+                Node* nodeForRemove = tree->rightChild;
+                tree->leftChild = tree->rightChild->leftChild;
+                tree->rightChild = tree->rightChild->rightChild;
+                free(nodeForRemove);
             }
             else if(tree->rightChild == NULL)
             {
                 tree->key = tree->leftChild->key;
+                free(tree->value);
                 tree->value = tree->leftChild->value;
-                deleteNode(tree->leftChild);
+                Node* nodeForRemove = tree->leftChild;
+                tree->rightChild = tree->leftChild->rightChild;
+                tree->leftChild = tree->leftChild->leftChild;
+                free(nodeForRemove);
             }
         }
         else
@@ -160,10 +179,11 @@ void removeFromTree(Node* tree, Node* root, const int key)
             if (tree->rightChild->leftChild == NULL)
             {
                 tree->key = tree->rightChild->key;
+                free(tree->value);
                 tree->value = tree->rightChild->value;
                 Node* nodeToRemove = tree->rightChild;
                 tree->rightChild = tree->rightChild->rightChild;
-                deleteNode(nodeToRemove);
+                free(nodeToRemove);
                 return;
             }
             root = tree;
