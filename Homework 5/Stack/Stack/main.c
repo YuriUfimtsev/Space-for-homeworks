@@ -13,5 +13,10 @@ int main()
         return -1;
     }
     deleteStack(&head, &checkOfCorrectWork);
+    if (!checkOfCorrectWork)
+    {
+        printf("Error with Stack deletion");
+        return -1;
+    }
     return 0;
 }
