@@ -17,7 +17,7 @@ void deleteNode(Node* node)
     free(node);
 }
 
-void deleteTree(Node* root)
+void deleteParseTree(Node* root)
 {
     if (root == NULL)
     {
@@ -25,11 +25,11 @@ void deleteTree(Node* root)
     }
     if (root->leftChild != NULL)
     {
-        deleteTree(root->leftChild);
+        deleteParseTree(root->leftChild);
     }
     if (root->rightChild != NULL)
     {
-        deleteTree(root->rightChild);
+        deleteParseTree(root->rightChild);
     }
     deleteNode(root);
 }
@@ -77,48 +77,81 @@ Node* createNewNodeForParseTree(char* stringOfNumbersAndOperators, int* index)
         }
         --(*index);
         int number = atoi(stringForNumber);
-        newNode->key = number;
+        newNode->number = number;
     }
     return newNode;
 }
 
-void prefixTraverse(Node* tree, int* countOfNumbers)
+void addToString(char* string, int* indexForString, char symbolToAdding, bool spaceOption)
 {
-    if (tree == NULL)
+    string[*indexForString] = symbolToAdding;
+    ++(* indexForString);
+    if (spaceOption)
+    {
+        string[*indexForString] = ' ';
+        ++(*indexForString);
+    }
+}
+
+void addMissingBrackets(char* stringForResult, int* indexForString, int* countOfBrackets)
+{
+    for (int i = 0; i < *countOfBrackets; ++i)
+    {
+        addToString(stringForResult, indexForString, ')', true);
+    }
+}
+
+void prefixTraverse(Node* parseTree, int* countOfNumbers,
+    char* stringForResult, int* indexForString, int* countOfBrackets)
+{
+    if (parseTree == NULL)
     {
         return;
     }
-    if (tree->symbol == '\0')
+    if (parseTree->symbol == '\0')
     {
-        printf("%d ", tree->key);
-        ++(*countOfNumbers);
-        if (*countOfNumbers == 2)
+        char stringForNumber[30] = { "\0" };
+        sprintf(stringForNumber, "%d", parseTree->number);
+        int indexOfStringForNumber = 0;
+        while (stringForNumber[indexOfStringForNumber] != '\0')
         {
-            printf(") ");
+            addToString(stringForResult, indexForString,
+                stringForNumber[indexOfStringForNumber], false);
+            ++indexOfStringForNumber;
+        }
+        addToString(stringForResult, indexForString, ' ', false);
+        ++(*countOfNumbers);
+        if (*countOfNumbers >= 2)
+        {
+            addToString(stringForResult, indexForString, ')', true);
+            --(*countOfBrackets);
             *countOfNumbers = 0;
         }
     }
     else
     {
-        printf("( ");
-        printf("%c ", tree->symbol);
+        addToString(stringForResult, indexForString, '(', true);
+        ++(*countOfBrackets);
+        addToString(stringForResult, indexForString, parseTree->symbol, true);
         *countOfNumbers = 0;
     }
-    prefixTraverse(tree->leftChild, countOfNumbers);
-    prefixTraverse(tree->rightChild, countOfNumbers);
+    prefixTraverse(parseTree->leftChild, countOfNumbers,
+        stringForResult, indexForString, countOfBrackets);
+    prefixTraverse(parseTree->rightChild, countOfNumbers,
+        stringForResult, indexForString, countOfBrackets);
 }
 
-int calculateParseTree(Node* tree, bool* divisionByZero)
+int calculateParseTree(Node* parseTree, bool* divisionByZero)
 {
     int firstElement = 0;
     int secondElement = 0;
-    if (tree->leftChild == NULL && tree->rightChild == NULL)
+    if (parseTree->leftChild == NULL && parseTree->rightChild == NULL)
     {
-        return tree->key;
+        return parseTree->number;
     }
-    firstElement = calculateParseTree(tree->leftChild, divisionByZero);
-    secondElement = calculateParseTree(tree->rightChild, divisionByZero);
-    switch (tree->symbol)
+    firstElement = calculateParseTree(parseTree->leftChild, divisionByZero);
+    secondElement = calculateParseTree(parseTree->rightChild, divisionByZero);
+    switch (parseTree->symbol)
     {
     case '+':
         return firstElement + secondElement;

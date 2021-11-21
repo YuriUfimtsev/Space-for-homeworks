@@ -21,14 +21,26 @@
     <ClCompile Include="ParseTree.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParseTreeTests.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ParseTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParseTreeTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="TestDataWithDivisionByZero.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="StandartTestData.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
