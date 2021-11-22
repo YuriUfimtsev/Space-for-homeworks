@@ -1,122 +1,171 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-#include "List.h"
+#include "../SortedList/SortedList.h"
 
-bool checkOfAddInSortedList(int arrayOfResult[], int array[], int lengthOfArray)
+typedef struct ListElement
 {
-    List* sortedList = createList();
-    for (int i = 0; i < lengthOfArray; ++i)
+    int value;
+    struct ListElement* next;
+} ListElement;
+
+typedef struct List
+{
+    ListElement* head;
+} List;
+
+typedef struct Position
+{
+    ListElement* position;
+} Position;
+
+List* createList()
+{
+    return calloc(1, sizeof(List));
+}
+
+void deleteList(List* list)
+{
+    ListElement* position = list->head;
+    while (position != NULL)
     {
-        addTheValueInSortedList(sortedList, array[i]);
+        list->head = list->head->next;
+        free(position);
+        position = list->head;
     }
-    int j = 0;
-    for (Position* i = first(sortedList); !(last(i)); i = next(i))
+    free(list);
+}
+
+void deletePosition(Position* position)
+{
+    free(position);
+}
+
+Position* first(List* list)
+{
+    Position* positionFirst = malloc(sizeof(Position));
+    positionFirst->position = list->head;
+    return positionFirst;
+}
+
+void next(Position* position)
+{
+    position->position = position->position->next;
+}
+
+bool last(Position* position)
+{
+    bool const result = position->position == NULL;
+    if (result)
     {
-        if (getValue(sortedList, i) != arrayOfResult[j])
+        deletePosition(position);
+    }
+    return result;
+}
+
+int getValue(List* list, Position* position)
+{
+    return position->position->value;
+}
+
+bool valueInList(List* list, int value)
+{
+    Position* startPosition = first(list);
+    for (Position* i = startPosition; !last(i); next(i))
+    {
+        if (getValue(list, i) == value)
         {
-            deleteList(sortedList);
-            return false;
+            deletePosition(i);
+            return true;
         }
-        ++j;
     }
-    deleteList(sortedList);
+    deletePosition(startPosition);
+    return false;
+}
+
+void addTheValueInSortedList(List* list, int value)
+{
+    ListElement* newElement = calloc(1, sizeof(ListElement));
+    newElement->value = value;
+    if (list->head == NULL)
+    {
+        list->head = newElement;
+        return;
+    }
+    Position* startPosition = first(list);
+    if (list->head->next == NULL)
+    {
+        if (value < getValue(list, startPosition))
+        {
+            newElement->next = list->head;
+            list->head = newElement;
+            deletePosition(startPosition);
+            return;
+        }
+    }
+    Position* i = first(list);
+    Position* j = first(list);
+    next(j);
+    while (j->position != NULL && value > getValue(list, j))
+    {
+        next(i);
+        next(j);
+    }
+    if (j->position == NULL)
+    {
+        i->position->next = newElement;
+        deletePosition(i);
+        deletePosition(j);
+        deletePosition(startPosition);
+        return;
+    }
+    if (i->position == startPosition->position && value < getValue(list, startPosition))
+    {
+        newElement->next = list->head;
+        list->head = newElement;
+        deletePosition(i);
+        deletePosition(j);
+        deletePosition(startPosition);
+        return;
+    }
+    newElement->next = i->position->next;
+    i->position->next = newElement;
+    deletePosition(i);
+    deletePosition(j);
+    deletePosition(startPosition);
+}
+
+bool delete(List* list, int value)
+{
+    if (!valueInList(list, value))
+    {
+        return false;
+    }
+    Position* i = first(list);
+    if (getValue(list, i) == value)
+    {
+        list->head = i->position->next;
+        free(i->position);
+        deletePosition(i);
+        return true;
+    }
+    Position* j = first(list);
+    next(j);
+    while (!last(j) && getValue(list, j) != value)
+    {
+        next(i);
+        next(j);
+    }
+    if (last(j))
+    {
+        i->position->next = NULL;
+        free(j->position);
+        deletePosition(i);
+        return true;
+    }
+    i->position->next = j->position->next;
+    deletePosition(i);
+    free(j->position);
+    deletePosition(j);
     return true;
-}
-
-bool checkOfDeleteFromTheSortedList(int arrayOfResult[], int array[], int lengthOfArray, int elementForRemove)
-{
-    List* sortedList = createList();
-    for (int i = 0; i < lengthOfArray; ++i)
-    {
-        addTheValueInSortedList(sortedList, array[i]);
-    }
-    delete(sortedList, elementForRemove);
-    int j = 0;
-    for (Position* i = first(sortedList); !(last(i)); i = next(i))
-    {
-        if (getValue(sortedList, i) != arrayOfResult[j])
-        {
-            deleteList(sortedList);
-            return false;
-        }
-        ++j;
-    }
-    deleteList(sortedList);
-    return true;
-}
-
-bool standartTestOfAdding()
-{
-    int array[4] = { 59, 80, 1, 0 };
-    int arrayOfResult[4] = { 0, 1, 59, 80 };
-    return checkOfAddInSortedList(arrayOfResult, array, 4);
-}
-
-bool testWithSortedElementsOfAdding()
-{
-    int array[6] = { 1, 7, 8, 99, 130, 250 };
-    int arrayOfResult[6] = { 1, 7, 8, 99, 130, 250 };
-    return checkOfAddInSortedList(arrayOfResult, array, 6);
-}
-
-bool standartTestOfDeleting()
-{
-    int array[6] = { 18, 34, 20, 48, 60, 1 };
-    int arrayOfResult[5] = { 1, 20, 34, 48, 60 };
-    return checkOfDeleteFromTheSortedList(arrayOfResult, array, 6, 18);
-}
-
-bool testOfDeletingFromHead()
-{
-    int array[4] = { 25, 44, 90, 8 };
-    int arrayOfResult[3] = { 25, 44, 90 };
-    return checkOfDeleteFromTheSortedList(arrayOfResult, array, 4, 8);
-}
-
-int main()
-{
-    List* sortedList = createList();
-    if (!standartTestOfAdding() || !testWithSortedElementsOfAdding()
-        || !standartTestOfDeleting() || !testOfDeletingFromHead())
-    {
-        printf("Tests failed");
-        deleteList(sortedList);
-        return -1;
-    }
-    int command = 1;
-    printf("You can use following commands.\n");
-    printf("0 - exit the programme.\n");
-    printf("1 - add the value in the sorted list.\n");
-    printf("2 - delete the value from the sorted list.\n");
-    printf("3 - look to the sorted list elements (print sorted list).\n");
-    while (command != 0)
-    {
-        printf("\nEnter the next command: ");
-        scanf("%d", &command);
-        int value = 0;
-        switch (command)
-        {
-        case 0:
-            break;
-        case 1:
-            scanf("%d", &value);
-            addTheValueInSortedList(sortedList, value);
-            printf("\n%d was added in the sorted list\n", value);
-            break;
-        case 2:
-            scanf("%d", &value);
-            printf(delete(sortedList, value) == true ? "\n%d was deleted from the sorted list"
-                : "\nSorted list doesn't contain this element", value);
-            break;
-        case 3:
-            printf("Sorted list contains this elements: ");
-            for (Position* i = first(sortedList); !(last(i)); i = next(i))
-            {
-                printf("%d ", getValue(sortedList, i));
-            }
-            break;
-        }
-    }
-    deleteList(sortedList);
 }
