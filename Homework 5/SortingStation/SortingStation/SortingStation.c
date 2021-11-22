@@ -115,11 +115,8 @@ bool standartTest()
     char infixFormSequence[20] = "(8 + 5) * 6 - 1";
     char resultString[20] = "8 5 + 6 * 1 - ";
     bool checkOfCorrectnessOfSequence = true;
-    if (checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence)
-    {
-        return true;
-    }
-    return false;
+    return checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence)
+        && checkOfCorrectnessOfSequence;
 }
 
 bool testWithDivision()
@@ -139,12 +136,7 @@ bool testWithIncorrectSequence()
     char infixFormSequence[20] = "(8 + 5) * 3 6 - 1";
     char resultString[20] = "8 5 + 3 6 * 1 - ";
     bool checkOfCorrectnessOfSequence = true;
-    if (checkOfCorrectnessOfSequence && checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence))
-    {
-        printf("66");
-        return false;
-    }
-    return true;;
+    return !(checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence);
 }
 
 int main()
