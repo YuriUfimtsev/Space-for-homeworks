@@ -5,15 +5,9 @@
 #include "..\..\Stack\Stack\TestsForStack.h"
 #include "..\..\Stack\Stack\Stack.h"
 
-int calculateInPostfixForm(const char commandSequence[],
-    bool* ñheckOfDivisionByZero, bool* checkOfCorrectWork)
+int calculateInPostfixForm(const char commandSequence[], bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        *checkOfCorrectWork = false;
-        return -1;
-    }
     bool checkOfCorrectWorkOfStackFunctions = true;
     int i = 0;
     while (commandSequence[i] != '\0')
@@ -29,7 +23,7 @@ int calculateInPostfixForm(const char commandSequence[],
             if (!checkOfCorrectWorkOfStackFunctions)
             {
                 *checkOfCorrectWork = false;
-                deleteStack(&head, &checkOfCorrectWork);
+                deleteStack(&head, checkOfCorrectWork);
                 return  -1;
             }
         }
@@ -48,9 +42,8 @@ int calculateInPostfixForm(const char commandSequence[],
             case '/':
                 if (firstElement == 0)
                 {
-                    *ñheckOfDivisionByZero = true;
-                    deleteStack(&head, &checkOfCorrectWork);
-                    return -1;
+                    deleteStack(&head, checkOfCorrectWork);
+                    return -1000;
                 }
                 number = secondElement / firstElement;
                 break;
@@ -68,7 +61,7 @@ int calculateInPostfixForm(const char commandSequence[],
             if (!checkOfCorrectWorkOfStackFunctions)
             {
                 *checkOfCorrectWork = false;
-                deleteStack(&head, &checkOfCorrectWork);
+                deleteStack(&head, checkOfCorrectWork);
                 return -1;
             }
             break;
@@ -85,41 +78,48 @@ int calculateInPostfixForm(const char commandSequence[],
     return result;
 }
 
-bool checkOfCalculation(const char commandSequence[], int expectedResult)
+bool checkOfCalculation(const char commandSequence[],
+    int expectedResult, bool expectedCheckOfCorrectWork)
 {
-    bool checkOfDivisionByZero = false;
     bool checkOfCorrectWork = true;
-    return calculateInPostfixForm(commandSequence, &checkOfDivisionByZero, &checkOfCorrectWork)
-        == expectedResult;
+    return calculateInPostfixForm(commandSequence, &checkOfCorrectWork)
+        == expectedResult && checkOfCorrectWork == expectedCheckOfCorrectWork;
 }
 
 bool standartTest()
 {
     char commandSequence[19] = { "9 5 * 3 / 9 1 + -" };
-    return checkOfCalculation(commandSequence, 5);
+    return checkOfCalculation(commandSequence, 5, true);
 }
 
 bool divisionByZeroTest()
 {
     char commandSequence[19] = { "9 5 * 0 / 9 1 + -" };
-    return checkOfCalculation(commandSequence, -1);
+    return checkOfCalculation(commandSequence, -1000, true);
 }
 
 bool zeroResultTest()
 {
     char commandSequence[15] = { "3 5 - 8 + 0 *" };
-    return checkOfCalculation(commandSequence, 0);
+    return checkOfCalculation(commandSequence, 0, true);
 }
 
 bool testOfIncorrectSequence()
 {
     char commandSequence[15] = { "3 * 5 - 8 + 0 *" };
-    return checkOfCalculation(commandSequence, -1);
+    return checkOfCalculation(commandSequence, -1, false);
+}
+
+bool testWithOneOperand()
+{
+    char commandSequence[2] = { "1" };
+    return checkOfCalculation(commandSequence, 1, true);
 }
 
 int main()
 {
-    if (!standartTest() || !divisionByZeroTest() || !zeroResultTest() || !testOfIncorrectSequence())
+    if (!standartTest() || !divisionByZeroTest()
+        || !zeroResultTest() || !testOfIncorrectSequence() || !testWithOneOperand())
     {
         printf("Tests failed");
         return -1;
@@ -127,11 +127,9 @@ int main()
     char commandSequence[30] = { '\0' };
     printf("Enter the sequence of digits and operations (in postfix form): ");
     gets_s(commandSequence, 30);
-    bool isDivisionByZero = false;
     bool checkOfCorrectWork = true;
-    int const resultOfCalculation = calculateInPostfixForm(commandSequence,
-        &isDivisionByZero, &checkOfCorrectWork);
-    if (isDivisionByZero)
+    int const resultOfCalculation = calculateInPostfixForm(commandSequence, &checkOfCorrectWork);
+    if (resultOfCalculation == -1000)
     {
         printf("\nIncorrect form: division by zero.\n");
         return -1;
