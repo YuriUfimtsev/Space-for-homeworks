@@ -42,6 +42,7 @@ int calculateInPostfixForm(const char commandSequence[], bool* checkOfCorrectWor
             case '/':
                 if (firstElement == 0)
                 {
+                    *checkOfCorrectWork = false;
                     deleteStack(&head, checkOfCorrectWork);
                     return -1000;
                 }
@@ -69,6 +70,11 @@ int calculateInPostfixForm(const char commandSequence[], bool* checkOfCorrectWor
         ++i;
     }
     int const result = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+    if (!isEmpty(head))
+    {
+        *checkOfCorrectWork = false;
+        return -1;
+    }
     deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
     if (!checkOfCorrectWorkOfStackFunctions)
     {
@@ -95,7 +101,7 @@ bool standartTest()
 bool divisionByZeroTest()
 {
     char commandSequence[19] = { "9 5 * 0 / 9 1 + -" };
-    return checkOfCalculation(commandSequence, -1000, true);
+    return checkOfCalculation(commandSequence, -1000, false);
 }
 
 bool zeroResultTest()
