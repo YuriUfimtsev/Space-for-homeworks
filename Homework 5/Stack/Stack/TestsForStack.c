@@ -1,7 +1,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "Stack.h"
+#include "../Stack/TestsForStack.h"
+#include "../Stack/Stack.h"
 
 bool checkOfPushAndPop(StackElement** head)
 {
@@ -22,7 +23,8 @@ bool checkOfPushAndPop(StackElement** head)
             deleteStack(head, &checkOfCorrectWork);
             return false;
         }
-    }    return true;
+    }
+    return true;
 }
 
 bool checkOfTop(StackElement** head)
@@ -70,8 +72,12 @@ bool checkOfDeletingStack(StackElement** head)
     return isEmpty(*head);
 }
 
-bool areTestsPassing(StackElement** head)
+bool areTestsPassing()
 {
-    return !checkOfPushAndPop(head) || !checkOfPopFromEmptyStack(head) || !checkOfIsEmpty(head)
-        || !checkOfDeletingStack(head) || !checkOfTop(head) ? false : true;
+    StackElement* head = NULL;
+    bool checkOfCorrectWork = true;
+    bool result = checkOfPushAndPop(&head) && checkOfPopFromEmptyStack(&head)
+        && checkOfIsEmpty(&head) && checkOfDeletingStack(&head) && checkOfTop(&head);
+    deleteStack(&head, &checkOfCorrectWork);
+    return result;
 }

@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "../Stack/Stack.h"
+
 typedef struct StackElement
 {
     int value;
