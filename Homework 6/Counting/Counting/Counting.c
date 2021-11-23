@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "List.h"
+#include "../Counting/CyclicList.h"
 
-List* makeListOfWarriors(int quantityOfWarriors)
+cyclicList* makeListOfWarriors(int quantityOfWarriors)
 {
-    List* cyclicList = createList();
+    cyclicList* cyclicList = createCyclicList();
     for (int i = 0; i < quantityOfWarriors; ++i)
     {
         add(cyclicList, i + 1);
@@ -13,27 +13,39 @@ List* makeListOfWarriors(int quantityOfWarriors)
     return cyclicList;
 }
 
-int deleteListElements(List* list, int numberOfUnluckyWarriors)
+int deleteListElements(cyclicList* cyclicList, int numberOfUnluckyWarriors)
 {
     int countForRemove = 1;
-    Position* i = first(list);
-    while (sizeOfList(list) > 1)
+    Position* i = first(cyclicList);
+    while (sizeOfCyclicList(cyclicList) > 1)
     {
         if (countForRemove % numberOfUnluckyWarriors == 0)
         {
-            delete(list, getValue(list, i));
+            delete(cyclicList, getValue(cyclicList, i));
         }
         ++countForRemove;
-        i = next(i);
+        next(i);
     }
-    return getValue(list, first(list));
+    deletePosition(i);
+    Position* startPosition = first(cyclicList);
+    const int result = getValue(cyclicList, startPosition);
+    deletePosition(startPosition);
+    return result;
 }
 
-bool checkOfCounting(int quantityOfWarriors, int numberOfUnluckyWarriors, int expectedNumberOfLastWarrior)
+int getNumberOfLastWarrior(const int startQuantityOfWarriors, const int numberOfUnluckyWarriors)
 {
-    List* cyclicList = makeListOfWarriors(quantityOfWarriors);
+    cyclicList* cyclicList = makeListOfWarriors(startQuantityOfWarriors);
     int const numberOfLastWarrior = deleteListElements(cyclicList, numberOfUnluckyWarriors);
-    deleteList(cyclicList);
+    deleteCyclicList(cyclicList);
+    return numberOfLastWarrior;
+}
+
+bool checkOfCounting(const int quantityOfWarriors, const int numberOfUnluckyWarriors,
+    const int expectedNumberOfLastWarrior)
+{
+    int const numberOfLastWarrior = getNumberOfLastWarrior(quantityOfWarriors,
+        numberOfUnluckyWarriors);
     return numberOfLastWarrior == expectedNumberOfLastWarrior;
 }
 
@@ -59,7 +71,8 @@ bool testWithAFewWarriors()
 
 bool areTestsPassing()
 {
-    return standartTest() && testWithSerialDeletion() && testWithOneWarrior() && testWithAFewWarriors();
+    return standartTest() && testWithSerialDeletion()
+        && testWithOneWarrior() && testWithAFewWarriors();
 }
 
 int main()
@@ -78,8 +91,7 @@ int main()
         printf("\nIncorrect input\n");
         return -1;
     }
-    List* cyclicList = makeListOfWarriors(quantityOfWarriors);
-    int const numberOfLastWarrior = deleteListElements(cyclicList, numberOfUnluckyWarriors);
+    int const numberOfLastWarrior = getNumberOfLastWarrior(quantityOfWarriors,
+        numberOfUnluckyWarriors);
     printf("\nThe number of last warrior: %d\n", numberOfLastWarrior);
-    deleteList(cyclicList);
 }
