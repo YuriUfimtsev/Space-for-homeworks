@@ -8,9 +8,8 @@ List* makeListWithNumbersFromFile(FILE* data)
 {
     List* startedList = createList();
     int elementOfList = 0;
-    while (!feof(data))
+    while (fscanf(data, "%d", &elementOfList) > 0)
     {
-        fscanf(data, "%d", &elementOfList);
         addLast(startedList, elementOfList);
     }
     return startedList;
@@ -40,7 +39,7 @@ void printListElements(List* listForPrintf)
 
 bool testOfMakingListWithNumbersFromFile()
 {
-    FILE* testData = fopen("TestData", "r");
+    FILE* testData = fopen("TestData.txt", "r");
     int array[5] = { 10, 20, 80, 30, 50 } ;
     List* startedList = makeListWithNumbersFromFile(testData);
     fclose(testData);
@@ -57,13 +56,12 @@ bool testOfMakingListWithNumbersFromFile()
         ++indexOfArray;
     }
     deleteList(startedList);
-    deletePosition(startPosition);
     return true;
 }
 
 bool testOfMakingInvertedList()
 {
-    FILE* testData = fopen("TestData", "r");
+    FILE* testData = fopen("TestData.txt", "r");
     int array[5] = { 50, 30, 80, 20, 10 };
     List* startedList = makeListWithNumbersFromFile(testData);
     fclose(testData);
@@ -82,7 +80,6 @@ bool testOfMakingInvertedList()
         ++indexOfArray;
     }
     deleteList(invertedList);
-    deletePosition(startPosition);
     return true;
 }
 
