@@ -5,7 +5,11 @@ typedef struct List List;
 
 typedef struct Position Position;
 
-typedef struct Entry Entry;
+typedef struct Entry
+{
+    char name[15];
+    char phone[15];
+} Entry;
 
 // Функция создает список - возвращает указатель на структуру ListElement - начало списка.
 List* createList();
@@ -22,13 +26,13 @@ void deletePosition(Position* position);
 // Функция добавляет новый элемент - а именно строки name и phone - в конец списка.
 // Принимает на вход указатель на голову списка, строки name и phone.
 // Ничего не возвращает.
-void add(List* list, const char name[], const char phone[]);
+void add(List* list, const char name[], const char phone[], int* sizeOfList);
 
 // Функция возвращает указатель на первый элемент списка. Принимает указатель на голову списка.
 Position* first(List* list);
 
 // Функция возвращает указатель на следующий элемент списка. Принимает указатель на текущий элемент списка.
-Position* next(Position* position);
+void next(Position* position);
 
 // Функция возвращает true, если передаваемое значение
 // - указатель на элемент списка - является указателем на последний элемент списка.
@@ -36,10 +40,6 @@ Position* next(Position* position);
 bool last(Position* position);
 
 // Функция принимает указатель на голову списка и указатель на элемент списка.
-// Функция возвращает структуру Entry, лежащую в структуре ListElement (то есть принадлежащую элементу списка).
+// Функция возвращает структуру Entry, лежащую в структуре ListElement
+// (то есть принадлежащую элементу списка).
 Entry getData(List* list, Position* position);
-
-// Функция вычисляет размер списка (количество элементов).
-// Принимает на вход указатель на голову списка.
-// Возвращает размер списка.
-int sizeOfList(List* list);

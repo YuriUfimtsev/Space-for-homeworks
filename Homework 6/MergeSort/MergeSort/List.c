@@ -1,5 +1,6 @@
+#include "../MergeSort/List.h"
+
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -7,7 +8,7 @@ typedef struct Entry
 {
     char name[15];
     char phone[15];
-}Entry;
+} Entry;
 
 typedef struct ListElement
 {
@@ -54,11 +55,9 @@ Position* first(List* list)
     return positionFirst;
 }
 
-Position* next(Position* position)
+void next(Position* position)
 {
-    Position* newPosition = (Position*)malloc(sizeof(Position));
-    newPosition->position = position->position->next;
-    return newPosition;
+    position->position = position->position->next;
 }
 
 bool last(Position* position)
@@ -66,7 +65,7 @@ bool last(Position* position)
     return position->position == NULL;
 }
 
-void add(List* list, const char name[], const char phone[])
+void add(List* list, const char name[], const char phone[], int* sizeOfList)
 {
     ListElement* newElement = (ListElement*)calloc(1, sizeof(ListElement));
     strcpy(newElement->data.name, name);
@@ -74,31 +73,24 @@ void add(List* list, const char name[], const char phone[])
     if (list->head == NULL)
     {
         list->head = newElement;
+        ++(*sizeOfList);
         return;
     }
     Position* i = first(list);
-    while (!last(next(i)))
+    Position* j = first(list);
+    next(j);
+    while (!last(j))
     {
-        i = next(i);
+        next(i);
+        next(j);
     }
     i->position->next = newElement;
+    deletePosition(i);
+    deletePosition(j);
+    ++(*sizeOfList);
 }
 
 Entry getData(List* list, Position* position)
 {
     return position->position->data;
-}
-
-int sizeOfList(List* list)
-{
-    int counter = 0;
-    if (list->head == NULL)
-    {
-        return 0;
-    }
-    for (Position* i = first(list); !last(i); i = next(i))
-    {
-        ++counter;
-    }
-    return counter;
 }

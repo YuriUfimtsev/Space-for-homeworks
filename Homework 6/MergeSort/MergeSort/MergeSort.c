@@ -3,13 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "List.h"
-
-typedef struct Entry
-{
-    char name[15];
-    char phone[15];
-}Entry;
+#include "../MergeSort/List.h"
 
 const char* returnCorrectValue(List* list, Position* position, int const key)
 {
@@ -23,7 +17,7 @@ const char* returnCorrectValue(List* list, Position* position, int const key)
     }
 }
 
-List* readEntriesFromFile(FILE* data)
+List* readEntriesFromFile(FILE* data, int* sizeOfList)
 {
     List* listOfEntries = createList();
     int i = 0;
@@ -43,7 +37,7 @@ List* readEntriesFromFile(FILE* data)
             }
             fscanf(data, "%s", phone);
             ++i;
-            add(listOfEntries, name, phone);
+            add(listOfEntries, name, phone, sizeOfList);
         }
     }
     return listOfEntries;
@@ -52,6 +46,7 @@ List* readEntriesFromFile(FILE* data)
 List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
 {
     List* listForMerging = createList();
+    int sizeOfListForMerging = 0;
     Position* secondPartPosition = first(secondHalfOfList);
     char secondHalfOfListName[15] = { '\0' };
     strcpy(secondHalfOfListName, getData(secondHalfOfList, secondPartPosition).name);
@@ -62,7 +57,8 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
     char secondHalfOfListValue[15] = { '\0' };
     char firstHalfOfListValue[15] = { '\0' };
     strcpy(secondHalfOfListValue, returnCorrectValue(secondHalfOfList, secondPartPosition, key));
-    for (Position* i = first(firstHalfOfList); !last(i); i = next(i))
+    Position* startedPosition = first(firstHalfOfList);
+    for (Position* i = startedPosition; !last(i); next(i))
     {
         strcpy(firstHalfOfListName, getData(firstHalfOfList, i).name);
         strcpy(firstHalfOfListPhone, getData(firstHalfOfList, i).phone);
@@ -70,8 +66,8 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
         int resultOfComparison = strcmp(firstHalfOfListValue, secondHalfOfListValue);
         while (resultOfComparison >= 0 && !last(secondPartPosition))
         {
-            add(listForMerging, secondHalfOfListName, secondHalfOfListPhone);
-            secondPartPosition = next(secondPartPosition);
+            add(listForMerging, secondHalfOfListName, secondHalfOfListPhone, &sizeOfListForMerging);
+            next(secondPartPosition);
             if (!last(secondPartPosition))
             {
                 strcpy(secondHalfOfListValue, returnCorrectValue(secondHalfOfList, secondPartPosition, key));
@@ -80,44 +76,49 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
                 resultOfComparison = strcmp(firstHalfOfListValue, secondHalfOfListValue);
             }
         }
-        add(listForMerging, firstHalfOfListName, firstHalfOfListPhone);
+        add(listForMerging, firstHalfOfListName, firstHalfOfListPhone, &sizeOfListForMerging);
     }
+    deletePosition(startedPosition);
     while (!last(secondPartPosition))
     {
         strcpy(secondHalfOfListName, getData(secondHalfOfList, secondPartPosition).name);
         strcpy(secondHalfOfListPhone, getData(secondHalfOfList, secondPartPosition).phone);
-        add(listForMerging, secondHalfOfListName, secondHalfOfListPhone);
-        secondPartPosition = next(secondPartPosition);
+        add(listForMerging, secondHalfOfListName, secondHalfOfListPhone, &sizeOfListForMerging);
+        next(secondPartPosition);
     }
+    deletePosition(secondPartPosition);
     return listForMerging;
 }
 
-List* mergeSort(List* listForSorting, const int key)
+List* mergeSort(List* listForSorting, const int key, int* sizeOfList)
 {
-    int const size = sizeOfList(listForSorting);
+    int const size = *sizeOfList;
     if (size > 1)
     {
         List* firstHalfOfList = createList();
         List* secondHalfOfList = createList();
+        int sizeOfFirstHalfOfList = 0;
+        int sizeOfSecondHalfOfList = 0;
         Position* i = first(listForSorting);
         int j = 0;
         while (j < size / 2)
         {
             add(firstHalfOfList, getData(listForSorting, i).name,
-                getData(listForSorting, i).phone);
-            i = next(i);
+                getData(listForSorting, i).phone, &sizeOfFirstHalfOfList);
+            next(i);
             ++j;
         }
         while (j < size)
         {
             add(secondHalfOfList, getData(listForSorting, i).name,
-                getData(listForSorting, i).phone);
-            i = next(i);
+                getData(listForSorting, i).phone, &sizeOfSecondHalfOfList);
+            next(i);
             ++j;
         }
-        List* sortedFirstHalfOfList = mergeSort(firstHalfOfList, key);
-        List* sortedSecondHalfOfList = mergeSort(secondHalfOfList, key);
+        List* sortedFirstHalfOfList = mergeSort(firstHalfOfList, key, &sizeOfFirstHalfOfList);
+        List* sortedSecondHalfOfList = mergeSort(secondHalfOfList, key, &sizeOfSecondHalfOfList);
         List* sortedList = merge(sortedFirstHalfOfList, sortedSecondHalfOfList, key);
+        deletePosition(i);
         deleteList(firstHalfOfList);
         deleteList(secondHalfOfList);
         return sortedList;
@@ -132,9 +133,10 @@ bool testOfMergeSortingByName()
     {
         return false;
     }
-    List* listOfEntries = readEntriesFromFile(data);
+    int sizeOfList = 0;
+    List* listOfEntries = readEntriesFromFile(data, &sizeOfList);
     fclose(data);
-    List* sortedListWith1 = mergeSort(listOfEntries, 1);
+    List* sortedListWith1 = mergeSort(listOfEntries, 1, &sizeOfList);
     char nameForCheck[15] = {'\0'};
     char phoneForCheck[15] = {'\0'};
     FILE* result = fopen("ExpectedResultOfTest1.txt", "r");
@@ -144,19 +146,22 @@ bool testOfMergeSortingByName()
         deleteList(sortedListWith1);
         return false;
     }
-    for (Position* i = first(sortedListWith1); !last(i); i = next(i))
+    Position* startedPosition = first(sortedListWith1);
+    for (Position* i = startedPosition; !last(i); next(i))
     {
         fscanf(result, "%s", nameForCheck);
         fscanf(result, "%s", phoneForCheck);
         if (strcmp(getData(sortedListWith1, i).name, nameForCheck) != 0 ||
             strcmp(getData(sortedListWith1, i).phone, phoneForCheck) != 0)
         {
+            deletePosition(i);
             deleteList(listOfEntries);
             deleteList(sortedListWith1);
             fclose(result);
             return false;
         }
     }
+    deletePosition(startedPosition);
     fclose(result);
     deleteList(listOfEntries);
     deleteList(sortedListWith1);
@@ -187,14 +192,17 @@ int main()
         fclose(data);
         return -1;
     }
-    List* listOfEntries = readEntriesFromFile(data);
+    int sizeOfList = 0;
+    List* listOfEntries = readEntriesFromFile(data, &sizeOfList);
     fclose(data);
-    List* sortedList = mergeSort(listOfEntries, key);
+    List* sortedList = mergeSort(listOfEntries, key, &sizeOfList);
     printf("\nResult of sorting: \n");
-    for (Position* i = first(sortedList); !last(i); i = next(i))
+    Position* startedPosition = first(sortedList);
+    for (Position* i = startedPosition; !last(i); next(i))
     {
         printf("%s %s \n", getData(sortedList, i).name, getData(sortedList, i).phone);
     }
+    deletePosition(startedPosition);
     deleteList(listOfEntries);
     deleteList(sortedList);
 }
