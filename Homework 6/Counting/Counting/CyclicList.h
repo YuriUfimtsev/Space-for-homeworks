@@ -17,8 +17,9 @@ void deleteCyclicList(cyclicList* cyclicList);
 void deletePosition(Position* position);
 
 // Функция добавляет элемент со значением value в конец списка.
-// Принимает на вход указатель на голову списка.
-void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition);
+// Принимает на вход указатель на голову списка, значение, которое нужно добавить,
+// указатель на последний элемент списка и указатель на размер списка.
+void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition, int* sizeOfCyclicList);
 
 // Функция возвращает указатель на первый элемент списка. Принимает указатель на голову списка.
 Position* first(cyclicList* cyclicList);
@@ -28,7 +29,8 @@ void next(Position* position);
 
 // Функция возвращает true, если передаваемое значение
 // - указатель на элемент списка - является указателем на последний элемент списка.
-// false - если передаваемое значение - указатель на элемент списка - не является указателем на последний элемент списка.
+// false - если передаваемое значение - указатель на элемент списка -
+// не является указателем на последний элемент списка.
 bool last(Position* position, cyclicList* cyclicList);
 
 // Функция возвращает значение value, лежащее в данном элементе списка.
@@ -41,13 +43,10 @@ int getValue(cyclicList* cyclicList, Position* position);
 // Возвращает false, если элемент с таким значением отсутствует в списке.
 bool valueInCyclicList(cyclicList* cyclicList, int value);
 
-// Функция вычисляет размер списка (количество элементов).
-// Принимает на вход указатель на голову списка.
-// Возвращает размер списка.
-int sizeOfCyclicList(cyclicList* cyclicList);
-
 // Функция удаляет элемент со значением value из списка.
 // Функция принимает указатель на голову списка и значение value, которое надо убрать из списка.
+// Также функция принимает указатель на элемент списка, который нужно удалить.
+// И принимает указатель на размер списка.
 // Функция возвращает true, если элемент со значением value удален.
 // Функция возвращает false, если элемента со значением value в списке нет.
-bool delete(cyclicList* cyclicList, int value, Position* position);
+bool delete(cyclicList* cyclicList, int value, Position* position, int* sizeOfCyclicList);

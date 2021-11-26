@@ -64,11 +64,12 @@ bool last(Position* position, cyclicList* cyclicList)
     return position->position->next == cyclicList->head;
 }
 
-void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition)
+void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition, int* sizeOfCyclicList)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
+        ++(*sizeOfCyclicList);
         return;
     }
     newElement->value = value;
@@ -77,12 +78,13 @@ void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition)
         cyclicList->head = newElement;
         newElement->next = cyclicList->head;
         lastPosition->position = cyclicList->head;
+        ++(*sizeOfCyclicList);
         return;
     }
     newElement->next = cyclicList->head;
     lastPosition->position->next = newElement;
-    //deletePosition(lastPosition);
     next(lastPosition);
+    ++(*sizeOfCyclicList);
 }
 
 int getValue(cyclicList* cyclicList, Position* position)
@@ -107,20 +109,7 @@ bool valueInCyclicList(cyclicList* cyclicList, int value)
     return result == value;
 }
 
-int sizeOfCyclicList(cyclicList* cyclicList)
-{
-    int counter = 0;
-    Position* startPosition = first(cyclicList);
-    for (Position* i = startPosition; !last(i, cyclicList); next(i))
-    {
-        getValue(cyclicList, i);
-        ++counter;
-    }
-    deletePosition(startPosition);
-    return counter + 1;
-}
-
-bool delete(cyclicList* cyclicList, int value, Position* position)
+bool delete(cyclicList* cyclicList, int value, Position* position, int* sizeOfCyclicList)
 {
     if (!valueInCyclicList(cyclicList, value))
     {
@@ -146,6 +135,7 @@ bool delete(cyclicList* cyclicList, int value, Position* position)
         deletePosition(positionForRemoving);
         deletePosition(i);
         deletePosition(j);
+        --(*sizeOfCyclicList);
         return true;
     }
     Position* j = first(cyclicList);
@@ -160,5 +150,6 @@ bool delete(cyclicList* cyclicList, int value, Position* position)
     free(j->position);
     deletePosition(j);
     deletePosition(i);
+    --(*sizeOfCyclicList);
     return true;
 }

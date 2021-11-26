@@ -3,27 +3,27 @@
 
 #include "../Counting/CyclicList.h"
 
-cyclicList* makeListOfWarriors(int quantityOfWarriors)
+cyclicList* makeListOfWarriors(int quantityOfWarriors, int* sizeOfCyclicList)
 {
     cyclicList* cyclicList = createCyclicList();
     Position* positionForAdding = first(cyclicList);
     for (int i = 0; i < quantityOfWarriors; ++i)
     {
-        addToTheEnd(cyclicList, i + 1, positionForAdding);
+        addToTheEnd(cyclicList, i + 1, positionForAdding, sizeOfCyclicList);
     }
     deletePosition(positionForAdding);
     return cyclicList;
 }
 
-int deleteListElements(cyclicList* cyclicList, int numberOfUnluckyWarriors)
+int deleteListElements(cyclicList* cyclicList, int numberOfUnluckyWarriors, int* sizeOfCyclicList)
 {
     int countForRemove = 1;
     Position* i = first(cyclicList);
-    while (sizeOfCyclicList(cyclicList) > 1)
+    while (*sizeOfCyclicList > 1)
     {
         if (countForRemove % numberOfUnluckyWarriors == 0)
         {
-            delete(cyclicList, getValue(cyclicList, i), i);
+            delete(cyclicList, getValue(cyclicList, i), i, sizeOfCyclicList);
             ++countForRemove;
         }
         else
@@ -41,8 +41,9 @@ int deleteListElements(cyclicList* cyclicList, int numberOfUnluckyWarriors)
 
 int getNumberOfLastWarrior(const int startQuantityOfWarriors, const int numberOfUnluckyWarriors)
 {
-    cyclicList* cyclicList = makeListOfWarriors(startQuantityOfWarriors);
-    int const numberOfLastWarrior = deleteListElements(cyclicList, numberOfUnluckyWarriors);
+    int sizeOfCyclicList = 0;
+    cyclicList* cyclicList = makeListOfWarriors(startQuantityOfWarriors, &sizeOfCyclicList);
+    int const numberOfLastWarrior = deleteListElements(cyclicList, numberOfUnluckyWarriors, &sizeOfCyclicList);
     deleteCyclicList(cyclicList);
     return numberOfLastWarrior;
 }
