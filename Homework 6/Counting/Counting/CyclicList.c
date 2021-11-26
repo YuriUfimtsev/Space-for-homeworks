@@ -64,7 +64,7 @@ bool last(Position* position, cyclicList* cyclicList)
     return position->position->next == cyclicList->head;
 }
 
-void addByPosition(cyclicList* cyclicList, Position* position, int value)
+void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
     if (newElement == NULL)
@@ -76,47 +76,13 @@ void addByPosition(cyclicList* cyclicList, Position* position, int value)
     {
         cyclicList->head = newElement;
         newElement->next = cyclicList->head;
+        lastPosition->position = cyclicList->head;
         return;
-    }
-    if (position->position == cyclicList->head)
-    {
-        Position* i = first(cyclicList);
-        while (!last(i, cyclicList))
-        {
-            next(i);
-        }
-        newElement->next = cyclicList->head;
-        cyclicList->head = newElement;
-        i->position->next = cyclicList->head;
-        deletePosition(i);
-        return;
-    }
-    newElement->next = position->position->next;
-    position->position->next = newElement;
-}
-
-void add(cyclicList* cyclicList, int value)
-{
-    ListElement* newElement = calloc(1, sizeof(ListElement));
-    if (newElement == NULL)
-    {
-        return;
-    }
-    newElement->value = value;
-    if (cyclicList->head == NULL)
-    {
-        cyclicList->head = newElement;
-        newElement->next = cyclicList->head;
-        return;
-    }
-    Position* i = first(cyclicList);
-    while (!last(i, cyclicList))
-    {
-        next(i);
     }
     newElement->next = cyclicList->head;
-    i->position->next = newElement;
-    deletePosition(i);
+    lastPosition->position->next = newElement;
+    //deletePosition(lastPosition);
+    next(lastPosition);
 }
 
 int getValue(cyclicList* cyclicList, Position* position)

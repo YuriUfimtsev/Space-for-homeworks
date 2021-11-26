@@ -6,10 +6,12 @@
 cyclicList* makeListOfWarriors(int quantityOfWarriors)
 {
     cyclicList* cyclicList = createCyclicList();
+    Position* positionForAdding = first(cyclicList);
     for (int i = 0; i < quantityOfWarriors; ++i)
     {
-        add(cyclicList, i + 1);
+        addToTheEnd(cyclicList, i + 1, positionForAdding);
     }
+    deletePosition(positionForAdding);
     return cyclicList;
 }
 

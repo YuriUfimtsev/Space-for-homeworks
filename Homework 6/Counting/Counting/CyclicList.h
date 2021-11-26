@@ -18,12 +18,7 @@ void deletePosition(Position* position);
 
 // Функция добавляет элемент со значением value в конец списка.
 // Принимает на вход указатель на голову списка.
-void add(cyclicList* cyclicList, int value);
-
-// Функция добавляет элемент со значением value в список (после элемента с указателем position).
-// Функция принимает на вход указатель на голову списка, указатель на элемент,
-// после которого нужно добавить новый элемент в список, значение value, которое нужно добавить в список.
-void addByPosition(cyclicList* cyclicList, Position* position, int value);
+void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition);
 
 // Функция возвращает указатель на первый элемент списка. Принимает указатель на голову списка.
 Position* first(cyclicList* cyclicList);
@@ -55,4 +50,4 @@ int sizeOfCyclicList(cyclicList* cyclicList);
 // Функция принимает указатель на голову списка и значение value, которое надо убрать из списка.
 // Функция возвращает true, если элемент со значением value удален.
 // Функция возвращает false, если элемента со значением value в списке нет.
-bool delete(cyclicList* cyclicList, int value);
+bool delete(cyclicList* cyclicList, int value, Position* position);
