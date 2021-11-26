@@ -21,10 +21,14 @@ int deleteListElements(cyclicList* cyclicList, int numberOfUnluckyWarriors)
     {
         if (countForRemove % numberOfUnluckyWarriors == 0)
         {
-            delete(cyclicList, getValue(cyclicList, i));
+            delete(cyclicList, getValue(cyclicList, i), i);
+            ++countForRemove;
         }
-        ++countForRemove;
-        next(i);
+        else
+        {
+            ++countForRemove;
+            next(i);
+        }
     }
     deletePosition(i);
     Position* startPosition = first(cyclicList);

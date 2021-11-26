@@ -98,6 +98,10 @@ void addByPosition(cyclicList* cyclicList, Position* position, int value)
 void add(cyclicList* cyclicList, int value)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
+    if (newElement == NULL)
+    {
+        return;
+    }
     newElement->value = value;
     if (cyclicList->head == NULL)
     {
@@ -150,7 +154,7 @@ int sizeOfCyclicList(cyclicList* cyclicList)
     return counter + 1;
 }
 
-bool delete(cyclicList* cyclicList, int value)
+bool delete(cyclicList* cyclicList, int value, Position* position)
 {
     if (!valueInCyclicList(cyclicList, value))
     {
@@ -160,7 +164,8 @@ bool delete(cyclicList* cyclicList, int value)
     if (getValue(cyclicList, i) == value)
     {
         cyclicList->head = i->position->next;
-        deletePosition(i);
+        ListElement* ListElementForRemoving = i->position;
+        Position* positionForRemoving = i;
         i = first(cyclicList);
         Position* j = first(cyclicList);
         next(j);
@@ -170,6 +175,9 @@ bool delete(cyclicList* cyclicList, int value)
             next(j);
         }
         i->position->next = cyclicList->head;
+        next(position);
+        free(ListElementForRemoving);
+        deletePosition(positionForRemoving);
         deletePosition(i);
         deletePosition(j);
         return true;
@@ -182,6 +190,8 @@ bool delete(cyclicList* cyclicList, int value)
         next(i);
     }
     i->position->next = j->position->next;
+    next(position);
+    free(j->position);
     deletePosition(j);
     deletePosition(i);
     return true;
