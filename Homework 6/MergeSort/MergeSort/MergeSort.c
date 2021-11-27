@@ -119,10 +119,11 @@ List* mergeSort(List* listForSorting, enum Key key, int* sizeOfList)
         }
         List* sortedFirstHalfOfList = mergeSort(firstHalfOfList, key, &sizeOfFirstHalfOfList);
         List* sortedSecondHalfOfList = mergeSort(secondHalfOfList, key, &sizeOfSecondHalfOfList);
+        deleteList(listForSorting);
         List* sortedList = merge(sortedFirstHalfOfList, sortedSecondHalfOfList, key);
         deletePosition(i);
-        deleteList(firstHalfOfList);
-        deleteList(secondHalfOfList);
+        deleteList(sortedFirstHalfOfList);
+        deleteList(sortedSecondHalfOfList);
         return sortedList;
     }
     return listForSorting;
@@ -157,7 +158,6 @@ bool testOfMergeSortingByName()
             strcmp(getData(sortedListWith1, i).phone, phoneForCheck) != 0)
         {
             deletePosition(i);
-            deleteList(listOfEntries);
             deleteList(sortedListWith1);
             fclose(result);
             return false;
@@ -165,14 +165,12 @@ bool testOfMergeSortingByName()
     }
     deletePosition(startedPosition);
     fclose(result);
-    deleteList(listOfEntries);
     deleteList(sortedListWith1);
     return true;
 }
 
 int main()
 {
-    enum Key key;
     if (!testOfMergeSortingByName())
     {
         printf("Tests failed");
@@ -187,6 +185,7 @@ int main()
     printf("How do you want sorting the notes?\n");
     printf("Enter 0 if you want sorting by phone number.\nEnter 1 if you want sorting by name.\n");
     printf("Your choice: ");
+    enum Key key;
     scanf("%d", &key);
     if (key != 0 && key != 1)
     {
@@ -205,6 +204,5 @@ int main()
         printf("%s %s \n", getData(sortedList, i).name, getData(sortedList, i).phone);
     }
     deletePosition(startedPosition);
-    deleteList(listOfEntries);
     deleteList(sortedList);
 }
