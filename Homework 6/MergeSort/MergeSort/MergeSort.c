@@ -5,19 +5,19 @@
 
 #include "../MergeSort/List.h"
 
-const char* returnCorrectValue(List* list, Position* position, int const key)
+enum Key {
+    phoneNumber,
+    name
+};
+
+const char* returnCorrectValue(List* list, Position* position, enum Key key)
 {
-    if (key == 1)
+    if (key == name)
     {
         return getData(list, position).name;
     }
     return getData(list, position).phone;
 }
-
-enum Key {
-    phoneNumber,
-    name
-};
 
 List* readEntriesFromFile(FILE* data, int* sizeOfList)
 {
@@ -45,7 +45,7 @@ List* readEntriesFromFile(FILE* data, int* sizeOfList)
     return listOfEntries;
 }
 
-List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
+List* merge(List* firstHalfOfList, List* secondHalfOfList, enum Key key)
 {
     List* listForMerging = createList();
     int sizeOfListForMerging = 0;
@@ -92,7 +92,7 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, const int key)
     return listForMerging;
 }
 
-List* mergeSort(List* listForSorting, const int key, int* sizeOfList)
+List* mergeSort(List* listForSorting, enum Key key, int* sizeOfList)
 {
     int const size = *sizeOfList;
     if (size > 1)
@@ -138,7 +138,7 @@ bool testOfMergeSortingByName()
     int sizeOfList = 0;
     List* listOfEntries = readEntriesFromFile(data, &sizeOfList);
     fclose(data);
-    List* sortedListWith1 = mergeSort(listOfEntries, 1, &sizeOfList);
+    List* sortedListWith1 = mergeSort(listOfEntries, name, &sizeOfList);
     char nameForCheck[15] = {'\0'};
     char phoneForCheck[15] = {'\0'};
     FILE* result = fopen("ExpectedResultOfTest1.txt", "r");
@@ -172,6 +172,7 @@ bool testOfMergeSortingByName()
 
 int main()
 {
+    enum Key key;
     if (!testOfMergeSortingByName())
     {
         printf("Tests failed");
@@ -184,11 +185,10 @@ int main()
         return -1;
     }
     printf("How do you want sorting the notes?\n");
-    printf("Enter 1 if you want sorting by name.\nEnter 2 if you want sorting by phone number\n");
+    printf("Enter 0 if you want sorting by phone number.\nEnter 1 if you want sorting by name.\n");
     printf("Your choice: ");
-    int key = 0;
     scanf("%d", &key);
-    if (key != 1 && key != 2)
+    if (key != 0 && key != 1)
     {
         printf("\nIncorrect value\n");
         fclose(data);
