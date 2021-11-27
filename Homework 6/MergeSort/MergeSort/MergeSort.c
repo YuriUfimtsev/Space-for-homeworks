@@ -11,11 +11,13 @@ const char* returnCorrectValue(List* list, Position* position, int const key)
     {
         return getData(list, position).name;
     }
-    if (key == 2)
-    {
-        return getData(list, position).phone;
-    }
+    return getData(list, position).phone;
 }
+
+enum Key {
+    phoneNumber,
+    name
+};
 
 List* readEntriesFromFile(FILE* data, int* sizeOfList)
 {

@@ -4,12 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct Entry
-{
-    char name[15];
-    char phone[15];
-} Entry;
-
 typedef struct ListElement
 {
     Entry data;
@@ -51,6 +45,10 @@ void deletePosition(Position* position)
 Position* first(List* list)
 {
     Position* positionFirst = (Position*)malloc(sizeof(Position));
+    if (positionFirst == NULL)
+    {
+        return NULL;
+    }
     positionFirst->position = list->head;
     return positionFirst;
 }
@@ -68,6 +66,10 @@ bool last(Position* position)
 void add(List* list, const char name[], const char phone[], int* sizeOfList)
 {
     ListElement* newElement = (ListElement*)calloc(1, sizeof(ListElement));
+    if (newElement == NULL)
+    {
+        return;
+    }
     strcpy(newElement->data.name, name);
     strcpy(newElement->data.phone, phone);
     if (list->head == NULL)
