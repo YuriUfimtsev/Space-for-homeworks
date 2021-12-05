@@ -3,36 +3,24 @@
 
 #define SIZE 14
 
-void qSort(int array[], int stopIndex, int startIndex)
+void insertionSort(int array[], int stopIndex, int startIndex)
 {
-    if (stopIndex - startIndex <= 8)
+    for (int i = startIndex + 1; i <= stopIndex; ++i)
     {
-        for (int i = startIndex + 1; i <= stopIndex; ++i)
+        int j = i;
+        while (array[j] < array[j - 1] && j >= startIndex + 1)
         {
-            while (array[i] < array[i - 1] && i >= startIndex + 1)
-            {
-                int const buffer = array[i - 1];
-                array[i - 1] = array[i];
-                array[i] = buffer;
-                --i;
-            }
+            int const buffer = array[j - 1];
+            array[j - 1] = array[j];
+            array[j] = buffer;
+            --j;
         }
-        return;
     }
-    if (stopIndex - startIndex == 0)
-    {
-        return;
-    }
-    if (stopIndex - startIndex == 1)
-    {
-        if (array[startIndex] > array[stopIndex])
-        {
-            int const buffer = array[startIndex];
-            array[startIndex] = array[stopIndex];
-            array[stopIndex] = buffer;
-        }
-        return;
-    }
+    return;
+}
+
+int findTheSupportElement(int array[], int stopIndex, int startIndex, bool* checkOfSupportElement)
+{
     int i = startIndex + 1;
     while (array[i - 1] == array[i] && i <= stopIndex)
     {
@@ -40,7 +28,8 @@ void qSort(int array[], int stopIndex, int startIndex)
     }
     if (i == stopIndex + 1 || array[i] == array[i - 1])
     {
-        return;
+        *checkOfSupportElement = false;
+        return 0;
     }
     int supportElement = 0;
     if (array[i] > array[i - 1])
@@ -50,6 +39,22 @@ void qSort(int array[], int stopIndex, int startIndex)
     else
     {
         supportElement = array[i - 1];
+    }
+    return supportElement;
+}
+
+void qSort(int array[], int stopIndex, int startIndex)
+{
+    if (stopIndex - startIndex <= 8)
+    {
+        insertionSort(array, stopIndex, startIndex);
+        return;
+    }
+    bool checkOfSupportElement = true;
+    int const supportElement = findTheSupportElement(array, stopIndex, startIndex, &checkOfSupportElement);
+    if (!checkOfSupportElement)
+    {
+        return;
     }
     int lessThanSupportElement = startIndex;
     int largerThanSupportElement = stopIndex;
@@ -70,28 +75,21 @@ void qSort(int array[], int stopIndex, int startIndex)
             array[largerThanSupportElement] = buffer;
         }
     }
-    i = startIndex;
-    while (array[i] < supportElement)
-    {
-        ++i;
-    }
-    qSort(array, i - 1, startIndex);
-    qSort(array, stopIndex, i);
+    qSort(array, lessThanSupportElement - 1, startIndex);
+    qSort(array, stopIndex, lessThanSupportElement);
 }
 
 bool checkOfCleverQSort(int startedArray[], int lengthOfArray, int sortedArray[])
 {
     qSort(startedArray, lengthOfArray - 1, 0);
-    bool checkOfEquivalence = true;
     for (int i = 0; i < lengthOfArray; ++i)
     {
         if (startedArray[i] != sortedArray[i])
         {
-            checkOfEquivalence = false;
-            break;
+            return false;
         }
     }
-    return checkOfEquivalence;
+    return true;
 }
 
 bool testWithFifteenElements()
@@ -131,10 +129,9 @@ int main()
     }
     printf("Enter fourteen elements to full the array: ");
     int array[SIZE] = { 0 };
-    int checkScanf = 0;
     for (int i = 0; i < SIZE; ++i)
     {
-        checkScanf = scanf("%d", &array[i]);
+        scanf("%d", &array[i]);
     }
     qSort(array, SIZE - 1, 0);
     printf("Receive sorted array: ");
