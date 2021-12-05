@@ -41,12 +41,15 @@ bool checkOfTop(StackElement** head)
         deleteStack(head, &checkOfCorrectWork);
         return true;
     }
+    deleteStack(head, &checkOfCorrectWork);
+    return false;
 }
 
 bool checkOfPopFromEmptyStack(StackElement** head)
 {
     bool checkOfCorrectWork = true;
-    return pop(head, &checkOfCorrectWork) == 0;
+    bool const result = pop(head, &checkOfCorrectWork) == 0;
+    return result && !checkOfCorrectWork;
 }
 
 bool checkOfIsEmpty(StackElement** head)

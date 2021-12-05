@@ -27,11 +27,6 @@ int returnIndexFromArray(char array[], char symbol, int lengthOfArray)
 bool checkBracketsBalance(const char bracketsSequence[], bool* checkOfCorrectWork)
 {
     StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        *checkOfCorrectWork = false;
-        return false;
-    }
     bool checkOfCorrectWorkOfStackFunctions = true;
     int i = 0;
     char arrayOfBrackets[6] = { '[', ']', '(', ')', '{', '}' };
@@ -134,6 +129,19 @@ bool areBracketsBalanceTestsPassing()
 
 int main()
 {
+    StackElement* head = NULL;
+    if (!areTestsPassing(&head))
+    {
+        printf("Stack's tests failed\n");
+        return -1;
+    }
+    bool checkOfCorrectWork = true;
+    deleteStack(&head, &checkOfCorrectWork);
+    if (!checkOfCorrectWork)
+    {
+        printf("Error with stack's deletion");
+        return -1;
+    }
     if (!areBracketsBalanceTestsPassing())
     {
         printf("Tests of brackets sequence failed\n");
@@ -142,7 +150,6 @@ int main()
     char bracketsSequence[30] = { '\0' };
     printf("Enter the brackets sequence: ");
     gets_s(bracketsSequence, 30);
-    bool checkOfCorrectWork = true;
     bool const result = checkBracketsBalance(bracketsSequence, &checkOfCorrectWork);
     if (!checkOfCorrectWork)
     {
