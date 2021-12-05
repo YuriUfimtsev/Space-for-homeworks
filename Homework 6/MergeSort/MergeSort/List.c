@@ -13,6 +13,7 @@ typedef struct ListElement
 typedef struct List
 {
     ListElement* head;
+    int sizeOfList;
 } List;
 
 typedef struct Position
@@ -63,19 +64,19 @@ bool last(Position* position)
     return position->position == NULL;
 }
 
-void add(List* list, const char name[], const char phone[], int* sizeOfList)
+void add(List* list, const char name[], const char phone[])
 {
     ListElement* newElement = (ListElement*)calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
         return;
     }
-    strcpy(newElement->data.name, name);
-    strcpy(newElement->data.phone, phone);
+    strcpy_s(newElement->data.name, 15, name);
+    strcpy_s(newElement->data.phone, 15, phone);
     if (list->head == NULL)
     {
         list->head = newElement;
-        ++(*sizeOfList);
+        ++(list->sizeOfList);
         return;
     }
     Position* i = first(list);
@@ -89,10 +90,15 @@ void add(List* list, const char name[], const char phone[], int* sizeOfList)
     i->position->next = newElement;
     deletePosition(i);
     deletePosition(j);
-    ++(*sizeOfList);
+    ++(list->sizeOfList);
 }
 
 Entry getData(List* list, Position* position)
 {
     return position->position->data;
+}
+
+int getSizeOfList(List* list)
+{
+    return list->sizeOfList;
 }

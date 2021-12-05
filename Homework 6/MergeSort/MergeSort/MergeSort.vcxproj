@@ -140,13 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Main.c" />
     <ClCompile Include="MergeSort.c" />
+    <ClCompile Include="TestsForMergeSort.c" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="List.c">
       <FileType>CppCode</FileType>
     </ClCompile>
     <ClInclude Include="List.h" />
+    <ClInclude Include="MergeSort.h" />
+    <ClInclude Include="TestsForMergeSort.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data.txt" />

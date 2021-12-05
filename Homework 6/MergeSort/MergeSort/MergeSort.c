@@ -3,23 +3,15 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../MergeSort/List.h"
-
-enum Key {
-    phoneNumber,
-    name
-};
+#include "List.h"
+#include "TestsForMergeSort.h"
 
 const char* returnCorrectValue(List* list, Position* position, enum Key key)
 {
-    if (key == name)
-    {
-        return getData(list, position).name;
-    }
-    return getData(list, position).phone;
+    return key == name ? getData(list, position).name : getData(list, position).phone;
 }
 
-List* readEntriesFromFile(FILE* data, int* sizeOfList)
+List* readEntriesFromFile(FILE* data)
 {
     List* listOfEntries = createList();
     int i = 0;
@@ -39,7 +31,7 @@ List* readEntriesFromFile(FILE* data, int* sizeOfList)
             }
             fscanf(data, "%s", phone);
             ++i;
-            add(listOfEntries, name, phone, sizeOfList);
+            add(listOfEntries, name, phone);
         }
     }
     return listOfEntries;
@@ -68,7 +60,7 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, enum Key key)
         int resultOfComparison = strcmp(firstHalfOfListValue, secondHalfOfListValue);
         while (resultOfComparison >= 0 && !last(secondPartPosition))
         {
-            add(listForMerging, secondHalfOfListName, secondHalfOfListPhone, &sizeOfListForMerging);
+            add(listForMerging, secondHalfOfListName, secondHalfOfListPhone);
             next(secondPartPosition);
             if (!last(secondPartPosition))
             {
@@ -78,131 +70,53 @@ List* merge(List* firstHalfOfList, List* secondHalfOfList, enum Key key)
                 resultOfComparison = strcmp(firstHalfOfListValue, secondHalfOfListValue);
             }
         }
-        add(listForMerging, firstHalfOfListName, firstHalfOfListPhone, &sizeOfListForMerging);
+        add(listForMerging, firstHalfOfListName, firstHalfOfListPhone);
     }
     deletePosition(startedPosition);
     while (!last(secondPartPosition))
     {
         strcpy(secondHalfOfListName, getData(secondHalfOfList, secondPartPosition).name);
         strcpy(secondHalfOfListPhone, getData(secondHalfOfList, secondPartPosition).phone);
-        add(listForMerging, secondHalfOfListName, secondHalfOfListPhone, &sizeOfListForMerging);
+        add(listForMerging, secondHalfOfListName, secondHalfOfListPhone);
         next(secondPartPosition);
     }
     deletePosition(secondPartPosition);
     return listForMerging;
 }
 
-List* mergeSort(List* listForSorting, enum Key key, int* sizeOfList)
+List* mergeSort(List* listForSorting, enum Key key)
 {
-    int const size = *sizeOfList;
-    if (size > 1)
+    int const size = getSizeOfList(listForSorting);
+    if (size <= 1)
     {
-        List* firstHalfOfList = createList();
-        List* secondHalfOfList = createList();
-        int sizeOfFirstHalfOfList = 0;
-        int sizeOfSecondHalfOfList = 0;
-        Position* i = first(listForSorting);
-        int j = 0;
-        while (j < size / 2)
-        {
-            add(firstHalfOfList, getData(listForSorting, i).name,
-                getData(listForSorting, i).phone, &sizeOfFirstHalfOfList);
-            next(i);
-            ++j;
-        }
-        while (j < size)
-        {
-            add(secondHalfOfList, getData(listForSorting, i).name,
-                getData(listForSorting, i).phone, &sizeOfSecondHalfOfList);
-            next(i);
-            ++j;
-        }
-        List* sortedFirstHalfOfList = mergeSort(firstHalfOfList, key, &sizeOfFirstHalfOfList);
-        List* sortedSecondHalfOfList = mergeSort(secondHalfOfList, key, &sizeOfSecondHalfOfList);
-        deleteList(listForSorting);
-        List* sortedList = merge(sortedFirstHalfOfList, sortedSecondHalfOfList, key);
-        deletePosition(i);
-        deleteList(sortedFirstHalfOfList);
-        deleteList(sortedSecondHalfOfList);
-        return sortedList;
+        return listForSorting;
     }
-    return listForSorting;
-}
-
-bool testOfMergeSortingByName()
-{
-    FILE* data = fopen("Test.txt", "r");
-    if (data == NULL)
+    List* firstHalfOfList = createList();
+    List* secondHalfOfList = createList();
+    int sizeOfFirstHalfOfList = 0;
+    int sizeOfSecondHalfOfList = 0;
+    Position* i = first(listForSorting);
+    int j = 0;
+    while (j < size / 2)
     {
-        return false;
+        add(firstHalfOfList, getData(listForSorting, i).name,
+            getData(listForSorting, i).phone);
+        next(i);
+        ++j;
     }
-    int sizeOfList = 0;
-    List* listOfEntries = readEntriesFromFile(data, &sizeOfList);
-    fclose(data);
-    List* sortedListWith1 = mergeSort(listOfEntries, name, &sizeOfList);
-    char nameForCheck[15] = {'\0'};
-    char phoneForCheck[15] = {'\0'};
-    FILE* result = fopen("ExpectedResultOfTest1.txt", "r");
-    if (result == NULL)
+    while (j < size)
     {
-        deleteList(listOfEntries);
-        deleteList(sortedListWith1);
-        return false;
+        add(secondHalfOfList, getData(listForSorting, i).name,
+            getData(listForSorting, i).phone);
+        next(i);
+        ++j;
     }
-    Position* startedPosition = first(sortedListWith1);
-    for (Position* i = startedPosition; !last(i); next(i))
-    {
-        fscanf(result, "%s", nameForCheck);
-        fscanf(result, "%s", phoneForCheck);
-        if (strcmp(getData(sortedListWith1, i).name, nameForCheck) != 0 ||
-            strcmp(getData(sortedListWith1, i).phone, phoneForCheck) != 0)
-        {
-            deletePosition(i);
-            deleteList(sortedListWith1);
-            fclose(result);
-            return false;
-        }
-    }
-    deletePosition(startedPosition);
-    fclose(result);
-    deleteList(sortedListWith1);
-    return true;
-}
-
-int main()
-{
-    if (!testOfMergeSortingByName())
-    {
-        printf("Tests failed");
-        return -1;
-    }
-    FILE* data = fopen("Data.txt", "r");
-    if (data == NULL)
-    {
-        printf("File not found");
-        return -1;
-    }
-    printf("How do you want sorting the notes?\n");
-    printf("Enter 0 if you want sorting by phone number.\nEnter 1 if you want sorting by name.\n");
-    printf("Your choice: ");
-    enum Key key;
-    scanf("%d", &key);
-    if (key != 0 && key != 1)
-    {
-        printf("\nIncorrect value\n");
-        fclose(data);
-        return -1;
-    }
-    int sizeOfList = 0;
-    List* listOfEntries = readEntriesFromFile(data, &sizeOfList);
-    fclose(data);
-    List* sortedList = mergeSort(listOfEntries, key, &sizeOfList);
-    printf("\nResult of sorting: \n");
-    Position* startedPosition = first(sortedList);
-    for (Position* i = startedPosition; !last(i); next(i))
-    {
-        printf("%s %s \n", getData(sortedList, i).name, getData(sortedList, i).phone);
-    }
-    deletePosition(startedPosition);
-    deleteList(sortedList);
+    List* sortedFirstHalfOfList = mergeSort(firstHalfOfList, key);
+    List* sortedSecondHalfOfList = mergeSort(secondHalfOfList, key);
+    deleteList(listForSorting);
+    List* sortedList = merge(sortedFirstHalfOfList, sortedSecondHalfOfList, key);
+    deletePosition(i);
+    deleteList(sortedFirstHalfOfList);
+    deleteList(sortedSecondHalfOfList);
+    return sortedList;
 }
