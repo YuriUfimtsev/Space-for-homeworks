@@ -13,13 +13,9 @@ void addInTheSequenceWithSpace(char sequence[], int* indexOfSequence, const char
     ++(*indexOfSequence);
 }
 
-bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequence[])
+bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequence[], const char lengthOfPostfixFormSequence)
 {
     StackElement* head = NULL;
-    if (!areTestsPassing(&head))
-    {
-        return false;
-    }
     int indexOfInfixFormSequence = 0;
     int indexOfPostfixFormSequence = 0;
     int counterOfNumbers = 0;
@@ -41,6 +37,11 @@ bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
             while (checkOfCorrectWorkOfStackFunctions && top(&head, &checkOfCorrectWorkOfTop) != '(' )
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+                if (indexOfPostfixFormSequence > lengthOfPostfixFormSequence - 3)
+                {
+                    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+                    return false;
+                }
                 addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             pop(&head, &checkOfCorrectWorkOfStackFunctions);
@@ -51,6 +52,11 @@ bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
                 top(&head, &checkOfCorrectWorkOfTop) == '/')
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+                if (indexOfPostfixFormSequence > lengthOfPostfixFormSequence - 3)
+                {
+                    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+                    return false;
+                }
                 addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
@@ -62,12 +68,22 @@ bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
                 top(&head, &checkOfCorrectWorkOfTop) == '+' || top(&head, &checkOfCorrectWorkOfTop) == '-')
             {
                 const char elementForAdding = pop(&head, &checkOfCorrectWorkOfStackFunctions);
+                if (indexOfPostfixFormSequence > lengthOfPostfixFormSequence - 3)
+                {
+                    deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+                    return false;
+                }
                 addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
             }
             push(&head, infixFormSequence[indexOfInfixFormSequence], &checkOfCorrectWorkOfStackFunctions);
             ++counterOfOperators;
             break;
         default:
+            if (indexOfPostfixFormSequence > lengthOfPostfixFormSequence - 3)
+            {
+                deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+                return false;
+            }
             addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence,
                 infixFormSequence[indexOfInfixFormSequence]);
             ++counterOfNumbers;
@@ -93,6 +109,11 @@ bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
             deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
             return false;
         }
+        if (indexOfPostfixFormSequence > lengthOfPostfixFormSequence - 3)
+        {
+            deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
+            return false;
+        }
         addInTheSequenceWithSpace(postfixFormSequence, &indexOfPostfixFormSequence, elementForAdding);
     }
     deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
@@ -102,7 +123,7 @@ bool convertToPostfixForm(const char infixFormSequence[], char postfixFormSequen
 bool checkOfConverting(const char infixFormSequence[], const char resultString[], bool* checkOfCorrectnessOfSequence)
 {
     char postfixFormSequence[30] = { '\0' };
-    bool const resultOfConverting = convertToPostfixForm(infixFormSequence, postfixFormSequence);
+    bool const resultOfConverting = convertToPostfixForm(infixFormSequence, postfixFormSequence, 30);
     if (!resultOfConverting)
     {
         *checkOfCorrectnessOfSequence = false;
@@ -124,11 +145,7 @@ bool testWithDivision()
     char infixFormSequence[20] = "((9 + 6) + 4) / 8";
     char resultString[20] = "9 6 + 4 + 8 / ";
     bool checkOfCorrectnessOfSequence = true;
-    if (checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence)
-    {
-        return true;
-    }
-    return false;
+    return checkOfConverting(infixFormSequence, resultString, &checkOfCorrectnessOfSequence) && checkOfCorrectnessOfSequence;
 }
 
 bool testWithIncorrectSequence()
@@ -141,6 +158,19 @@ bool testWithIncorrectSequence()
 
 int main()
 {
+    StackElement* head = NULL;
+    bool checkOfCorrectWork = true;
+    if (!areTestsPassing(&head))
+    {
+        printf("Stack's tests failed");
+        return -1;
+    }
+    deleteStack(&head, &checkOfCorrectWork);
+    if (!checkOfCorrectWork)
+    {
+        printf("Error with stack deletion");
+        return -1;
+    }
     if (!standartTest() || !testWithDivision() || !testWithIncorrectSequence())
     {
         printf("Tests failed");
@@ -151,10 +181,10 @@ int main()
     gets_s(infixFormSequence, 30);
     char postfixFormSequence[30] = { '\0' };
     bool resultOfConvertingInPostfixForm = true;
-    resultOfConvertingInPostfixForm = convertToPostfixForm(infixFormSequence, postfixFormSequence);
+    resultOfConvertingInPostfixForm = convertToPostfixForm(infixFormSequence, postfixFormSequence, 30);
     if (!resultOfConvertingInPostfixForm)
     {
-        printf("\nIncorrect mathematical expression\n");
+        printf("\nIncorrect mathematical expression or overflow error\n");
         return -1;
     }
     printf("\nThe mathematical expression in postfix form: %s\n", postfixFormSequence);
