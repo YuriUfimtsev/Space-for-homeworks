@@ -3,7 +3,7 @@
 
 #include "../SortedList/SortedList.h"
 
-bool isAddingInSortedListCorrect(int arrayOfResult[], int array[], int lengthOfArray)
+bool isAddingInSortedListCorrect(const int arrayOfResult[], int array[], int lengthOfArray)
 {
     List* sortedList = createList();
     for (int i = 0; i < lengthOfArray; ++i)
@@ -12,7 +12,7 @@ bool isAddingInSortedListCorrect(int arrayOfResult[], int array[], int lengthOfA
     }
     int j = 0;
     Position* startPosition = first(sortedList);
-    for (Position* i = startPosition; !(last(i)); next(i))
+    for (Position* i = startPosition; !last(i); next(i))
     {
         if (getValue(sortedList, i) != arrayOfResult[j])
         {

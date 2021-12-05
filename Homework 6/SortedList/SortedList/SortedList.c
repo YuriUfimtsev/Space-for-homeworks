@@ -44,6 +44,10 @@ void deletePosition(Position* position)
 Position* first(List* list)
 {
     Position* positionFirst = malloc(sizeof(Position));
+    if (positionFirst == NULL)
+    {
+        return NULL;
+    }
     positionFirst->position = list->head;
     return positionFirst;
 }
@@ -70,8 +74,7 @@ int getValue(List* list, Position* position)
 
 bool valueInList(List* list, int value)
 {
-    Position* startPosition = first(list);
-    for (Position* i = startPosition; !last(i); next(i))
+    for (Position* i = first(list); !last(i); next(i))
     {
         if (getValue(list, i) == value)
         {
@@ -79,60 +82,49 @@ bool valueInList(List* list, int value)
             return true;
         }
     }
-    deletePosition(startPosition);
     return false;
 }
 
 void addTheValueInSortedList(List* list, int value)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
+    if (newElement == NULL)
+    {
+        return;
+    }
     newElement->value = value;
     if (list->head == NULL)
     {
         list->head = newElement;
         return;
     }
-    Position* startPosition = first(list);
     if (list->head->next == NULL)
     {
-        if (value < getValue(list, startPosition))
+        if (value < list->head->value)
         {
             newElement->next = list->head;
             list->head = newElement;
-            deletePosition(startPosition);
             return;
         }
     }
-    Position* i = first(list);
-    Position* j = first(list);
-    next(j);
-    while (j->position != NULL && value > getValue(list, j))
+    ListElement* i = list->head;
+    while (i->next != NULL && value > i->next->value)
     {
-        next(i);
-        next(j);
+        i = i->next;
     }
-    if (j->position == NULL)
+    if (i->next == NULL)
     {
-        i->position->next = newElement;
-        deletePosition(i);
-        deletePosition(j);
-        deletePosition(startPosition);
+        i->next = newElement;
         return;
     }
-    if (i->position == startPosition->position && value < getValue(list, startPosition))
+    if (i == list->head && value < list->head->value)
     {
         newElement->next = list->head;
         list->head = newElement;
-        deletePosition(i);
-        deletePosition(j);
-        deletePosition(startPosition);
         return;
     }
-    newElement->next = i->position->next;
-    i->position->next = newElement;
-    deletePosition(i);
-    deletePosition(j);
-    deletePosition(startPosition);
+    newElement->next = i->next;
+    i->next = newElement;
 }
 
 bool delete(List* list, int value)
@@ -141,31 +133,26 @@ bool delete(List* list, int value)
     {
         return false;
     }
-    Position* i = first(list);
-    if (getValue(list, i) == value)
+    ListElement* i = list->head;
+    if (i->value == value)
     {
-        list->head = i->position->next;
-        free(i->position);
-        deletePosition(i);
+        list->head = i->next;
+        free(i);
         return true;
     }
-    Position* j = first(list);
-    next(j);
-    while (!last(j) && getValue(list, j) != value)
+    ListElement* j = list->head->next;
+    while (j != NULL && j->value != value)
     {
-        next(i);
-        next(j);
+        i = i->next;
+        j = j->next;
     }
-    if (last(j))
+    if (j == NULL)
     {
-        i->position->next = NULL;
-        free(j->position);
-        deletePosition(i);
+        i->next = NULL;
+        free(j);
         return true;
     }
-    i->position->next = j->position->next;
-    deletePosition(i);
-    free(j->position);
-    deletePosition(j);
+    i->next = j->next;
+    free(j);
     return true;
 }
