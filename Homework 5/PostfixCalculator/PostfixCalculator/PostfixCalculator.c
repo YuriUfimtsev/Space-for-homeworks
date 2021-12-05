@@ -24,7 +24,7 @@ int calculateInPostfixForm(const char commandSequence[], bool* checkOfCorrectWor
             {
                 *checkOfCorrectWork = false;
                 deleteStack(&head, checkOfCorrectWork);
-                return  -1;
+                return -1;
             }
         }
         switch (commandSequence[i])
@@ -73,6 +73,7 @@ int calculateInPostfixForm(const char commandSequence[], bool* checkOfCorrectWor
     if (!isEmpty(head))
     {
         *checkOfCorrectWork = false;
+        deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
         return -1;
     }
     deleteStack(&head, &checkOfCorrectWorkOfStackFunctions);
