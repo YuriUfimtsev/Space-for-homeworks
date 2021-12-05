@@ -10,24 +10,24 @@ void sumOfBinaryNumbers(int arrayForSummand[], int lengthOfArrayForSummand, int 
     int numbersOfUnits = 0;
     for (int i = lengthOfArrayForSummand - 1; i >= 0; --i)
     {
-        int sum = arrayForAddend[i] + arrayForSummand[i];
-        if (sum == 0 && numbersOfUnits > 0)
+        const int sum = arrayForAddend[i] + arrayForSummand[i];
+        if (sum == 0 && numbersOfUnits == 1)
         {
             sumArray[i] = 1;
-            --numbersOfUnits;
+            numbersOfUnits = 0;
         }
-        else if (sum == 1 && numbersOfUnits > 0)
+        else if (sum == 1 && numbersOfUnits == 1)
         {
             sumArray[i] = 0;
         }
-        else if (sum == 2 && numbersOfUnits > 0)
+        else if (sum == 2 && numbersOfUnits == 1)
         {
             sumArray[i] = 1;
         }
         else if (sum == 2)
         {
             sumArray[i] = 0;
-            ++numbersOfUnits;
+            numbersOfUnits = 1;
         }
         else
         {
@@ -65,11 +65,10 @@ bool checkOfSum(int summand, int addend, int expectedResult)
     readTwosComplementCode(summand, arrayForSummand, SIZE);
     int arrayForAddend[SIZE] = { 0 };
     readTwosComplementCode(addend, arrayForAddend, SIZE);
-
     int sumArray[SIZE] = { 0 };
     sumOfBinaryNumbers(arrayForSummand, SIZE, arrayForAddend, sumArray);
     int result = makeDecimalFromBinary(sumArray, SIZE);
-    return (expectedResult == result);
+    return expectedResult == result;
 }
 
 bool standartTestWithPositiveSummand()
@@ -107,18 +106,18 @@ int main()
     }
     int summand = 0;
     int addend = 0;
-    printf("Введите два числа, сумма которых вас интересует: ");
+    printf("Г‚ГўГҐГ¤ГЁГІГҐ Г¤ГўГ  Г·ГЁГ±Г«Г , Г±ГіГ¬Г¬Г  ГЄГ®ГІГ®Г°Г»Гµ ГўГ Г± ГЁГ­ГІГҐГ°ГҐГ±ГіГҐГІ: ");
     scanf("%d %d", &summand, &addend);
     int arrayForSummand[SIZE] = { 0 };
     readTwosComplementCode(summand, arrayForSummand, SIZE);
-    printf("Первое слагаемое в двоичном представлении в дополнительном коде: ");
+    printf("ГЏГҐГ°ГўГ®ГҐ Г±Г«Г ГЈГ ГҐГ¬Г®ГҐ Гў Г¤ГўГ®ГЁГ·Г­Г®Г¬ ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГЁ Гў Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г®Г¬ ГЄГ®Г¤ГҐ: ");
     for (int i = 0; i < SIZE; ++i)
     {
         printf(" %d", arrayForSummand[i]);
     }
     int arrayForAddend[SIZE] = { 0 };
     readTwosComplementCode(addend, arrayForAddend, SIZE);
-    printf("\nВторое слагаемое в двоичном представлении в дополнительном коде: ");
+    printf("\nГ‚ГІГ®Г°Г®ГҐ Г±Г«Г ГЈГ ГҐГ¬Г®ГҐ Гў Г¤ГўГ®ГЁГ·Г­Г®Г¬ ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГЁ Гў Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г®Г¬ ГЄГ®Г¤ГҐ: ");
     for (int i = 0; i < SIZE; ++i)
     {
         printf(" %d", arrayForAddend[i]);
@@ -127,11 +126,11 @@ int main()
 
     int sumArray[SIZE] = { 0 };
     sumOfBinaryNumbers(arrayForSummand, SIZE, arrayForAddend, sumArray);
-    printf("Сумма в двоичной системе счисления: ");
+    printf("Г‘ГіГ¬Г¬Г  Гў Г¤ГўГ®ГЁГ·Г­Г®Г© Г±ГЁГ±ГІГҐГ¬ГҐ Г±Г·ГЁГ±Г«ГҐГ­ГЁГї: ");
     for (int i = 1; i < SIZE; ++i)
     {
         printf(" %d", sumArray[i]);
     }
     int result = makeDecimalFromBinary(sumArray, SIZE);
-    printf("\nСумма в десятичной системе счисления: %d\n", result);
+    printf("\nГ‘ГіГ¬Г¬Г  Гў Г¤ГҐГ±ГїГІГЁГ·Г­Г®Г© Г±ГЁГ±ГІГҐГ¬ГҐ Г±Г·ГЁГ±Г«ГҐГ­ГЁГї: %d\n", result);
 }
