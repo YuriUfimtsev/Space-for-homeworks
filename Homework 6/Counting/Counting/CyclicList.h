@@ -2,15 +2,15 @@
 
 #include <stdbool.h>
 
-typedef struct cyclicList cyclicList;
+typedef struct CyclicList CyclicList;
 
 typedef struct Position Position;
 
 // Функция создает список - возвращает указатель на начало списка.
-cyclicList* createCyclicList();
+CyclicList* createCyclicList();
 
 // Функция удаляет список. Принимает на вход указатель на голову списка.
-void deleteCyclicList(cyclicList* cyclicList);
+void deleteCyclicList(CyclicList* cyclicList);
 
 // Функция удаляет элемент в списке.
 // Принимает на вход указатель на элемент списка.
@@ -18,11 +18,11 @@ void deletePosition(Position* position);
 
 // Функция добавляет элемент со значением value в конец списка.
 // Принимает на вход указатель на голову списка, значение, которое нужно добавить,
-// указатель на последний элемент списка и указатель на размер списка.
-void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition, int* sizeOfCyclicList);
+// и указатель на последний элемент списка.
+void addToTheEnd(CyclicList* cyclicList, int value, Position* lastPosition);
 
 // Функция возвращает указатель на первый элемент списка. Принимает указатель на голову списка.
-Position* first(cyclicList* cyclicList);
+Position* first(CyclicList* cyclicList);
 
 // Функция возвращает указатель на следующий элемент списка. Принимает указатель на текущий элемент списка.
 void next(Position* position);
@@ -31,22 +31,22 @@ void next(Position* position);
 // - указатель на элемент списка - является указателем на последний элемент списка.
 // false - если передаваемое значение - указатель на элемент списка -
 // не является указателем на последний элемент списка.
-bool last(Position* position, cyclicList* cyclicList);
+bool last(Position* position, CyclicList* cyclicList);
 
 // Функция возвращает значение value, лежащее в данном элементе списка.
 // Функция принимает указатель на голову списка и указатель на элемент списка.
-int getValue(cyclicList* cyclicList, Position* position);
+int getValue(CyclicList* cyclicList, Position* position);
 
 // Функция проверяет, есть ли в списке элемент с данным значением value.
 // Функция принимает указатель на голову списка и значение value.
 // Возвращает true, если элемент с таким значением присутсвует в списке.
-// Возвращает false, если элемент с таким значением отсутствует в списке.
-bool valueInCyclicList(cyclicList* cyclicList, int value);
+// Возвращает false иначе.
+bool valueInCyclicList(CyclicList* cyclicList, int value);
 
 // Функция удаляет элемент со значением value из списка.
-// Функция принимает указатель на голову списка и значение value, которое надо убрать из списка.
+// Функция принимает указатель на голову списка.
 // Также функция принимает указатель на элемент списка, который нужно удалить.
-// И принимает указатель на размер списка.
-// Функция возвращает true, если элемент со значением value удален.
-// Функция возвращает false, если элемента со значением value в списке нет.
-bool delete(cyclicList* cyclicList, int value, Position* position, int* sizeOfCyclicList);
+void deleteValueFromTheNextPosition(CyclicList* cyclicList, Position* position);
+
+// Функция принимает указатель на голову списка, возвращает размер (кол-во элементов) списка.
+int getSizeOfCyclicList(CyclicList* cyclicList);

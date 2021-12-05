@@ -9,22 +9,23 @@ typedef struct ListElement
     struct ListElement* next;
 } ListElement;
 
-typedef struct cyclicList
+typedef struct CyclicList
 {
     ListElement* head;
-} cyclicList;
+    int sizeOfCyclicList;
+} CyclicList;
 
 typedef struct Position
 {
     ListElement* position;
 } Position;
 
-cyclicList* createCyclicList()
+CyclicList* createCyclicList()
 {
-    return calloc(1, sizeof(cyclicList));
+    return calloc(1, sizeof(CyclicList));
 }
 
-void deleteCyclicList(cyclicList* cyclicList)
+void deleteCyclicList(CyclicList* cyclicList)
 {
     ListElement* position = cyclicList->head;
     ListElement* headOfListToCompare = cyclicList->head;
@@ -43,7 +44,7 @@ void deletePosition(Position* position)
     free(position);
 }
 
-Position* first(cyclicList* cyclicList)
+Position* first(CyclicList* cyclicList)
 {
     Position* positionFirst = malloc(sizeof(Position));
     if (positionFirst == NULL)
@@ -59,17 +60,20 @@ void next(Position* position)
     position->position = position->position->next;
 }
 
-bool last(Position* position, cyclicList* cyclicList)
+bool last(Position* position, CyclicList* cyclicList)
 {
     return position->position->next == cyclicList->head;
 }
 
-void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition, int* sizeOfCyclicList)
+void addToTheEnd(CyclicList* cyclicList, int value, Position* lastPosition)
 {
+    if (lastPosition == NULL)
+    {
+        return;
+    }
     ListElement* newElement = calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
-        ++(*sizeOfCyclicList);
         return;
     }
     newElement->value = value;
@@ -78,21 +82,28 @@ void addToTheEnd(cyclicList* cyclicList, int value, Position* lastPosition, int*
         cyclicList->head = newElement;
         newElement->next = cyclicList->head;
         lastPosition->position = cyclicList->head;
-        ++(*sizeOfCyclicList);
+        ++(cyclicList->sizeOfCyclicList);
         return;
+    }
+    if (lastPosition->position->next != cyclicList->head)
+    {
+        while (lastPosition->position->next != cyclicList->head)
+        {
+            lastPosition->position = lastPosition->position->next;
+        }
     }
     newElement->next = cyclicList->head;
     lastPosition->position->next = newElement;
     next(lastPosition);
-    ++(*sizeOfCyclicList);
+    ++(cyclicList->sizeOfCyclicList);
 }
 
-int getValue(cyclicList* cyclicList, Position* position)
+int getValue(CyclicList* cyclicList, Position* position)
 {
     return position->position->value;
 }
 
-bool valueInCyclicList(cyclicList* cyclicList, int value)
+bool valueInCyclicList(CyclicList* cyclicList, int value)
 {
     Position* i = first(cyclicList);
     while (!last(i, cyclicList))
@@ -109,47 +120,38 @@ bool valueInCyclicList(cyclicList* cyclicList, int value)
     return result == value;
 }
 
-bool delete(cyclicList* cyclicList, int value, Position* position, int* sizeOfCyclicList)
+void deleteValueFromTheNextPosition(CyclicList* cyclicList, Position* position)
 {
-    if (!valueInCyclicList(cyclicList, value))
+    if (position->position->next == cyclicList->head)
     {
-        return false;
-    }
-    Position* i = first(cyclicList);
-    if (getValue(cyclicList, i) == value)
-    {
-        cyclicList->head = i->position->next;
-        ListElement* ListElementForRemoving = i->position;
-        Position* positionForRemoving = i;
-        i = first(cyclicList);
-        Position* j = first(cyclicList);
-        next(j);
-        while (!last(j, cyclicList))
+        if (cyclicList->sizeOfCyclicList == 2)
         {
-            next(i);
-            next(j);
+
+            cyclicList->head->value = position->position->value;
+            ListElement* elementForRemoving = cyclicList->head->next;
+            cyclicList->head->next = cyclicList->head;
+            free(elementForRemoving);
+            --(cyclicList->sizeOfCyclicList);
+            return;
         }
-        i->position->next = cyclicList->head;
-        next(position);
-        free(ListElementForRemoving);
-        deletePosition(positionForRemoving);
-        deletePosition(i);
-        deletePosition(j);
-        --(*sizeOfCyclicList);
-        return true;
+        else
+        {
+            cyclicList->head->value = cyclicList->head->next->value;
+            ListElement* elementForRemoving = cyclicList->head->next;
+            cyclicList->head->next = cyclicList->head->next->next;
+            free(elementForRemoving);
+            --(cyclicList->sizeOfCyclicList);
+            return;
+        }
     }
-    Position* j = first(cyclicList);
-    next(j);
-    while (!last(j, cyclicList) && getValue(cyclicList, j) != value)
-    {
-        next(j);
-        next(i);
-    }
-    i->position->next = j->position->next;
-    next(position);
-    free(j->position);
-    deletePosition(j);
-    deletePosition(i);
-    --(*sizeOfCyclicList);
-    return true;
+    ListElement* elementForRemoving = position->position->next;
+    position->position->next = position->position->next->next;
+    free(elementForRemoving);
+    --(cyclicList->sizeOfCyclicList);
+    return;
+}
+
+int getSizeOfCyclicList(CyclicList* cyclicList)
+{
+    return cyclicList->sizeOfCyclicList;
 }

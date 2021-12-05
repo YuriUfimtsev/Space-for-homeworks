@@ -142,9 +142,13 @@
   <ItemGroup>
     <ClCompile Include="Counting.c" />
     <ClCompile Include="CyclicList.c" />
+    <ClCompile Include="Main.c" />
+    <ClCompile Include="TestsForCounting.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Counting.h" />
     <ClInclude Include="CyclicList.h" />
+    <ClInclude Include="TestsForCounting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

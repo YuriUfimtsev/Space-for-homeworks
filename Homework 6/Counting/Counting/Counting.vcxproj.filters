@@ -21,9 +21,21 @@
     <ClCompile Include="CyclicList.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestsForCounting.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CyclicList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestsForCounting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Counting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
