@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../ParseTree/ParseTree.h"
+#include "ParseTree.h"
 
 typedef struct Node {
     int number;
@@ -26,7 +26,7 @@ void deleteNode(Node* node)
     free(node);
 }
 
-void deleteParseTree(Node* root)
+void deleteParseTree(Tree* root)
 {
     if (root == NULL)
     {
@@ -37,29 +37,49 @@ void deleteParseTree(Node* root)
     deleteNode(root);
 }
 
-bool isOperator(const char symbol) //
+bool isOperator(const char symbol)
 {
     return symbol == '+' || symbol == '*' || symbol == '/' || symbol == '-';
 }
 
 bool isDigit(const char symbol)
 {
-    return symbol != '(' && symbol != ')' && symbol != ' ';
+    return symbol == '0' || symbol == '1' || symbol == '2' || symbol == '3' || symbol == '4'
+        || symbol == '5' || symbol == '6' || symbol == '7' || symbol == '8' || symbol == '9';
 }
 
-Node* createNewNodeForParseTree(const char* stringOfNumbersAndOperators, int* index)
+bool isBracketOrSpace(const char symbol)
+{
+    return symbol == '(' || symbol == ')' || symbol == ' ';
+}
+
+int getNumberFromSequence(const char* stringOfNumbersAndOperators, unsigned int* index)
+{
+    char stringForNumber[30] = { '\0' };
+    int indexOfStringForNumber = 0;
+    while (isDigit(stringOfNumbersAndOperators[*index])
+        || stringOfNumbersAndOperators[*index] == '-')
+    {
+        stringForNumber[indexOfStringForNumber] = stringOfNumbersAndOperators[*index];
+        ++indexOfStringForNumber;
+        ++(*index);
+    }
+    --(*index);
+    return atoi(stringForNumber);
+}
+
+Node* createNewNodeForParseTree(const char* stringOfNumbersAndOperators, unsigned int* index)
 {
     ++(*index);
-    const int lengthOfString = (int)strlen(stringOfNumbersAndOperators);
+    const unsigned int lengthOfString = (unsigned int)strlen(stringOfNumbersAndOperators);
     Node* newNode = createNode();
     while (*index < lengthOfString
-        && !isDigit(stringOfNumbersAndOperators[*index]))
+        && isBracketOrSpace(stringOfNumbersAndOperators[*index]))
     {
         ++(*index);
     }
     if (isOperator(stringOfNumbersAndOperators[*index])
-        || (stringOfNumbersAndOperators[*index] == '-'
-            && stringOfNumbersAndOperators[*index + 1] == ' '))
+            && stringOfNumbersAndOperators[*index + 1] == ' ')
     {
         newNode->symbol = stringOfNumbersAndOperators[*index];
         newNode->leftChild = createNewNodeForParseTree(stringOfNumbersAndOperators,
@@ -67,25 +87,14 @@ Node* createNewNodeForParseTree(const char* stringOfNumbersAndOperators, int* in
         newNode->rightChild = createNewNodeForParseTree(stringOfNumbersAndOperators,
             index);
     }
-    else if (isDigit(stringOfNumbersAndOperators[*index]))
+    else if (isDigit(stringOfNumbersAndOperators[*index]) || stringOfNumbersAndOperators[*index] == '-')
     {
-        char stringForNumber[30] = { '\0' };
-        int indexOfStringForNumber = 0;
-        while (isDigit(stringOfNumbersAndOperators[*index])
-            && !isOperator(stringOfNumbersAndOperators[*index]))
-        {
-            stringForNumber[indexOfStringForNumber] = stringOfNumbersAndOperators[*index];
-            ++indexOfStringForNumber;
-            ++(*index);
-        }
-        --(*index);
-        int number = atoi(stringForNumber);
-        newNode->number = number;
+        newNode->number = getNumberFromSequence(stringOfNumbersAndOperators, index);
     }
     return newNode;
 }
 
-void symbolToAdd(char* string, int* indexForString, char symbolToAdding, bool spaceOption)
+void symbolToAdd(char* string, unsigned int* indexForString, char symbolToAdding, bool spaceOption)
 {
     string[*indexForString] = symbolToAdding;
     ++(*indexForString);
@@ -96,16 +105,7 @@ void symbolToAdd(char* string, int* indexForString, char symbolToAdding, bool sp
     }
 }
 
-void addMissingBrackets(char* stringForResult, int* indexForString, int* countOfBrackets)
-{
-    for (int i = 0; i < *countOfBrackets; ++i)
-    {
-        symbolToAdd(stringForResult, indexForString, ')', true);
-    }
-}
-
-void prefixTraverse(const Tree* parseTree, int* countOfNumbers,
-    char* stringForResult, int* indexForString, int* countOfBrackets)
+void prefixTraverse(const Tree* parseTree, char* stringForResult, unsigned int* indexForString)
 {
     if (parseTree == NULL)
     {
@@ -116,55 +116,40 @@ void prefixTraverse(const Tree* parseTree, int* countOfNumbers,
         char stringForNumber[30] = { "\0" };
         sprintf(stringForNumber, "%d", parseTree->number);
         int indexOfStringForNumber = 0;
-        while (stringForNumber[indexOfStringForNumber] != '\0')
+        strcat(stringForResult, stringForNumber);
+        ++(*indexForString);
+        if (parseTree->number < 0)
         {
-            symbolToAdd(stringForResult, indexForString,
-                stringForNumber[indexOfStringForNumber], false);
-            ++indexOfStringForNumber;
+            ++(*indexForString);
         }
         symbolToAdd(stringForResult, indexForString, ' ', false);
-        ++(*countOfNumbers);
-        if (*countOfNumbers >= 2)
-        {
-            symbolToAdd(stringForResult, indexForString, ')', true);
-            --(*countOfBrackets);
-            *countOfNumbers = 0;
-        }
     }
     else
     {
         symbolToAdd(stringForResult, indexForString, '(', true);
-        ++(*countOfBrackets);
         symbolToAdd(stringForResult, indexForString, parseTree->symbol, true);
-        *countOfNumbers = 0;
+        prefixTraverse(parseTree->leftChild, stringForResult, indexForString);
+        prefixTraverse(parseTree->rightChild, stringForResult, indexForString);
+        symbolToAdd(stringForResult, indexForString, ')', true);
     }
-    prefixTraverse(parseTree->leftChild, countOfNumbers,
-        stringForResult, indexForString, countOfBrackets);
-    prefixTraverse(parseTree->rightChild, countOfNumbers,
-        stringForResult, indexForString, countOfBrackets);
 }
 
 int calculateParseTree(const Tree* parseTree, bool* divisionByZero)
 {
-    int firstElement = 0;
-    int secondElement = 0;
     if (parseTree->leftChild == NULL && parseTree->rightChild == NULL)
     {
         return parseTree->number;
     }
-    firstElement = calculateParseTree(parseTree->leftChild, divisionByZero);
-    secondElement = calculateParseTree(parseTree->rightChild, divisionByZero);
+    int firstElement = calculateParseTree(parseTree->leftChild, divisionByZero);
+    int secondElement = calculateParseTree(parseTree->rightChild, divisionByZero);
     switch (parseTree->symbol)
     {
     case '+':
         return firstElement + secondElement;
-        break;
     case '-':
         return firstElement - secondElement;
-        break;
     case'*':
         return firstElement * secondElement;
-        break;
     case '/':
         if (secondElement == 0)
         {
@@ -172,15 +157,11 @@ int calculateParseTree(const Tree* parseTree, bool* divisionByZero)
             break;
         }
         return firstElement / secondElement;
-        break;
     }
-    if (*divisionByZero)
-    {
-        return -1;
-    }
+    return -1;
 }
 
-Tree* buildTree(const char* string)
+Tree* buildParseTree(const char* string)
 {
     int indexOfSequence = 0;
     Node* parseTree = createNewNodeForParseTree(string, &indexOfSequence);
@@ -189,12 +170,8 @@ Tree* buildTree(const char* string)
 
 void printParseTree(const Tree* parseTree)
 {
-    int indexOfResultString = 0;
-    int countOfNumbers = 0;
-    int countOfBrackets = 0;
+    unsigned int indexOfResultString = 0;
     char resultSequenceOfNumbersAndOperators[50] = { '\0' };
-    prefixTraverse(parseTree, &countOfNumbers,
-        resultSequenceOfNumbersAndOperators, &indexOfResultString, &countOfBrackets);
-    addMissingBrackets(resultSequenceOfNumbersAndOperators, &indexOfResultString, &countOfBrackets);
+    prefixTraverse(parseTree, resultSequenceOfNumbersAndOperators, &indexOfResultString);
     printf("%s", resultSequenceOfNumbersAndOperators);
 }

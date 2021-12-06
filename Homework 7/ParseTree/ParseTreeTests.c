@@ -3,42 +3,31 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../ParseTree/ParseTreeTests.h"
+#include "ParseTreeTests.h"
+#include "ParseTree.h"
 
 bool checkOfCreatingParseTree()
 {
     FILE* data = fopen("StandartTestData.txt", "r");
-    char sequenceOfNumbersAndOperators[50] = { "\0" };
+    char sequenceOfNumbersAndOperators[50] = { '\0' };
     fgets(sequenceOfNumbersAndOperators, 50, data);
     fclose(data);
+    Tree* parseTree = buildParseTree(sequenceOfNumbersAndOperators);
     int indexOfSequence = 0;
-    Node* parseTree = createNewNodeForParseTree(sequenceOfNumbersAndOperators,
-        &indexOfSequence);
-    int countOfNumbers = 0;
-    indexOfSequence = 0;
-    int countOfBrackets = 0;
-    prefixTraverse(parseTree, &countOfNumbers,
-        sequenceOfNumbersAndOperators, &indexOfSequence, &countOfBrackets);
-    addMissingBrackets(sequenceOfNumbersAndOperators, &indexOfSequence, &countOfBrackets);
-    char* expectedResult = "( * ( + 3 5 ) ( - 8 ( * 3 5 ) ) ) ";
-    if (strcmp(expectedResult, sequenceOfNumbersAndOperators) != 0)
-    {
-        deleteParseTree(parseTree);
-        return false;
-    }
+    char stringForResult[50] = { '\0' };
+    prefixTraverse(parseTree, stringForResult, &indexOfSequence);
+    const char* expectedResult = "( * ( + 3 5 ) ( - 8 ( * 3 5 ) ) ) ";
     deleteParseTree(parseTree);
-    return true;
+    return strcmp(expectedResult, stringForResult) == 0;
 }
 
 bool checkOfCalculatingParseTree()
 {
     FILE* data = fopen("StandartTestData.txt", "r");
-    char sequenceOfNumbersAndOperators[50] = { "\0" };
+    char sequenceOfNumbersAndOperators[50] = { '\0' };
     fgets(sequenceOfNumbersAndOperators, 50, data);
     fclose(data);
-    int indexOfSequence = 0;
-    Node* parseTree = createNewNodeForParseTree(sequenceOfNumbersAndOperators,
-        &indexOfSequence);
+    Tree* parseTree = buildParseTree(sequenceOfNumbersAndOperators);
     int expectedResult = 56;
     bool divisionByZero = false;
     if (calculateParseTree(parseTree, &divisionByZero) != -56 || divisionByZero)
@@ -50,17 +39,10 @@ bool checkOfCalculatingParseTree()
     data = fopen("TestDataWithDivisionByZero.txt", "r");
     fgets(sequenceOfNumbersAndOperators, 50, data);
     fclose(data);
-    indexOfSequence = 0;
-    parseTree = createNewNodeForParseTree(sequenceOfNumbersAndOperators,
-        &indexOfSequence);
+    parseTree = buildParseTree(sequenceOfNumbersAndOperators);
     expectedResult = calculateParseTree(parseTree, &divisionByZero);
-    if (!divisionByZero)
-    {
-        deleteParseTree(parseTree);
-        return false;
-    }
     deleteParseTree(parseTree);
-    return true;
+    return divisionByZero;
 }
 
 bool areTestsPassed()

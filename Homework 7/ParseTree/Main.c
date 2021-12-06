@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 
-#include "../ParseTree/ParseTree.h"
-#include "../ParseTree/ParseTreeTests.h"
+#include "ParseTree.h"
+#include "ParseTreeTests.h"
 
 int main()
 {
@@ -17,17 +17,16 @@ int main()
     fgets(sequenceOfNumbersAndOperators, 50, data);
     fclose(data);
     printf("The original arithmetic expression: %s", sequenceOfNumbersAndOperators);
-    Tree* parseTree = buildTree(sequenceOfNumbersAndOperators);
+    Tree* parseTree = buildParseTree(sequenceOfNumbersAndOperators);
     printf("\nNew expression (from tree): ");
     printParseTree(parseTree);
     bool divisionByZero = false;
     int const result = calculateParseTree(parseTree, &divisionByZero);
+    deleteParseTree(parseTree);
     if (divisionByZero)
     {
         printf("\nIncorrect sequence\n");
-        deleteParseTree(parseTree);
         return -1;
     }
-    printf("\nExpression value: %d ", result);
-    deleteParseTree(parseTree);
+    printf("\nExpression value: %d \n", result);
 }
