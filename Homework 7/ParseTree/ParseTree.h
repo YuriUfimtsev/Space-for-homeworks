@@ -2,18 +2,19 @@
 
 #include <stdbool.h>
 
-typedef struct Node {
-    int number;
-    char symbol;
-    struct Node* leftChild;
-    struct Node* rightChild;
-} Node;
+typedef struct Node Node;
+
+typedef Node Tree;
+
+Tree* buildTree(const char* string);
+
+// Функция вычисляет значение выражения, выполняя обход по дереву.
+// Функция принимает указатель на корень дерева, а также указатель на переменную,
+// которая сигнализирует о делении на ноль.
+int calculateParseTree(const Tree* tree, bool* checkOfDivisionByZero);
 
 // Функция создает дерево - точнее, его первый узел. Возвращает указатель на данный узел.
 Node* createNode();
-
-// Функция очищает память, выделенную по данный узел. Принимает указатель на узел.
-void deleteNode(Node* node);
 
 // Функция удаляет все дерево. Очищает память, выделенную под него.
 // Принимает указатель на корень дерева.
@@ -26,7 +27,7 @@ void deleteParseTree(Node* root);
 // в которую будет записывать результат, и указатель на индекс этой строки.
 // Кроме того функция принимает указатель на счетчик незакрытых скобок - необходимо
 // для соблюдения скобочного баланса в получившейся строке.
-void prefixTraverse(Node* parseTree, int* countOfNumbers,
+void prefixTraverse(const Tree* parseTree, int* countOfNumbers,
     char* stringForResult, int* indexForString, int* countOfBrackets);
 
 // Функция дописывает необходимое кол-во скобок в конец строки.
@@ -38,20 +39,17 @@ void addMissingBrackets(char* stringForResult, int* indexForString, int* countOf
 // Функция принимает строку, в которую нужно добавить символ, указатель на индекс этой строки,
 // сам символ, который нужно добавить, и вариант добавления:
 // true - добавить с последующим пробелом, false - без пробела.
-void addToString(char* string, int* indexForString, char symbolToAdding, bool spaceOption);
+void symbolToAdd(char* string, int* indexForString, char symbolToAdding, bool spaceOption);
 
 // Функция проверяет, является ли данный символ цифрой.
-bool isNumberInString(char symbol);
+bool isDigit(const char symbol);
 
 // Функция проверяет, является ли данный символ оператором.
-bool isOperatorInString(char symbol);
+bool isOperator(const char symbol);
 
 // Функция строит дерево разбора арифметического выражения.
 // Принимает строку с арифметическим выражением и индекс элемента в строке.
 // Функция возвращает указатель на корень созданного дерева.
-Node* createNewNodeForParseTree(char* stringOfNumbersAndOperators, int* index);
+Node* createNewNodeForParseTree(const char* stringOfNumbersAndOperators, int* index);
 
-// Функция вычисляет значение выражения, выполняя обход по дереву.
-// Функция принимает указатель на корень дерева, а также указатель на переменную,
-// которая сигнализирует о делении на ноль.
-int calculateParseTree(Node* tree, bool* checkOfDivisionByZero);
+void printParseTree(const Tree* parseTree);

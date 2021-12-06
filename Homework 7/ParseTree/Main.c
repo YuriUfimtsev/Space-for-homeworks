@@ -13,21 +13,13 @@ int main()
         return -1;
     }
     FILE* data = fopen("Data.txt", "r");
-    char sequenceOfNumbersAndOperators[50] = { "\0" };
+    char sequenceOfNumbersAndOperators[50] = { '\0' };
     fgets(sequenceOfNumbersAndOperators, 50, data);
     fclose(data);
     printf("The original arithmetic expression: %s", sequenceOfNumbersAndOperators);
-    int indexOfSequence = 0;
-    Node* parseTree = createNewNodeForParseTree(sequenceOfNumbersAndOperators,
-        &indexOfSequence);
-    int countOfNumbers = 0;
+    Tree* parseTree = buildTree(sequenceOfNumbersAndOperators);
     printf("\nNew expression (from tree): ");
-    int indexOfResultString = 0;
-    int countOfBrackets = 0;
-    prefixTraverse(parseTree, &countOfNumbers,
-        sequenceOfNumbersAndOperators, &indexOfResultString, &countOfBrackets);
-    addMissingBrackets(sequenceOfNumbersAndOperators, &indexOfResultString, &countOfBrackets);
-    printf("%s", sequenceOfNumbersAndOperators);
+    printParseTree(parseTree);
     bool divisionByZero = false;
     int const result = calculateParseTree(parseTree, &divisionByZero);
     if (divisionByZero)
