@@ -4,14 +4,14 @@
 
 void dfs(int node, int* nodes[], int matrix[][5])
 {
-     //nodes[node] = node;
+     nodes[node] = node;
     for (int i = 0; i <= 5; ++i)
     {
         for (int j = 0; j <= 5; ++j)
         {
             if (matrix[i][j] == 1 && i != j)
             {
-                if (nodes[j] == 0)
+                if (nodes[j] != j)
                 {
                     dfs(j, nodes, matrix);
                     nodes[j] = i;
