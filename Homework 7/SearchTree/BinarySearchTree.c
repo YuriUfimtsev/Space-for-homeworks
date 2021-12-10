@@ -2,199 +2,218 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "../SearchTree/BinarySearchTree.h"
+#include "BinarySearchTree.h"
 
-Node* createNode()
+typedef struct Node {
+    int key;
+    const char* value;
+    struct Node* leftChild;
+    struct Node* rightChild;
+} Node;
+
+Node* createNode(const int key, const char* value)
+{
+    Node* newNode = calloc(1, sizeof(Node));
+    if (newNode == NULL)
+    {
+        return NULL;
+    }
+    newNode->key = key;
+    newNode->value = value;
+    return newNode;
+}
+
+Node* createEmptyNode()
 {
     return calloc(1, sizeof(Node));
 }
 
 void deleteNode(Node* node)
 {
-    free(node->value);
+    free((void*)node->value);
     free(node);
 }
 
-void deleteTree(Node* root)
+void deleteTree(Node* parent)
 {
-    if (root == NULL)
+    if (parent == NULL)
     {
         return;
     }
-    if (root->leftChild != NULL)
-    {
-        deleteTree(root->leftChild);
-    }
-    if (root->rightChild != NULL)
-    {
-        deleteTree(root->rightChild);
-    }
-    deleteNode(root);
+    deleteTree(parent->leftChild);
+    deleteTree(parent->rightChild);
+    deleteNode(parent);
 }
 
-void insertToTree(Node* tree, const int key, char* value)
+void insertToTree(Node* currentNode, const int key, const char* value)
 {
-    if (tree->leftChild == NULL && tree->rightChild == NULL
-        && tree->value == NULL)
+    if (currentNode->leftChild == NULL && currentNode->rightChild == NULL
+        && currentNode->value == NULL)
     {
-        tree->key = key;
-        tree->value = value;
+        currentNode->key = key;
+        currentNode->value = value;
         return;
     }
-    if (key > tree->key)
+    if (key > currentNode->key)
     {
-        if (tree->rightChild == NULL)
+        if (currentNode->rightChild == NULL)
         {
-            Node* newNode = createNode();
-            tree->rightChild = newNode;
-            newNode->key = key;
-            newNode->value = value;
+            Node* newNode = createNode(key, value);
+            currentNode->rightChild = newNode;
             return;
         }
-        insertToTree(tree->rightChild, key, value);
+        insertToTree(currentNode->rightChild, key, value);
     }
-    else if (key < tree->key)
+    else if (key < currentNode->key)
     {
-        if (tree->leftChild == NULL)
+        if (currentNode->leftChild == NULL)
         {
-            Node* newNode = createNode();
-            tree->leftChild = newNode;
-            newNode->key = key;
-            newNode->value = value;
+            Node* newNode = createNode(key, value);
+            currentNode->leftChild = newNode;
             return;
         }
-        insertToTree(tree->leftChild, key, value);
+        insertToTree(currentNode->leftChild, key, value);
     }
-    else if (key == tree->key)
+    else if (key == currentNode->key)
     {
-        tree->value = value;
+        free((void*)currentNode->value);
+        currentNode->value = value;
     }
 }
 
-bool isKeyInTree(Node* tree, const int key)
+bool isKeyInTree(Node* currentNode, const int key)
 {
-    if (tree == NULL)
+    if (currentNode == NULL)
     {
         return false;
     }
-    if (key > tree->key)
+    if (key > currentNode->key)
     {
-        if (tree->rightChild == NULL)
-        {
-            return false;
-        }
-        isKeyInTree(tree->rightChild, key);
+        return isKeyInTree(currentNode->rightChild, key);
     }
-    else if (key < tree->key)
+    else if (key < currentNode->key)
     {
-        if (tree->leftChild == NULL)
-        {
-            return false;
-        }
-        isKeyInTree(tree->leftChild, key);
+        return isKeyInTree(currentNode->leftChild, key);
     }
-    else if (key == tree->key)
+    else
     {
         return true;
     }
 }
 
-char* findInTree(Node* tree, const int key)
+const char* findInTree(Node* currentNode, const int key)
 {
-    if (key == tree->key)
+    if (key == currentNode->key)
     {
-        return tree->value;
+        return currentNode->value;
     }
-    if (key > tree->key)
+    else if (key > currentNode->key)
     {
-        findInTree(tree->rightChild, key);
+        return findInTree(currentNode->rightChild, key);
     }
-    else if (key < tree->key)
+    else
     {
-        findInTree(tree->leftChild, key);
+        return findInTree(currentNode->leftChild, key);
     }
 }
 
-void removeFromTree(Node* tree, Node* root, const int key)
+void removeFromTree(Node* currentNode, Node* parent, const int key)
 {
-    if (!isKeyInTree(tree, key))
+    if (!isKeyInTree(currentNode, key))
     {
         return;
     }
-    if (key > tree->key)
+    if (key > currentNode->key)
     {
-        removeFromTree(tree->rightChild, tree, key);
+        removeFromTree(currentNode->rightChild, currentNode, key);
     }
-    else if (key < tree->key)
+    else if (key < currentNode->key)
     {
-        removeFromTree(tree->leftChild, tree, key);
+        removeFromTree(currentNode->leftChild, currentNode, key);
     }
-    else if (key == tree->key)
+    else if (key == currentNode->key)
     {
-        if (tree->leftChild == NULL && tree->rightChild == NULL)
+        if (currentNode->leftChild == NULL && currentNode->rightChild == NULL)
         {
-            if (root != tree)
+            if (parent != currentNode)
             {
-                if (root->leftChild == tree)
+                if (parent->leftChild == currentNode)
                 {
-                    root->leftChild = NULL;
+                    parent->leftChild = NULL;
                 }
                 else
                 {
-                    root->rightChild = NULL;
+                    parent->rightChild = NULL;
                 }
-                deleteNode(tree);
+                deleteNode(currentNode);
+                return;
             }
-            else if (root == tree)
-            {
-                tree->value = NULL;
-                tree->key = 0;
-            }
+            currentNode->value = NULL;
+            currentNode->key = 0;
         }
-        else if (tree->leftChild == NULL || tree->rightChild == NULL)
+        else if (currentNode->leftChild == NULL || currentNode->rightChild == NULL)
         {
-            if (tree->leftChild == NULL)
+            if (currentNode->leftChild == NULL)
             {
-                tree->key = tree->rightChild->key;
-                free(tree->value);
-                tree->value = tree->rightChild->value;
-                Node* nodeForRemove = tree->rightChild;
-                tree->leftChild = tree->rightChild->leftChild;
-                tree->rightChild = tree->rightChild->rightChild;
+                currentNode->key = currentNode->rightChild->key;
+                free((void*)currentNode->value);
+                currentNode->value = currentNode->rightChild->value;
+                Node* nodeForRemove = currentNode->rightChild;
+                currentNode->leftChild = currentNode->rightChild->leftChild;
+                currentNode->rightChild = currentNode->rightChild->rightChild;
                 free(nodeForRemove);
+                return;
             }
-            else if(tree->rightChild == NULL)
-            {
-                tree->key = tree->leftChild->key;
-                free(tree->value);
-                tree->value = tree->leftChild->value;
-                Node* nodeForRemove = tree->leftChild;
-                tree->rightChild = tree->leftChild->rightChild;
-                tree->leftChild = tree->leftChild->leftChild;
-                free(nodeForRemove);
-            }
+            currentNode->key = currentNode->leftChild->key;
+            free((void*)currentNode->value);
+            currentNode->value = currentNode->leftChild->value;
+            Node* nodeForRemove = currentNode->leftChild;
+            currentNode->rightChild = currentNode->leftChild->rightChild;
+            currentNode->leftChild = currentNode->leftChild->leftChild;
+            free(nodeForRemove);
         }
         else
         {
-            if (tree->rightChild->leftChild == NULL)
+            if (currentNode->rightChild->leftChild == NULL)
             {
-                tree->key = tree->rightChild->key;
-                free(tree->value);
-                tree->value = tree->rightChild->value;
-                Node* nodeToRemove = tree->rightChild;
-                tree->rightChild = tree->rightChild->rightChild;
+                currentNode->key = currentNode->rightChild->key;
+                free((void*)currentNode->value);
+                currentNode->value = currentNode->rightChild->value;
+                Node* nodeToRemove = currentNode->rightChild;
+                currentNode->rightChild = currentNode->rightChild->rightChild;
                 free(nodeToRemove);
                 return;
             }
-            root = tree;
-            tree = tree->rightChild;
-            while (tree->leftChild->leftChild != NULL)
+            parent = currentNode;
+            currentNode = currentNode->rightChild;
+            while (currentNode->leftChild->leftChild != NULL)
             {
-                tree = tree->leftChild;
+                currentNode = currentNode->leftChild;
             }
-            root->key = tree->leftChild->key;
-            root->value = tree->leftChild->value;
-            removeFromTree(tree->leftChild, tree, key);
+            parent->key = currentNode->leftChild->key;
+            parent->value = currentNode->leftChild->value;
+            removeFromTree(currentNode->leftChild, currentNode, key);
         }
     }
 }
+
+const char* getValueFromTree(Node* currentNode)
+{
+    return currentNode->value;
+}
+
+const int getKeyFromTree(Node* currentNode)
+{
+    return currentNode->key;
+}
+
+Node* getRightChild(Node* currentNode)
+{
+    return currentNode->rightChild;
+}
+
+Node* getLeftChild(Node* currentNode)
+{
+    return currentNode->leftChild;
+}
+

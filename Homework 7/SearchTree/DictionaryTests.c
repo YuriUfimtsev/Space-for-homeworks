@@ -3,28 +3,25 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../SearchTree/BinarySearchTree.h"
-#include "../SearchTree/Dictionary.h"
+#include "BinarySearchTree.h"
+#include "Dictionary.h"
 
 bool checkOfAddingToTheDictionary()
 {
-    Node* dictionary = createDictionary();
-    char firstStringForCheck[8] = "abbba";
-    char secondStringForCheck[8] = "ccchhh";
-    char thirdStringForCheck[8] = "kkkkmmm";
-    addToDictionary(dictionary, 50, firstStringForCheck);
-    addToDictionary(dictionary, 0, secondStringForCheck);
-    addToDictionary(dictionary, 28, thirdStringForCheck);
-    if (!(dictionary->key == 50 && dictionary->leftChild->key == 0
-        && dictionary->rightChild == NULL
-        && dictionary->leftChild->rightChild->key == 28))
+    Dictionary* dictionary = createDictionary();
+    addToDictionary(dictionary, 50, "abbba");
+    addToDictionary(dictionary, 0, "ccchhh");
+    addToDictionary(dictionary, 28, "kkkkmmm");
+    if (!(getKeyFromTree(dictionary) == 50 && getKeyFromTree(getLeftChild(dictionary)) == 0
+        && getRightChild(dictionary) == NULL
+        && getKeyFromTree(getRightChild(getLeftChild(dictionary))) == 28))
     {
         deleteDictionary(dictionary);
         return false;
     }
-    if (!(strcmp(firstStringForCheck, dictionary->value) == 0
-        && strcmp(secondStringForCheck, dictionary->leftChild->value) == 0
-        && strcmp(thirdStringForCheck, dictionary->leftChild->rightChild->value) == 0))
+    if (!(strcmp("abbba", getValueFromTree(dictionary)) == 0
+        && strcmp("ccchhh", getValueFromTree(getLeftChild(dictionary))) == 0
+        && strcmp("kkkkmmm", getValueFromTree(getRightChild(getLeftChild(dictionary)))) == 0))
     {
         deleteDictionary(dictionary);
         return false;
@@ -35,14 +32,13 @@ bool checkOfAddingToTheDictionary()
 
 bool checkOfGettingValueFromDictionary()
 {
-    Node* dictionary = createDictionary();
-    char firstStringForCheck[8] = "abbba";
-    char secondStringForCheck[8] = "ccchhh";
-    char thirdStringForCheck[5] = "NULL";
-    addToDictionary(dictionary, 50, firstStringForCheck);
-    addToDictionary(dictionary, 0, secondStringForCheck);
-    if (strcmp(getValueFromDictionary(dictionary, 0), secondStringForCheck) != 0
-        || strcmp(getValueFromDictionary(dictionary, 5), thirdStringForCheck) != 0)
+    Dictionary* dictionary = createDictionary();
+    addToDictionary(dictionary, 50, "abbba");
+    addToDictionary(dictionary, 0, "ccchhh");
+    bool keyInDictionary = true;
+    if (strcmp(getValueFromDictionary(dictionary, 0, &keyInDictionary), "ccchhh") != 0
+        || strcmp(getValueFromDictionary(dictionary, 5, &keyInDictionary), "NULL") != 0
+        || keyInDictionary)
     {
         deleteDictionary(dictionary);
         return false;
@@ -53,16 +49,13 @@ bool checkOfGettingValueFromDictionary()
 
 bool checkOfRemovingFromDictionary()
 {
-    Node* dictionary = createDictionary();
-    char firstStringForCheck[8] = "abbba";
-    char secondStringForCheck[8] = "ccchhh";
-    char thirdStringForCheck[8] = "kkkkmmm";
-    addToDictionary(dictionary, 50, firstStringForCheck);
-    addToDictionary(dictionary, 0, secondStringForCheck);
-    addToDictionary(dictionary, 28, thirdStringForCheck);
+    Dictionary* dictionary = createDictionary();
+    addToDictionary(dictionary, 50, "abbba");
+    addToDictionary(dictionary, 0, "ccchhh");
+    addToDictionary(dictionary, 28, "kkkkmmm");
     removeFromDictionary(dictionary, 50);
-    if (dictionary->key != 0 || dictionary->rightChild->key != 28
-        || dictionary->leftChild != NULL)
+    if (getKeyFromTree(dictionary) != 0 || getKeyFromTree(getRightChild(dictionary)) != 28
+        || getLeftChild(dictionary) != NULL)
     {
         deleteDictionary(dictionary);
         return false;

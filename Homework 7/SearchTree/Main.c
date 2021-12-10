@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../SearchTree/BinarySearchTree.h"
-#include "../SearchTree/Dictionary.h"
-#include "../SearchTree/DictionaryTests.h"
+#include "BinarySearchTree.h"
+#include "Dictionary.h"
+#include "DictionaryTests.h"
 
 void printTheMenu()
 {
@@ -27,7 +27,7 @@ int main()
         return -1;
     }
     printTheMenu();
-    Node* dictionary = createDictionary();
+    Dictionary* dictionary = createDictionary();
     int command = 0;
     while (command != 5)
     {
@@ -35,6 +35,7 @@ int main()
         scanf("%d", &command);
         int key = 0;
         char value[30] = "";
+        bool keyInDictionary = true;
         if (command != 5)
         {
             printf("Enter the key: ");
@@ -50,7 +51,12 @@ int main()
             printf("The new entry has been created\n");
             break;
         case 2:
-            strcpy(value, getValueFromDictionary(dictionary, key));
+            strcpy(value, getValueFromDictionary(dictionary, key, &keyInDictionary));
+            if (!keyInDictionary)
+            {
+                printf("The value doesn't exist in 'Dictionary'");
+                break;
+            }
             printf("The value is '%s'\n", value);
             break;
         case 3:

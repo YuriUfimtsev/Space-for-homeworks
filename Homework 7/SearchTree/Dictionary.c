@@ -5,41 +5,44 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../SearchTree/BinarySearchTree.h"
+#include "BinarySearchTree.h"
+#include "Dictionary.h"
 
-Node* createDictionary()
+Dictionary* createDictionary()
 {
-    return createNode();
+    return createEmptyNode();
 }
 
-void addToDictionary(Node* tree, const int key, char* value)
+void addToDictionary(Dictionary* currentNode, const int key, const char* value)
 {
     char* valueForDictionary = malloc(30);
     strcpy(valueForDictionary, value);
-    insertToTree(tree, key, valueForDictionary);
+    insertToTree(currentNode, key, valueForDictionary);
 }
 
-char* getValueFromDictionary(Node* tree, const int key)
+const char* getValueFromDictionary(Dictionary* currentNode, const int key, bool* keyInTree)
 {
-    if (!isKeyInTree(tree, key))
+    if (!isKeyInTree(currentNode, key))
     {
+        *keyInTree = false;
         char* value = "NULL";
         return value;
     }
-    return findInTree(tree, key);
+    const char* resultString = findInTree(currentNode, key);
+    return resultString;
 }
 
-bool isKeyInDictionary(Node* tree, const int key)
+bool isKeyInDictionary(Dictionary* currentNode, const int key)
 {
-    return isKeyInTree(tree, key);
+    return isKeyInTree(currentNode, key);
 }
 
-void removeFromDictionary(Node* tree, const int key)
+void removeFromDictionary(Dictionary* currentNode, const int key)
 {
-    removeFromTree(tree, tree, key);
+    removeFromTree(currentNode, currentNode, key);
 }
 
-void deleteDictionary(Node* tree)
+void deleteDictionary(Dictionary* currentNode)
 {
-    deleteTree(tree);
+    deleteTree(currentNode);
 }
