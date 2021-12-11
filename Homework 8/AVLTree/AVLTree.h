@@ -14,10 +14,6 @@ Node* createNode(const int key, const char* value);
 // Принимает указатель на корень дерева.
 void deleteTree(Node* parent);
 
-// Функция добавляет новый узел с ключом key и значением value в дерево tree.
-// Принимает указатель на корень дерева, ключ key и указатель на строку value.
-Node* insertToTree(Node* currentNode, const int key, const char* value);
-
 // Функция проверяет, есть ли в дереве tree элемент с ключом key.
 // Принимает указатель на корень дерева, ключ key.
 // Возвращает true, если элемент найден, false иначе.
@@ -54,7 +50,10 @@ Node* bigRotateLeft(Node* currentNode);
 
 Node* bigRotateRight(Node* currentNode);
 
-Node* balance(Node* currentNode);
+Node* balance(Node* currentNode, bool* isBalance);
+
+Node* insertToTree(Node* currentNode, const int key, const char* value, Node* root,
+	bool* areBalancesCorrect, bool* isBalance);
 
 
 

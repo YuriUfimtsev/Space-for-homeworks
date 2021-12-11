@@ -50,13 +50,45 @@ void deleteTree(Node* parent)
     deleteNode(parent);
 }
 
+//int correctNumber(Node* currentNode, enum option side)
+//{
+//    if (side == left)
+//    {
+//        if (currentNode->balance <= 0)
+//        {
+//
+//        }
+//    }
+//}
+
+int calculateBalance(Node* currentNode)
+{
+    int result = 0;
+    if (currentNode->leftChild != NULL)
+    {
+        result += currentNode->leftChild->balance;
+    }
+    if (currentNode->rightChild != NULL)
+    {
+        result += currentNode->rightChild->balance;
+    }
+    return result;
+}
+
 Node* rotateLeft(Node* currentNode)
 {
     Node* buffer = currentNode->rightChild;
+    if (buffer->balance == 1)
+    {
+        currentNode->balance = 0;
+        buffer->balance = 0;
+    }
+    else if (buffer->balance == 0)
+    {
+        buffer->balance = -1;
+    }
     currentNode->rightChild = buffer->leftChild;
-    buffer->leftChild == currentNode;
-    currentNode->balance = currentNode->rightChild->balance + currentNode->leftChild->balance;
-    buffer->balance = buffer->rightChild->balance + buffer->leftChild->balance;
+    buffer->leftChild = currentNode;
     return buffer;
 }
 
@@ -72,18 +104,73 @@ Node* rotateRight(Node* currentNode)
 
 Node* bigRotateLeft(Node* currentNode)
 {
-
+    Node* firstBuffer = currentNode->rightChild->leftChild;
+    Node* secondBuffer = currentNode->rightChild;
+    currentNode->rightChild = firstBuffer->leftChild;
+    secondBuffer->leftChild = firstBuffer->rightChild;
+    firstBuffer->rightChild = secondBuffer;
+    firstBuffer->leftChild = currentNode;
+    secondBuffer->balance = secondBuffer->leftChild->balance + secondBuffer->rightChild->balance;
+    currentNode->balance = currentNode->leftChild->balance + currentNode->rightChild->balance;
+    firstBuffer->balance = currentNode->balance + secondBuffer->balance;
+    return firstBuffer;
 }
 
 Node* bigRotateRight(Node* currentNode)
 {
-
+    Node* firstBuffer = currentNode->leftChild->rightChild;
+    Node* secondBuffer = currentNode->leftChild;
+    secondBuffer->rightChild = firstBuffer->leftChild;
+    currentNode->leftChild = firstBuffer->rightChild;
+    firstBuffer->leftChild = secondBuffer;
+    firstBuffer->rightChild = currentNode;
+    secondBuffer->balance = secondBuffer->leftChild->balance + secondBuffer->rightChild->balance;
+    currentNode->balance = currentNode->leftChild->balance + currentNode->rightChild->balance;
+    firstBuffer->balance = currentNode->balance + secondBuffer->balance;
+    return firstBuffer;
 }
 
-Node* balance(Node* currentNode)
+void updateBalance(Node* currentNode, const int key, bool* areBalancesCorrect)
+{
+    if (key == currentNode->key)
+    {
+        if (currentNode->balance == 0)
+        {
+            *areBalancesCorrect = true;
+        }
+        return;
+    }
+    else if (key > currentNode->key)
+    {
+        updateBalance(currentNode->rightChild, key, areBalancesCorrect);
+        if (!*areBalancesCorrect)
+        {
+            --(currentNode->balance);
+        }
+        if (currentNode->balance == 0)
+        {
+            *areBalancesCorrect = true;
+        }
+    }
+    else
+    {
+        updateBalance(currentNode->leftChild, key, areBalancesCorrect);
+        if (!*areBalancesCorrect)
+        {
+            ++(currentNode->balance);
+        }
+        if (currentNode->balance == 0)
+        {
+            *areBalancesCorrect = true;
+        }
+    }
+}
+
+Node* balance(Node* currentNode, bool* isBalance)
 {
     if (currentNode->balance == 2)
     {
+        *isBalance = true;
         if (currentNode->rightChild->balance >= 0)///
         {
             return rotateLeft(currentNode);
@@ -92,6 +179,7 @@ Node* balance(Node* currentNode)
     }
     if (currentNode->balance == -2)
     {
+        *isBalance = true;
         if (currentNode->leftChild->balance <= 0)
         {
             return rotateRight(currentNode);
@@ -101,43 +189,87 @@ Node* balance(Node* currentNode)
     return currentNode;
 }
 
-Node* insertToTree(Node* currentNode, const int key, const char* value)
+Node* insertToTree(Node* currentNode, const int key, const char* value, Node* root,
+    bool* areBalancesCorrect, bool* isBalance)
 {
     if (currentNode == NULL)
     {
         Node* newNode = calloc(1, sizeof(Node));
+        if (newNode == NULL)
+        {
+            return NULL;
+        }
         newNode->key = key;
         newNode->value = value;
+        if (root == NULL)
+        {
+            root = newNode;///
+        }
         return newNode;
     }
-    if (currentNode->leftChild == NULL && currentNode->rightChild == NULL
-        && currentNode->value == NULL)
-    {
-        currentNode->key = key;
-        currentNode->value = value;
-        return NULL;
-    }
+    //if (currentNode->leftChild == NULL && currentNode->rightChild == NULL
+    //    && currentNode->value == NULL)
+    //{
+    //    currentNode->key = key;
+    //    currentNode->value = value;
+    //    return NULL;
+    //}
     if (key > currentNode->key)
     {
-        currentNode->rightChild = insertToTree(currentNode->rightChild, key, value);
-        ++(currentNode->balance);
-    }
-    else if (key < currentNode->key)
-    {
-        currentNode->leftChild = insertToTree(currentNode->leftChild, key, value);
-        --(currentNode->balance);
+        currentNode->rightChild = insertToTree(currentNode->rightChild, key,
+            value, root, areBalancesCorrect, isBalance);
+        if (*isBalance)
+        {
+            bool areBalancesCorrecForUpdate = false;
+            updateBalance(root, key, &areBalancesCorrecForUpdate);
+            *areBalancesCorrect = true;
+        }
+        if (!*areBalancesCorrect)
+        {
+            ++(currentNode->balance);
+        }
+        if (currentNode->balance == 0)
+        {
+            *areBalancesCorrect = true;
+        }
     }
     else
     {
-        free((void*)currentNode->value);
-        currentNode->value = value;
-        return NULL;
+        currentNode->leftChild = insertToTree(currentNode->leftChild, key,
+            value, root, areBalancesCorrect, isBalance);
+        if (*isBalance)
+        {
+            bool areBalancesCorrecForUpdate = false;
+            updateBalance(root, key, &areBalancesCorrecForUpdate);
+            *areBalancesCorrect = true;
+        }
+        if (!*areBalancesCorrect)
+        {
+            --(currentNode->balance);
+        }
+        if (currentNode->balance == 0)
+        {
+            *areBalancesCorrect = true;
+        }
     }
-    Node* newRoot = balance(currentNode,...);
-    if (...)
-    {
-        findInTree();
-    }
+    //else
+    //{
+    //    free((void*)currentNode->value);
+    //    currentNode->value = value;
+    //    return NULL;
+    //}      ÄËß ÝÒÎÃÎ ÑÄÅËÀÒÜ ÄÐÓÃÓÞ ÔÓÍÊÖÈÞ È ÏÅÐÅÄ ÇÀÏÓÑÊÎÌ ÝÒÎÉ, ÇÀÏÓÑÒÈÒÜ ÄÐÓÃÓÞ È ÏÐÎÂÅÐÈÒÜ, ÅÑÒÜ ËÈ ÄÀÍÍÎÅ ÇÍÀ×ÅÍÈÅ Â ÄÅÐÅÂÅ
+    //if (root->)
+    Node* newRoot = balance(currentNode, isBalance);
+    //if (currentNode == root && isBalance)
+    //{
+    //    root = newRoot;
+    //}
+    //else if (isBalance)
+    //{
+    //    bool areBalancesCorrecForUpdate = false;
+    //    updateBalance(root, key, &areBalancesCorrecForUpdate);
+    //    *areBalancesCorrect = true;
+    //}
     return newRoot;
 }
 
