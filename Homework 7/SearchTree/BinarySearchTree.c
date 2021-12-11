@@ -11,6 +11,10 @@ typedef struct Node {
     struct Node* rightChild;
 } Node;
 
+typedef struct Tree {
+    struct Node* root;
+} Tree;
+
 Node* createNode(const int key, const char* value)
 {
     Node* newNode = calloc(1, sizeof(Node));
