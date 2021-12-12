@@ -5,5 +5,5 @@
 
 int main()
 {
-    return testOfInsertion();
+    return areTestsPassing();
 }

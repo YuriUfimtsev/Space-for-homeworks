@@ -34,7 +34,8 @@ bool isKeyInAVLTree(Node* currentNode, const int key);
 void advancedRemoveFromAVLTree(Node* root, const int key);
 
 // Функция по данному значению узла возвращает значение, лежащее в нем.
-const char* getValueFromAVLTree(Node* currentNode);
+const char* getValueFromAVLTree(Node* currentNode, const int key);
+
 
 // Функция возвращает ключ данного узла.
 const int getKeyFromAVLTree(Node* currentNode);
@@ -46,7 +47,7 @@ Node* getRightChild(Node* currentNode);
 Node* getLeftChild(Node* currentNode);
 
 Node* insertToAVLTree(Node* currentNode, const int key, const char* value, Node* root,
-	bool* areBalancesCorrect, bool* isBalance);
+    bool* areBalancesCorrect, bool* isBalance);
 
 char getBalanceFromAVLTree(Node* currentNode);
 

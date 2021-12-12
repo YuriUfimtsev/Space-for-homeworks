@@ -31,7 +31,6 @@ Node* createEmptyNode()
 
 void deleteNode(Node* node)
 {
-    //free((void*)node->value);
     free(node);
 }
 
@@ -199,7 +198,8 @@ void updateBalanceForInsert(Node* currentNode, const int key, bool* areBalancesC
     }
 }
 
-void updateBalanceForRemoving(Node* currentNode, const int key, bool* areBalancesCorrect, Node* parent, Node* root)
+void updateBalanceForRemoving(Node* currentNode, const int key,
+    bool* areBalancesCorrect, Node* parent, Node* root)
 {
     if (key == currentNode->key)
     {
@@ -230,7 +230,7 @@ void updateBalanceForRemoving(Node* currentNode, const int key, bool* areBalance
         updateBalanceForRemoving(currentNode->rightChild, key, areBalancesCorrect, currentNode, root);
         if (!*areBalancesCorrect)
         {
-            ++(currentNode->balance);
+            --(currentNode->balance);
         }
         if (currentNode->balance == 1 || currentNode->balance == -1 && !*areBalancesCorrect)
         {
@@ -258,7 +258,7 @@ void updateBalanceForRemoving(Node* currentNode, const int key, bool* areBalance
         updateBalanceForRemoving(currentNode->leftChild, key, areBalancesCorrect, currentNode, root);
         if (!*areBalancesCorrect)
         {
-            --(currentNode->balance);
+            ++(currentNode->balance);
         }
         if (currentNode->balance == 1 || currentNode->balance == -1 && !*areBalancesCorrect)
         {
@@ -276,7 +276,8 @@ void updateBalanceForRemoving(Node* currentNode, const int key, bool* areBalance
             else
             {
                 parent->leftChild = newRoot;
-                updateBalanceForRemoving(newRoot, newRoot->key, &areBalancesCorrectForUpdate, parent, root);////
+                updateBalanceForRemoving(newRoot, newRoot->key,
+                    &areBalancesCorrectForUpdate, parent, root);
             }
             *areBalancesCorrect = true;
         }
@@ -289,19 +290,18 @@ bool findInAVLTree(Node* currentNode, const int key, const char* value)
     {
         return false;
     }
-    if (key > currentNode->key)
+    if (key == currentNode->key)
     {
-        return isKeyInAVLTree(currentNode->rightChild, key);
+        currentNode->value = value;
+        return true;
     }
-    else if (key < currentNode->key)
+    else if (key > currentNode->key)
     {
-        return isKeyInAVLTree(currentNode->leftChild, key);
+        return findInAVLTree(currentNode->rightChild, key, value);
     }
     else
     {
-        //free((void*)currentNode->value);
-        currentNode->value = value;
-        return true;
+        return findInAVLTree(currentNode->leftChild, key, value);
     }
 }
 
@@ -379,9 +379,9 @@ void advancedInsertToAVLTree(Node** root, const int key, const char* value)
         bool areBalancesCorrect = false;
         bool isBalance = false;
         Node* newRoot = insertToAVLTree(*root, key, value, *root, &areBalancesCorrect, &isBalance);
-        if (newRoot != *root)/////
+        if (newRoot != *root)
         {
-            *root = newRoot;/////
+            *root = newRoot;
         }
     }
     return;
@@ -407,7 +407,7 @@ bool isKeyInAVLTree(Node* currentNode, const int key)
     }
 }
 
-const char* getValue(Node* currentNode, const int key)
+const char* getValueFromAVLTree(Node* currentNode, const int key)
 {
     if (key == currentNode->key)
     {
@@ -415,11 +415,11 @@ const char* getValue(Node* currentNode, const int key)
     }
     else if (key > currentNode->key)
     {
-        return getValue(currentNode->rightChild, key);
+        return getValueFromAVLTree(currentNode->rightChild, key);
     }
     else
     {
-        return getValue(currentNode->leftChild, key);
+        return getValueFromAVLTree(currentNode->leftChild, key);
     }
 }
 
@@ -427,7 +427,7 @@ const char* advancedGetValue(Node* root, const int key)
 {
     if (isKeyInAVLTree(root, key))
     {
-        return getValue(root, key);
+        return getValueFromAVLTree(root, key);
     }
     return "NULL";
 }
@@ -471,7 +471,6 @@ void removeFromAVLTree(Node* currentNode, Node* parent, const int key, Node* roo
             if (currentNode->leftChild == NULL)
             {
                 currentNode->key = currentNode->rightChild->key;
-                //free(currentNode->value);
                 currentNode->value = currentNode->rightChild->value;
                 Node* nodeForRemove = currentNode->rightChild;
                 currentNode->leftChild = currentNode->rightChild->leftChild;
@@ -484,7 +483,6 @@ void removeFromAVLTree(Node* currentNode, Node* parent, const int key, Node* roo
                 return;
             }
             currentNode->key = currentNode->leftChild->key;
-            //free((void*)currentNode->value);
             currentNode->value = currentNode->leftChild->value;
             Node* nodeForRemove = currentNode->leftChild;
             currentNode->rightChild = currentNode->leftChild->rightChild;
@@ -500,7 +498,6 @@ void removeFromAVLTree(Node* currentNode, Node* parent, const int key, Node* roo
             if (currentNode->rightChild->leftChild == NULL)
             {
                 currentNode->key = currentNode->rightChild->key;
-                //free((void*)currentNode->value);//
                 currentNode->value = currentNode->rightChild->value;
                 Node* nodeToRemove = currentNode->rightChild;
                 currentNode->rightChild = currentNode->rightChild->rightChild;
@@ -532,7 +529,7 @@ void advancedRemoveFromAVLTree(Node* root, const int key)
     removeFromAVLTree(root, root, key, root);
 }
 
-const char* getValueFromAVLTree(Node* currentNode)
+const char* getValue(Node* currentNode)
 {
     return currentNode->value;
 }
