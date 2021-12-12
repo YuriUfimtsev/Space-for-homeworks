@@ -10,17 +10,17 @@ Node* createEmptyNode();
 // Функция создает дерево с ключем key и значением value в корне.
 Node* createNode(const int key, const char* value);
 
-// Функция удаляет все дерево. Очищает память, выделенную под него.
+// Функция удаляет все дерево.
 // Принимает указатель на корень дерева.
 void deleteAVLTree(Node* parent);
 
 // Функция возвращает значение элемента с ключом key, лежащего в дереве tree.
-// Функция принимает указатель на корень дерева tree и ключ key.
+// Функция принимает указатель на корень дерева root и ключ key.
 // Вовращает NULL, если элемент с данным ключом в дереве не найден.
-// Если же элемент найден, функция вернет значение элемента - указатель на строку value.
 const char* advancedGetValue(Node* root, const int key);
 
-
+// Функция добавляет элемент в АВЛ дерево. Принимает адрес указателя на корень дерева,
+// ключ key, значениу value, которое необходимо добавить
 void advancedInsertToAVLTree(Node** root, const int key, const char* value);
 
 // Функция проверяет, есть ли в дереве tree элемент с ключом key.
@@ -28,14 +28,13 @@ void advancedInsertToAVLTree(Node** root, const int key, const char* value);
 // Возвращает true, если элемент найден, false иначе.
 bool isKeyInAVLTree(Node* currentNode, const int key);
 
-// Функция удаляет из дерева tree элемент с ключом key.
-// Принимает указатель на корень дерева root
-// и указатель на текущий узел (тоже корень дерева) currentNode, ключ key.
+// Функция удаляет из дерева элемент с ключом key.
+// Принимает указатель на корень дерева root, ключ key.
 void advancedRemoveFromAVLTree(Node* root, const int key);
 
-// Функция по данному значению узла возвращает значение, лежащее в нем.
+// Функция принимает указатель на корень дерева и ключ.
+// Возвращет значение, соответствующее этому ключу.
 const char* getValueFromAVLTree(Node* currentNode, const int key);
-
 
 // Функция возвращает ключ данного узла.
 const int getKeyFromAVLTree(Node* currentNode);
@@ -46,8 +45,5 @@ Node* getRightChild(Node* currentNode);
 // Функция возвращает указатель на левого сына данного узла.
 Node* getLeftChild(Node* currentNode);
 
-Node* insertToAVLTree(Node* currentNode, const int key, const char* value, Node* root,
-    bool* areBalancesCorrect, bool* isBalance);
-
+// Функция возвращает значение баланса данного узла.
 char getBalanceFromAVLTree(Node* currentNode);
-
