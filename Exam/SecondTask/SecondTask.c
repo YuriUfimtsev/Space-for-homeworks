@@ -1,3 +1,5 @@
+#pragma warning(disable: 4996 6031)
+
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -28,7 +30,7 @@ bool isDigit(char symbol)
         || symbol == '5' || symbol == '6' || symbol == '7' || symbol == '8' || symbol == '9';
 }
 
-bool isCorrect(const char* string)
+bool isCorrect(char* string)
 {
     enum states state;
     char symbol = ' ';
@@ -168,16 +170,33 @@ bool isCorrect(const char* string)
     return state == eleven;
 }
 
+bool trueTest()
+{
+    return isCorrect("21.B10-mm");
+}
+
+bool falseTest()
+{
+    return !isCorrect("21.BBB");
+}
+
 
 int main()
 {
-    const char string[12] = "21.B10-mm";
+    if (!trueTest() || !falseTest())
+    {
+        printf("Tests failed");
+        return;
+    }
+    printf("Enter the string: ");
+    char string[12] = { '\0' };
+    scanf("%s", &string);
     if (isCorrect(string))
     {
-        printf("correct");
+        printf("\ncorrect string");
     }
     else
     {
-        printf("incorrect");
+        printf("\nincorrect string");
     }
 }
