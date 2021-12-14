@@ -1,6 +1,18 @@
+#pragma once
 
-typedef hashSection hashSection;
+#include <stdbool.h>
 
-typedef hashTable hashTable;
+typedef struct HashTable HashTable;
 
-int calculateHashFunction(const char*);
+int calculateHashFunction(const char*, const int moduleForHash, const int numberForHashFunction);
+
+bool increaseHashTable(HashTable* table);
+
+HashTable* createHashTable(const int numberForHashFunction);
+
+void insertToHashTable(const char* data, HashTable* table);
+
+void removeElementFromHashTable(const char* data, HashTable* table);
+
+void deleteHashTable(HashTable* table);
+

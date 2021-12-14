@@ -32,6 +32,7 @@ void deleteList(List* list)
     while (position != NULL)
     {
         list->head = list->head->next;
+        ///free((void*)position->data);////
         free(position);
         position = list->head;
     }
@@ -87,75 +88,74 @@ bool valueInList(List* list, int value)
     return false;
 }
 
-void addTheValueInSortedList(List* list, int value)
+bool addTheValueInList(List* list, int value, const char* data)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
-        return;
+        return false;
     }
     newElement->numbersOfRepetition = value;
+    newElement->data = data;
     if (list->head == NULL)
     {
         list->head = newElement;
-        return;
+        ++list->numberOfElements;
+        return true;
     }
-    if (list->head->next == NULL)
+    ListElement* currentElement = list->head;
+    while (currentElement->next != NULL)
     {
-        if (value < list->head->numbersOfRepetition)
+        if (data == currentElement->data)
         {
-            newElement->next = list->head;
-            list->head = newElement;
-            return;
+            currentElement->numbersOfRepetition += value;
+            //////////////////free(data);//////////??????????????7
+            free(newElement);
+            return false;
         }
+        currentElement = currentElement->next;
     }
-    ListElement* i = list->head;
-    while (i->next != NULL && value > i->next->numbersOfRepetition)
+    if (data == currentElement->data)
     {
-        i = i->next;
+        currentElement->numbersOfRepetition += value;
+        //////////////////free(data);//////////??????????????7
+        free(newElement);
+        return false;
     }
-    if (i->next == NULL)
-    {
-        i->next = newElement;
-        return;
-    }
-    if (i == list->head && value < list->head->numbersOfRepetition)
-    {
-        newElement->next = list->head;
-        list->head = newElement;
-        return;
-    }
-    newElement->next = i->next;
-    i->next = newElement;
+    currentElement->next = newElement;
+    ++list->numberOfElements;
+    return true;
 }
 
-bool delete(List* list, int value)
+bool delete(List* list, const char* data)
 {
-    if (!valueInList(list, value))
+    if (list->numberOfElements == 0)
     {
         return false;
     }
     ListElement* i = list->head;
-    if (i->numbersOfRepetition == value)
+    if (i->data == data)
     {
         list->head = i->next;
+        //free((void*)i->data);////
         free(i);
+        --list->numberOfElements;
         return true;
     }
     ListElement* j = list->head->next;
-    while (j != NULL && j->numbersOfRepetition != value)
+    while (j != NULL && j->data != data)
     {
         i = i->next;
         j = j->next;
     }
     if (j == NULL)
     {
-        i->next = NULL;
-        free(j);
-        return true;
+        return false;
     }
     i->next = j->next;
+    free((void*)j->data);
     free(j);
+    --list->numberOfElements;
     return true;
 }
 

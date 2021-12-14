@@ -6,7 +6,7 @@ typedef struct List List;
 
 typedef struct Position Position;
 
-typedef ListElement ListElement;
+typedef struct ListElement ListElement;
 
 int getNumberOfListElements(List* list);
 
@@ -46,10 +46,10 @@ bool valueInList(List* list, int value);
 
 // Функция добавляет элемент со значением value в сортированный список.
 // Функция принимает указатель на голову списка и значение value, которое надо добавить.
-void addTheValueInSortedList(List* list, int value);
+bool addTheValueInList(List* list, int value, const char* data);
 
 // Функция удаляет элемент со значением value из списка. 
 // Функция принимает указатель на голову списка и значение value, которое надо убрать из списка.
 // Функция возвращает true, если элемент со значением value удален.
 // Функция возвращает false, если элемента со значением value в списке нет.
-bool delete(List* list, int value);
+bool delete(List* list, const char* data);
