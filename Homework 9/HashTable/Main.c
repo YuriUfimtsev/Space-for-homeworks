@@ -3,14 +3,13 @@
 #include <stdio.h>
 #include <locale.h>
 
-
 #include "HashTable.h"
 #include "TestsForHashTable.h"
 
 int main()
 {
     setlocale(LC_ALL, "Rus");
-    if (!isHashTableCorrect())
+    if (!isTestForHashTablePassing())
     {
         printf("Tests failed");
         return -1;

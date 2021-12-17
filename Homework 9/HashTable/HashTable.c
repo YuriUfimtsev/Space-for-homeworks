@@ -16,7 +16,7 @@ typedef struct HashTable
     List** array;
 } HashTable;
 
-const char* dataToInsert(char* data)
+char* dataToInsert(const char* data)
 {
     char* dataForHashTable = malloc(30);
     if (dataForHashTable == NULL)
@@ -62,9 +62,9 @@ bool increaseHashTable(HashTable* table)
             for (Position* j = first(table->array[i]); !last(j); next(j))
             {
                 const int numberOfRepetitions = getNumberOfRepetitionsByPosition(j);
-                const char* data = getData(j);
+                const char* data = dataToInsert(getData(j));
                 const int hashFinction = calculateHashFunction(data, newSize, table->numberForHashFunction);
-                addTheValueInList(newArray[hashFinction], numberOfRepetitions, data);
+                addTheDataInList(newArray[hashFinction], numberOfRepetitions, data);
             }
         }
         deleteList(table->array[i]);
@@ -98,11 +98,11 @@ HashTable* createHashTable(int numberForHashFunction)
     return newTable;
 }
 
-void insertToHashTable(char* data, HashTable* table)
+void insertToHashTable(const char* data, HashTable* table)
 {
     const char* requiredData = dataToInsert(data);
     const int key = calculateHashFunction(requiredData, table->countOfBuckets, table->numberForHashFunction);
-    if (addTheValueInList(table->array[key], 1, requiredData))
+    if (addTheDataInList(table->array[key], 1, requiredData))
     {
         ++table->countOfElements;
     }

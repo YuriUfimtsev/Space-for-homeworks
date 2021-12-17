@@ -1,12 +1,11 @@
 #pragma warning(disable: 4996)
 
 #include "TestsForHashTable.h"
-
 #include "HashTable.h"
 
 #include <stdio.h>
 
-bool isHashTableCorrect()
+bool isTestForHashTablePassing()
 {
     FILE* data = fopen("testData.txt", "r");
     HashTable* table = fillInHashTableFromFile(data);

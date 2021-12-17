@@ -6,7 +6,7 @@
 
 typedef struct ListElement
 {
-    int numbersOfRepetition;
+    int numberOfRepetitions;
     const char* data;
     struct ListElement* next;
 } ListElement;
@@ -33,7 +33,7 @@ void deleteList(List* list)
     while (position != NULL)
     {
         list->head = list->head->next;
-        //free((void*)position->data);////???7
+        free((void*)position->data);
         free(position);
         position = list->head;
     }
@@ -71,32 +71,14 @@ bool last(Position* position)
     return result;
 }
 
-int getValue(List* list, Position* position)
-{
-    return position->position->numbersOfRepetition;
-}
-
-bool valueInList(List* list, int value)
-{
-    for (Position* i = first(list); !last(i); next(i))
-    {
-        if (getValue(list, i) == value)
-        {
-            deletePosition(i);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool addTheValueInList(List* list, int value, const char* data)
+bool addTheDataInList(List* list, int numberOfRepetitions, const char* data)
 {
     ListElement* newElement = calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
         return false;
     }
-    newElement->numbersOfRepetition = value;
+    newElement->numberOfRepetitions = numberOfRepetitions;
     newElement->data = data;
     if (list->head == NULL)
     {
@@ -109,7 +91,7 @@ bool addTheValueInList(List* list, int value, const char* data)
     {
         if (strcmp(data, currentElement->data) == 0)
         {
-            currentElement->numbersOfRepetition += value;
+            currentElement->numberOfRepetitions += numberOfRepetitions;
             free((void*)data);
             free(newElement);
             return false;
@@ -118,7 +100,7 @@ bool addTheValueInList(List* list, int value, const char* data)
     }
     if (strcmp(data, currentElement->data) == 0)
     {
-        currentElement->numbersOfRepetition += value;
+        currentElement->numberOfRepetitions += numberOfRepetitions;
         free((void*)data);
         free(newElement);
         return false;
@@ -172,7 +154,7 @@ const char* getData(Position* position)
 
 int getNumberOfRepetitionsByPosition(Position* position)
 {
-    return position->position->numbersOfRepetition;
+    return position->position->numberOfRepetitions;
 }
 
 int getNumberOfRepetitionsByHash(const char* data, List* list)
@@ -186,7 +168,7 @@ int getNumberOfRepetitionsByHash(const char* data, List* list)
     {
         if (strcmp(i->data, data) == 0)
         {
-            return i->numbersOfRepetition;
+            return i->numberOfRepetitions;
         }
         i = i->next;
     }

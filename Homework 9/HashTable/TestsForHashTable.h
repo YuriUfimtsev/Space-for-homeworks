@@ -2,4 +2,5 @@
 
 #include <stdbool.h>
 
-bool isHashTableCorrect();
+// Функция проверяет, успешно ли выполнен тест для хэш-таблицы.
+bool isTestForHashTablePassing();
