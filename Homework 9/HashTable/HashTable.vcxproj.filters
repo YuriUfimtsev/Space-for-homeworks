@@ -24,6 +24,9 @@
     <ClCompile Include="List.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestsForHashTable.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HashTable.h">
@@ -32,5 +35,16 @@
     <ClInclude Include="List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestsForHashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="testData.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Data.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

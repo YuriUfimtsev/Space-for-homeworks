@@ -1,3 +1,5 @@
+#pragma warning(disable: 4996)
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -14,34 +16,16 @@ typedef struct HashTable
     List** array;
 } HashTable;
 
-//bool isSimple(const int number) // не нужна в итоге:(:(:(
-//{
-//    int squareRoot = (int)sqrt(number);
-//    bool isSimple = true;
-//    for (int i = 2; i < squareRoot + 1; ++i)
-//    {
-//        if (number % i == 0)
-//        {
-//            isSimple = false;
-//            break;
-//        }
-//    }
-//    return isSimple;
-//}
-//
-//int findTheMoreSimpleNumber(int currentSimpleNumber) // не нужна в итоге:(:(:(
-//{
-//    int result = 0;
-//    while (result == 0)
-//    {
-//        if (isSimple(currentSimpleNumber))
-//        {
-//            result = currentSimpleNumber;
-//        }
-//        currentSimpleNumber += 2;
-//    }
-//    return result;
-//}
+const char* dataToInsert(char* data)
+{
+    char* dataForHashTable = malloc(30);
+    if (dataForHashTable == NULL)
+    {
+        return NULL;
+    }
+    strcpy_s(dataForHashTable, 30, data);
+    return dataForHashTable;
+}
 
 int calculateHashFunction(const char* word, const int moduleForHash, int numberForHashFunction)
 {
@@ -53,6 +37,7 @@ int calculateHashFunction(const char* word, const int moduleForHash, int numberF
         result += word[i] * numberForHashFunctionInDegree;
         numberForHashFunctionInDegree *= numberForHashFunction;
     }
+    result = abs(result);
     return result % moduleForHash;
 }
 
@@ -76,7 +61,7 @@ bool increaseHashTable(HashTable* table)
         {
             for (Position* j = first(table->array[i]); !last(j); next(j))
             {
-                const int numberOfRepetitions = getNumberOfRepetitions(j);
+                const int numberOfRepetitions = getNumberOfRepetitionsByPosition(j);
                 const char* data = getData(j);
                 const int hashFinction = calculateHashFunction(data, newSize, table->numberForHashFunction);
                 addTheValueInList(newArray[hashFinction], numberOfRepetitions, data);
@@ -113,10 +98,11 @@ HashTable* createHashTable(int numberForHashFunction)
     return newTable;
 }
 
-void insertToHashTable(const char* data, HashTable* table)
+void insertToHashTable(char* data, HashTable* table)
 {
-    const int key = calculateHashFunction(data, table->countOfBuckets, table->numberForHashFunction);
-    if (addTheValueInList(table->array[key], 1, data))
+    const char* requiredData = dataToInsert(data);
+    const int key = calculateHashFunction(requiredData, table->countOfBuckets, table->numberForHashFunction);
+    if (addTheValueInList(table->array[key], 1, requiredData))
     {
         ++table->countOfElements;
     }
@@ -147,3 +133,75 @@ void deleteHashTable(HashTable* table)
     free((void*)table);
 }
 
+int getNumberOfElements(HashTable* table)
+{
+    return table->countOfElements;
+}
+
+int getNumberOfRepetitons(const char* data, HashTable* table)
+{
+    const int key = calculateHashFunction(data, table->countOfBuckets, table->numberForHashFunction);
+    return getNumberOfRepetitionsByHash(data, table->array[key]);
+}
+
+void printWordsWithNumbersOfRepetitions(HashTable* table)
+{
+    for (int i = 0; i < table->countOfBuckets; ++i)
+    {
+        if (getNumberOfListElements(table->array[i]) != 0)
+        {
+            for (Position* j = first(table->array[i]); !last(j); next(j))
+            {
+                printf("The word '%s' occurs %d times.\n", getData(j), getNumberOfRepetitionsByPosition(j));
+            }
+        }
+    }
+}
+
+float getLoadFactorOfHashTable(HashTable* table)
+{
+    float result = (float) table->countOfElements / table->countOfBuckets;
+    return result;
+}
+
+int getMaxLengthOfListFromHashTable(HashTable* table)
+{
+    int maxLength = 0;
+    for (int i = 0; i < table->countOfBuckets; ++i)
+    {
+        int currentListLength = getNumberOfListElements(table->array[i]);
+        if (currentListLength > maxLength)
+        {
+            maxLength = currentListLength;
+        }
+    }
+    return maxLength;
+}
+
+float getAverageLengthOfListFromHashTable(HashTable* table)
+{
+    int numberOfLists = 0;
+    int commonListsLength = 0;
+    for (int i = 0; i < table->countOfBuckets; ++i)
+    {
+        int currentListLength = getNumberOfListElements(table->array[i]);
+        if (currentListLength > 0)
+        {
+            ++numberOfLists;
+            commonListsLength += currentListLength;
+        }
+    }
+    float result = (float) commonListsLength / numberOfLists;
+    return result;
+}
+
+HashTable* fillInHashTableFromFile(FILE* data)
+{
+    HashTable* table = createHashTable(113);
+    char word[30] = { '\0' };
+    while (fscanf(data, "%s", &word) > 0)
+    { 
+        insertToHashTable(word, table);
+    }
+    return table;
+}

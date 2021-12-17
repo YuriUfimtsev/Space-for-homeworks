@@ -12,7 +12,7 @@ int getNumberOfListElements(List* list);
 
 const char* getData(Position* listElement);
 
-int getNumberOfRepetitions(Position* listElement);
+int getNumberOfRepetitionsByPosition(Position* listElement);
 
 // Функция создает список - возвращает указатель на структуру ListElement - начало списка.
 List* createList();
@@ -53,3 +53,5 @@ bool addTheValueInList(List* list, int value, const char* data);
 // Функция возвращает true, если элемент со значением value удален.
 // Функция возвращает false, если элемента со значением value в списке нет.
 bool delete(List* list, const char* data);
+
+int getNumberOfRepetitionsByHash(const char* data, List* list);

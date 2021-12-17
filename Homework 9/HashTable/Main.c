@@ -1,18 +1,26 @@
+#pragma warning(disable: 4996)
+
 #include <stdio.h>
+#include <locale.h>
+
 
 #include "HashTable.h"
+#include "TestsForHashTable.h"
 
 int main()
 {
-    HashTable* table = createHashTable(5);
-    insertToHashTable("aaa", table);
-    insertToHashTable("bbb", table);
-    removeElementFromHashTable("bbb", table);
-    insertToHashTable("ccc", table);
-    insertToHashTable("kkk", table);
-    insertToHashTable("lll", table);
-    insertToHashTable("mMM", table);
-    insertToHashTable("ccc1", table);
-    removeElementFromHashTable("ccck", table);
+    setlocale(LC_ALL, "Rus");
+    if (!isHashTableCorrect())
+    {
+        printf("Tests failed");
+        return -1;
+    }
+    FILE* data = fopen("Data.txt", "r");
+    HashTable* table = fillInHashTableFromFile(data);
+    printf("The load factor of hash table = %f.\n", getLoadFactorOfHashTable(table));
+    printf("Max lentgth of list from hash table = %d.\n", getMaxLengthOfListFromHashTable(table));
+    printf("Average length of list from hash table = %f.\n", getAverageLengthOfListFromHashTable(table));
+    printf("\nIn this file\n");
+    printWordsWithNumbersOfRepetitions(table);
     deleteHashTable(table);
 }

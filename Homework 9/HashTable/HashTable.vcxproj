@@ -142,10 +142,16 @@
     <ClCompile Include="HashTable.c" />
     <ClCompile Include="List.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="TestsForHashTable.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HashTable.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="TestsForHashTable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data.txt" />
+    <Text Include="testData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

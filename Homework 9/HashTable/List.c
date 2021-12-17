@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "List.h"
 
@@ -32,7 +33,7 @@ void deleteList(List* list)
     while (position != NULL)
     {
         list->head = list->head->next;
-        ///free((void*)position->data);////
+        //free((void*)position->data);////???7
         free(position);
         position = list->head;
     }
@@ -106,19 +107,19 @@ bool addTheValueInList(List* list, int value, const char* data)
     ListElement* currentElement = list->head;
     while (currentElement->next != NULL)
     {
-        if (data == currentElement->data)
+        if (strcmp(data, currentElement->data) == 0)
         {
             currentElement->numbersOfRepetition += value;
-            //////////////////free(data);//////////??????????????7
+            free((void*)data);
             free(newElement);
             return false;
         }
         currentElement = currentElement->next;
     }
-    if (data == currentElement->data)
+    if (strcmp(data, currentElement->data) == 0)
     {
         currentElement->numbersOfRepetition += value;
-        //////////////////free(data);//////////??????????????7
+        free((void*)data);
         free(newElement);
         return false;
     }
@@ -137,7 +138,7 @@ bool delete(List* list, const char* data)
     if (i->data == data)
     {
         list->head = i->next;
-        //free((void*)i->data);////
+        free((void*)i->data);
         free(i);
         --list->numberOfElements;
         return true;
@@ -153,7 +154,7 @@ bool delete(List* list, const char* data)
         return false;
     }
     i->next = j->next;
-    //free((void*)j->data);
+    free((void*)j->data);
     free(j);
     --list->numberOfElements;
     return true;
@@ -169,7 +170,26 @@ const char* getData(Position* position)
     return position->position->data;
 }
 
-int getNumberOfRepetitions(Position* position)
+int getNumberOfRepetitionsByPosition(Position* position)
 {
     return position->position->numbersOfRepetition;
+}
+
+int getNumberOfRepetitionsByHash(const char* data, List* list)
+{
+    if (list->numberOfElements == 0)
+    {
+        return 0;
+    }
+    ListElement* i = list->head;
+    while (i != NULL)
+    {
+        if (strcmp(i->data, data) == 0)
+        {
+            return i->numbersOfRepetition;
+        }
+        i = i->next;
+    }
+    free(i);
+    return 0;
 }
