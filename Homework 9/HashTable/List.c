@@ -153,7 +153,7 @@ bool delete(List* list, const char* data)
         return false;
     }
     i->next = j->next;
-    free((void*)j->data);
+    //free((void*)j->data);
     free(j);
     --list->numberOfElements;
     return true;

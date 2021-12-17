@@ -65,6 +65,11 @@ bool increaseHashTable(HashTable* table)
     {
         return false;
     }
+    for (int i = 0; i < newSize; ++i)
+    {
+        List* newList = createList();
+        newArray[i] = newList;
+    }
     for (int i = 0; i < currentSizeOfArray; ++i)
     {
         if (getNumberOfListElements(table->array[i]) > 0)
@@ -76,10 +81,10 @@ bool increaseHashTable(HashTable* table)
                 const int hashFinction = calculateHashFunction(data, newSize, table->numberForHashFunction);
                 addTheValueInList(newArray[hashFinction], numberOfRepetitions, data);
             }
-            deleteList(table->array[i]);
         }
+        deleteList(table->array[i]);
     }
-    //deleteBackArray(table)
+    free(table->array);
     table->array = newArray;
     table->countOfBuckets = newSize;
     return true;
@@ -141,3 +146,4 @@ void deleteHashTable(HashTable* table)
     free(table->array);
     free((void*)table);
 }
+
