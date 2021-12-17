@@ -10,9 +10,9 @@ typedef struct ListElement ListElement;
 
 int getNumberOfListElements(List* list);
 
-const char* getData(ListElement* listElement);
+const char* getData(Position* listElement);
 
-int getNumberOfRepetitions(ListElement* listElement);
+int getNumberOfRepetitions(Position* listElement);
 
 // Функция создает список - возвращает указатель на структуру ListElement - начало списка.
 List* createList();

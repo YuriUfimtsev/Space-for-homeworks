@@ -164,12 +164,12 @@ int getNumberOfListElements(List* list)
     return list->numberOfElements;
 }
 
-const char* getData(ListElement* listElement)
+const char* getData(Position* position)
 {
-    return listElement->data;
+    return position->position->data;
 }
 
-int getNumberOfRepetitions(ListElement* listElement)
+int getNumberOfRepetitions(Position* position)
 {
-    return listElement->numbersOfRepetition;
+    return position->position->numbersOfRepetition;
 }

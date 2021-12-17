@@ -9,5 +9,4 @@ int main()
     insertToHashTable("bbb", table);
     removeElementFromHashTable("bbb", table);
     deleteHashTable(table);
-
 }

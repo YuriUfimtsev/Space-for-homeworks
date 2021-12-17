@@ -4,11 +4,11 @@
 
 typedef struct HashTable HashTable;
 
-int calculateHashFunction(const char*, const int moduleForHash, const int numberForHashFunction);
+int calculateHashFunction(const char*, const int moduleForHash, int numberForHashFunction);
 
 bool increaseHashTable(HashTable* table);
 
-HashTable* createHashTable(const int numberForHashFunction);
+HashTable* createHashTable(int numberForHashFunction);
 
 void insertToHashTable(const char* data, HashTable* table);
 

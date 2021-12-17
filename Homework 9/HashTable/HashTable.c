@@ -43,7 +43,7 @@ typedef struct HashTable
 //    return result;
 //}
 
-int calculateHashFunction(const char* word, const int moduleForHash, const int numberForHashFunction)
+int calculateHashFunction(const char* word, const int moduleForHash, int numberForHashFunction)
 {
     int result = 0;
     unsigned int wordLength = (unsigned int)strlen(word);
@@ -71,12 +71,10 @@ bool increaseHashTable(HashTable* table)
         {
             for (Position* j = first(table->array[i]); !last(j); next(j))
             {
-                const int numberOfRepetitions = getNumberOfRepetitions(table->array[i]);
-                const char* data = getData(table->array[i]);
+                const int numberOfRepetitions = getNumberOfRepetitions(j);
+                const char* data = getData(j);
                 const int hashFinction = calculateHashFunction(data, newSize, table->numberForHashFunction);
-                addTheValueInList(newArray[hashFinction], numberOfRepetitions, data);///// - изменить в функцию:
-                // обычное добавление в конец с проверкой на повтор. И в качестве еще одного параметра - хэш
-                // (т.е. индекс)
+                addTheValueInList(newArray[hashFinction], numberOfRepetitions, data);
             }
             deleteList(table->array[i]);
         }
@@ -87,15 +85,19 @@ bool increaseHashTable(HashTable* table)
     return true;
 }
 
-HashTable* createHashTable(const int numberForHashFunction)
+HashTable* createHashTable(int numberForHashFunction)
 {
-    HashTable* newTable = calloc(1, sizeof(HashTable*));
+    HashTable* newTable = calloc(1, sizeof(HashTable));
     if (newTable == NULL)
     {
         return NULL;
     }
     newTable->numberForHashFunction = numberForHashFunction;
     List** array = calloc(numberForHashFunction, sizeof(List*));
+    if (array == NULL)
+    {
+        return NULL;
+    }
     for (int i = 0; i < numberForHashFunction; ++i)
     {
         List* newList = createList();
@@ -137,5 +139,5 @@ void deleteHashTable(HashTable* table)
         deleteList(table->array[i]);
     }
     free(table->array);
-    //free((void*)table);
+    free((void*)table);
 }
