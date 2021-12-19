@@ -34,7 +34,7 @@ bool** getBoolTypeMatrix(StatesAndCities* statesAndCities)
     return statesAndCities->matrixOfRelationsBetweenStatesAndCities;
 }
 
-int** getIntTypeMatrix(StatesAndCities* statesAndCities)
+int** getResultMatrix(StatesAndCities* statesAndCities)
 {
     return statesAndCities->resultStatesMatrix;
 }
@@ -117,7 +117,6 @@ void createResultStatesMatrix(StatesAndCities* statesAndCities)
         resultMatrix[i] = (int*)calloc(statesAndCities->graph->sizeOfAdjacencyMatrix + 1, sizeof(int));
         resultMatrix[i][0] = i + 1;
     }
-    //printBoolTypeMatrix(statesAndCities->matrixOfRelationsBetweenStatesAndCities, 4, 8);/////
     for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
     {
         resultMatrix[i][1] = statesAndCities->arrayOfCapitals[i];
@@ -152,32 +151,9 @@ void printResult(StatesAndCities* statesAndCities)
         {
             printf(" null");
         }
-        printf(".");
+        printf(".\n");
     }
 }
-
-//void printResult(StatesAndCities* statesAndCities)
-//{
-//    int maxCapitalValue = findMaxElementOfArray(statesAndCities->arrayOfCapitals, statesAndCities->sizeOfArrayOfCapitals);
-//    int countOfStates = 0;
-//    for (int i = 0; i < maxCapitalValue; ++i)
-//    {
-//        if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][i])
-//        {
-//            ++countOfStates;
-//            printf("\nState number %d: ", countOfStates);
-//            printf("%d capital and ", i + 1);
-//            for (int j = 0; j < statesAndCities->graph->sizeOfAdjacencyMatrix; ++j)
-//            {
-//                if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][j] && i != j)
-//                {
-//                    printf("%d ", j + 1);
-//                }
-//            }
-//            printf("cities");
-//        }
-//    }
-//}
 
 void deleteIntTypeMatrix(int** matrix, int numberOfRows)
 {
@@ -219,12 +195,6 @@ void deleteBoolTypeMatrix(bool** matrix, int numberOfRows)
         free((void*)matrix[i]);
     }
     free(matrix);
-}
-
-void setEdgeWithNodes(Node* firstNode, Node* secondNode, int distance)
-{
-    firstNode->graph->adjacencyMatrix[firstNode->value - 1][secondNode->value - 1] = distance;
-    firstNode->graph->adjacencyMatrix[secondNode->value - 1][firstNode->value - 1] = distance;
 }
 
 void setEdgeWithNodesValues(int firstNodeValue, int secondNodeValue, int distance, Graph* graph)

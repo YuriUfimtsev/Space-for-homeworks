@@ -21,9 +21,15 @@
     <ClCompile Include="Graph.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestsForStates.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestsForStates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -31,10 +37,10 @@
     <Text Include="Data.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Data1.txt">
+    <Text Include="TestWithoutFreeCitiesData.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Data2.txt">
+    <Text Include="StandartTestData.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

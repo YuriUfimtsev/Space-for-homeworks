@@ -5,10 +5,16 @@
 #include <stdbool.h>
 
 #include "Graph.h"
+#include "TestsForStates.h"
 
 int main()
 {
-    FILE* data = fopen("Data2.txt", "r");
+    if (!areTestPassing())
+    {
+        printf("Tests failed");
+        return -1;
+    }
+    FILE* data = fopen("Data.txt", "r");
     StatesAndCities* statesAndCities = getDataFromFile(data);
     fclose(data);
     buildStates(statesAndCities);
