@@ -8,7 +8,7 @@
 
 int main()
 {
-    FILE* data = fopen("Data.txt", "r");
+    FILE* data = fopen("Data2.txt", "r");
     StatesAndCities* statesAndCities = getDataFromFile(data);
     fclose(data);
     buildStates(statesAndCities);

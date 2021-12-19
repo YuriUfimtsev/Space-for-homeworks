@@ -12,6 +12,7 @@ typedef struct StatesAndCities
     int* arrayOfCapitals;
     int sizeOfArrayOfCapitals;
     bool** matrixOfRelationsBetweenStatesAndCities;
+    int** resultStatesMatrix;
 } StatesAndCities;
 
 typedef struct Graph
@@ -28,6 +29,16 @@ typedef struct Node
     Graph* graph;
 } Node;
 
+bool** getBoolTypeMatrix(StatesAndCities* statesAndCities)
+{
+    return statesAndCities->matrixOfRelationsBetweenStatesAndCities;
+}
+
+int** getIntTypeMatrix(StatesAndCities* statesAndCities)
+{
+    return statesAndCities->resultStatesMatrix;
+}
+
 Graph* createGraph(int nodesCount)
 {
     Graph* newGraph = calloc(1, sizeof(Graph));
@@ -35,6 +46,7 @@ Graph* createGraph(int nodesCount)
     Node** arrayOfNodes = calloc(nodesCount, sizeof(Node*));
     for (int i = 0; i < nodesCount; ++i)
     {
+        arrayOfNodes[i] = calloc(1, sizeof(Node));
         arrayOfNodes[i]->value = i + 1;
         arrayOfNodes[i]->graph = newGraph;
     }
@@ -43,6 +55,7 @@ Graph* createGraph(int nodesCount)
     {
         adjacencyMatrix[i] = (int*)calloc(nodesCount, sizeof(int));
     }
+    newGraph->arrayOfNodes = arrayOfNodes;
     newGraph->adjacencyMatrix = adjacencyMatrix;
     newGraph->sizeOfAdjacencyMatrix = nodesCount;
     return newGraph;
@@ -55,9 +68,13 @@ StatesAndCities* createStatesAndCities()
 
 void deleteGraph(Graph* graph)
 {
-    for (int i = 0; i < graph->nodesCount; ++i)
+    for (int i = 0; i < graph->sizeOfAdjacencyMatrix; ++i)
     {
         free(graph->adjacencyMatrix[i]);
+    }
+    for (int i = 0; i < graph->nodesCount; ++i)
+    {
+        free(graph->arrayOfNodes[i]);
     }
     free(graph->adjacencyMatrix);
     free(graph->arrayOfNodes);
@@ -77,22 +94,101 @@ int findMaxElementOfArray(int* array, int lengthOfArray)
     return result;
 }
 
-bool** createMatrixOfRelationsBetweenStatesAndCities(StatesAndCities* stateAndCities)
+bool** createMatrixOfRelationsBetweenStatesAndCities(StatesAndCities* statesAndCities)
 {
-    int maxCapitalValue = findMaxElementOfArray(stateAndCities->arrayOfCapitals, stateAndCities->sizeOfArrayOfCapitals);
+    int maxCapitalValue = findMaxElementOfArray(statesAndCities->arrayOfCapitals, statesAndCities->sizeOfArrayOfCapitals);
     bool** matrix = (bool**)calloc(maxCapitalValue, sizeof(bool*));
     for (int i = 0; i < maxCapitalValue; ++i)
     {
-        matrix[i] = (bool*)calloc(stateAndCities->graph->sizeOfAdjacencyMatrix, sizeof(bool));
+        matrix[i] = (bool*)calloc(statesAndCities->graph->sizeOfAdjacencyMatrix, sizeof(bool));
     }
-    for (int i = 0; i < stateAndCities->sizeOfArrayOfCapitals; ++i)
+    for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
     {
-        matrix[stateAndCities->arrayOfCapitals[i] - 1][stateAndCities->arrayOfCapitals[i] - 1] = true;
+        matrix[statesAndCities->arrayOfCapitals[i] - 1][statesAndCities->arrayOfCapitals[i] - 1] = true;
     }
     return matrix;
 }
 
-void printMatrix(bool** matrix, int numberOfRows, int numberOfColumns)
+void createResultStatesMatrix(StatesAndCities* statesAndCities)
+{
+    int** resultMatrix = (int**)calloc(statesAndCities->sizeOfArrayOfCapitals, sizeof(int*));
+    for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
+    {
+        resultMatrix[i] = (int*)calloc(statesAndCities->graph->sizeOfAdjacencyMatrix + 1, sizeof(int));
+        resultMatrix[i][0] = i + 1;
+    }
+    //printBoolTypeMatrix(statesAndCities->matrixOfRelationsBetweenStatesAndCities, 4, 8);/////
+    for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
+    {
+        resultMatrix[i][1] = statesAndCities->arrayOfCapitals[i];
+        int indexForResultMatrixRow = 2;
+        for (int j = 0; j < statesAndCities->graph->sizeOfAdjacencyMatrix; ++j)
+        {
+            if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[statesAndCities->arrayOfCapitals[i] - 1][j]
+                && statesAndCities->arrayOfCapitals[i] - 1 != j)
+            {
+                resultMatrix[i][indexForResultMatrixRow] = j + 1;
+                ++indexForResultMatrixRow;
+            }
+        }
+    }
+    statesAndCities->resultStatesMatrix = resultMatrix;
+}
+
+void printResult(StatesAndCities* statesAndCities)
+{
+    for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
+    {
+        printf("\nState number %d: ", statesAndCities->resultStatesMatrix[i][0]);
+        printf("capital %d and cities", statesAndCities->resultStatesMatrix[i][1]);
+        int indexOfResultMatrixRow = 2;
+        while (indexOfResultMatrixRow < statesAndCities->graph->sizeOfAdjacencyMatrix
+            && statesAndCities->resultStatesMatrix[i][indexOfResultMatrixRow] != 0)
+        {
+            printf(" %d", statesAndCities->resultStatesMatrix[i][indexOfResultMatrixRow]);
+            ++indexOfResultMatrixRow;
+        }
+        if (indexOfResultMatrixRow == 2)
+        {
+            printf(" null");
+        }
+        printf(".");
+    }
+}
+
+//void printResult(StatesAndCities* statesAndCities)
+//{
+//    int maxCapitalValue = findMaxElementOfArray(statesAndCities->arrayOfCapitals, statesAndCities->sizeOfArrayOfCapitals);
+//    int countOfStates = 0;
+//    for (int i = 0; i < maxCapitalValue; ++i)
+//    {
+//        if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][i])
+//        {
+//            ++countOfStates;
+//            printf("\nState number %d: ", countOfStates);
+//            printf("%d capital and ", i + 1);
+//            for (int j = 0; j < statesAndCities->graph->sizeOfAdjacencyMatrix; ++j)
+//            {
+//                if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][j] && i != j)
+//                {
+//                    printf("%d ", j + 1);
+//                }
+//            }
+//            printf("cities");
+//        }
+//    }
+//}
+
+void deleteIntTypeMatrix(int** matrix, int numberOfRows)
+{
+    for (int i = 0; i < numberOfRows; ++i)
+    {
+        free((void*)matrix[i]);
+    }
+    free(matrix);
+}
+
+void printBoolTypeMatrix(bool** matrix, int numberOfRows, int numberOfColumns)
 {
     for (int i = 0; i < numberOfRows; ++i)
     {
@@ -104,11 +200,23 @@ void printMatrix(bool** matrix, int numberOfRows, int numberOfColumns)
     }
 }
 
-void deleteMatrix(bool** matrix, int numberOfRows)
+void printIntTypeMatrix(int** matrix, int numberOfRows, int numberOfColumns)
 {
     for (int i = 0; i < numberOfRows; ++i)
     {
-        free(matrix[i]);
+        for (int j = 0; j < numberOfColumns; ++j)
+        {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void deleteBoolTypeMatrix(bool** matrix, int numberOfRows)
+{
+    for (int i = 0; i < numberOfRows; ++i)
+    {
+        free((void*)matrix[i]);
     }
     free(matrix);
 }
@@ -162,7 +270,14 @@ StatesAndCities* getDataFromFile(FILE* data)
 
 void buildStates(StatesAndCities* statesAndCities)
 {
-    int countOfFreeCities = statesAndCities->graph->nodesCount;
+    for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
+    {
+        for (int j = 0; j < statesAndCities->graph->sizeOfAdjacencyMatrix; ++j)
+        {
+            statesAndCities->graph->adjacencyMatrix[j][statesAndCities->arrayOfCapitals[i] - 1] = -1;
+        }
+    }
+    int countOfFreeCities = statesAndCities->graph->nodesCount - statesAndCities->sizeOfArrayOfCapitals;
     while (countOfFreeCities > 0)
     {
         for (int i = 0; i < statesAndCities->sizeOfArrayOfCapitals; ++i)
@@ -180,7 +295,7 @@ void buildStates(StatesAndCities* statesAndCities)
                 {
                     for (int k = 0; k < statesAndCities->graph->sizeOfAdjacencyMatrix; ++k)
                     {
-                        if (statesAndCities->graph->adjacencyMatrix[j][k] != -1
+                        if (statesAndCities->graph->adjacencyMatrix[j][k] > 0
                             && statesAndCities->graph->adjacencyMatrix[j][k] <= minDistance
                             && !statesAndCities->matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1][k])
                         {
@@ -190,42 +305,27 @@ void buildStates(StatesAndCities* statesAndCities)
                     }
                 }
             }
-            statesAndCities->matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1]
-                [numberOfCandidateForState - 1] = true;
-            --countOfFreeCities;
-            for (int i = 0; i < statesAndCities->graph->sizeOfAdjacencyMatrix; ++i)
+            if (numberOfCandidateForState != 0)
             {
-                statesAndCities->graph->adjacencyMatrix[i][numberOfCandidateForState - 1] = -1;
-            }
-        }
-    }
-}
-
-void printResult(StatesAndCities* statesAndCities)
-{
-    int maxCapitalValue = findMaxElementOfArray(statesAndCities->arrayOfCapitals, statesAndCities->sizeOfArrayOfCapitals);
-    int countOfStates = 0;
-    for (int i = 0; i < maxCapitalValue; ++i)
-    {
-        if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][i])
-        {
-            ++countOfStates;
-            printf("\nState number %d: ", countOfStates);
-            for (int j = 0; j < statesAndCities->graph->sizeOfAdjacencyMatrix; ++j)
-            {
-                if (statesAndCities->matrixOfRelationsBetweenStatesAndCities[i][j])
+                statesAndCities->matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1]
+                    [numberOfCandidateForState - 1] = true;
+                --countOfFreeCities;
+                for (int i = 0; i < statesAndCities->graph->sizeOfAdjacencyMatrix; ++i)
                 {
-                    printf("%d", j + 1);
+                    statesAndCities->graph->adjacencyMatrix[i][numberOfCandidateForState - 1] = -1;
                 }
             }
-            printf("cities");
         }
     }
+    createResultStatesMatrix(statesAndCities);
 }
 
 void deleteStatesAndCities(StatesAndCities* statesAndCities)
 {
-    deleteMatrix(statesAndCities->matrixOfRelationsBetweenStatesAndCities, statesAndCities->graph->sizeOfAdjacencyMatrix);
+    int rowsInBoolTypeMatrix = findMaxElementOfArray(statesAndCities->arrayOfCapitals,
+        statesAndCities->sizeOfArrayOfCapitals);
+    deleteBoolTypeMatrix(statesAndCities->matrixOfRelationsBetweenStatesAndCities, rowsInBoolTypeMatrix);
+    deleteIntTypeMatrix(statesAndCities->resultStatesMatrix, statesAndCities->sizeOfArrayOfCapitals);
     deleteGraph(statesAndCities->graph);
     free(statesAndCities->arrayOfCapitals);
     free(statesAndCities);
