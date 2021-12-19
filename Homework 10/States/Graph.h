@@ -20,11 +20,12 @@ Node** getNearNodes(Node* node, int* count);//////////
 
 int getEdge(Node* firstNode, Node* secondNode);
 
-void setEdge(Node* firstNode, Node* secondNode, int weight);
+void setEdge(Node* firstNode, Node* secondNode, int distance);
 
 Node** depthFirstSearch(Graph* graph, Node* startNode, int nodesCount);
 
-bool** createMatrixOfRelationsBetweenStatesAndCities(int numbersOfStates, int numbersOfCities);
+bool** createMatrixOfRelationsBetweenStatesAndCities(int numbersOfCities, int* arrayOfCapitalsValues,
+    int lengthOfCapitalsValuesArray);
 
 void printMatrix(bool** matrix, int numberOfRows, int numberOfColumns);
 

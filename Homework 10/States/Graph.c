@@ -57,18 +57,6 @@ void deleteGraph(Graph* graph)
     free(graph);
 }
 
-bool nodeIsVisited(Node* node, Node* visitedNodes[], int length)
-{
-    for (int i = 0; i < length; i++)
-    {
-        if (node == visitedNodes[i])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 Node** getNearNodes(Node* node, int* nearNodesCount)
 {
     const int nodeValue = node->value;
@@ -92,35 +80,31 @@ Node** getNearNodes(Node* node, int* nearNodesCount)
     return arrayOfNearNodes;
 }
 
-void depthRecursive(Node* node, Node* result[], int* length)
+int findMaxElementOfArray(int* array, int lengthOfArray)
 {
-    result[*length] = node;
-    (*length)++;
-    int nearNodesCount = 0;
-    Node** nearNodes = getNearNodes(node, &nearNodesCount);
-    for (int i = 0; i < nearNodesCount; i++)
+    int result = 0;
+    for (int i = 0; i < lengthOfArray; ++i)
     {
-        if (!nodeIsVisited(nearNodes[i], result, *length))
+        if (array[i] > result)
         {
-            depthRecursive(nearNodes[i], result, length);
+            result = array[i];
         }
     }
-}
-
-Node** depthFirstSearch(Graph* graph, Node* startNode, int nodesCount)
-{
-    Node** result = calloc(nodesCount, sizeof(Node*));
-    int resultLength = 0;
-    depthRecursive(startNode, result, &resultLength);
     return result;
 }
 
-bool** createMatrixOfRelationsBetweenStatesAndCities(int numbersOfStates, int numbersOfCities)
+bool** createMatrixOfRelationsBetweenStatesAndCities(int numbersOfCities, int* arrayOfCapitalsValues,
+    int lengthOfCapitalsValuesArray)
 {
-    bool** matrix = (bool**)calloc(numbersOfStates, sizeof(bool*));
-    for (int i = 0; i < numbersOfStates; ++i)
+    int maxCapitalValue = findMaxElementOfArray(arrayOfCapitalsValues, lengthOfCapitalsValuesArray);
+    bool** matrix = (bool**)calloc(maxCapitalValue, sizeof(bool*));
+    for (int i = 0; i < maxCapitalValue; ++i)
     {
         matrix[i] = (bool*)calloc(numbersOfCities, sizeof(bool));
+    }
+    for (int i = 0; i < lengthOfCapitalsValuesArray; ++i)
+    {
+        matrix[arrayOfCapitalsValues[i] - 1][arrayOfCapitalsValues[i] - 1] = true;
     }
     return matrix;
 }
@@ -144,4 +128,79 @@ void deleteMatrix(bool** matrix, int numberOfRows)
         free(matrix[i]);
     }
     free(matrix);
+}
+
+void setEdgeWithNodes(Node* firstNode, Node* secondNode, int distance)
+{
+    firstNode->graph->adjacencyMatrix[firstNode->value - 1][secondNode->value - 1] = distance;
+    firstNode->graph->adjacencyMatrix[secondNode->value - 1][firstNode->value - 1] = distance;
+}
+
+void setEdgeWithNodesValues(int firstNodeValue, int secondNodeValue, int distance, Graph* graph)
+{
+    graph->adjacencyMatrix[firstNodeValue - 1][secondNodeValue - 1] = distance;
+    graph->adjacencyMatrix[secondNodeValue - 1][firstNodeValue - 1] = distance;
+}
+
+void buildStates(Graph* graph, bool** matrixOfRelationsBetweenStatesAndCities, int* arrayOfCapitalsValues,
+    int lengthOfCapitalsValuesArray)
+{
+    int countOfFreeCities = graph->nodesCount;
+    while (countOfFreeCities > 0)
+    {
+        for (int i = 0; i < lengthOfCapitalsValuesArray; ++i)
+        {
+            if (countOfFreeCities == 0)
+            {
+                break;
+            }
+            int minDistance = 2147483647;
+            int numberOfCandidateForState = 0;
+            int currentCapitalNumber = arrayOfCapitalsValues[i];
+            for (int j = 0; j < graph->sizeOfAdjacencyMatrix; ++j)
+            {
+                if (matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1][j])
+                {
+                    for (int k = 0; k < graph->sizeOfAdjacencyMatrix; ++k)
+                    {
+                        if (graph->adjacencyMatrix[j][k] != -1 && graph->adjacencyMatrix[j][k] < minDistance
+                            && !matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1][k])
+                        {
+                            minDistance = graph->adjacencyMatrix[j][k];
+                            numberOfCandidateForState = k + 1;
+                        }
+                    }
+                }
+            }
+            matrixOfRelationsBetweenStatesAndCities[currentCapitalNumber - 1][numberOfCandidateForState - 1] = true;
+            --countOfFreeCities;
+            for (int i = 0; i < graph->sizeOfAdjacencyMatrix; ++i)
+            {
+                graph->adjacencyMatrix[i][numberOfCandidateForState - 1] = -1;
+            }
+        }
+    }
+}
+
+void printResult(Graph* graph, bool** matrixOfRelationsBetweenStatesAndCities, int* arrayOfCapitalsValues,
+    int lengthOfCapitalsValuesArray)
+{
+    int maxCapitalValue = findMaxElementOfArray(arrayOfCapitalsValues, lengthOfCapitalsValuesArray);
+    int countOfStates = 0;
+    for (int i = 0; i < maxCapitalValue; ++i)
+    {
+        if (matrixOfRelationsBetweenStatesAndCities[i][i])
+        {
+            ++countOfStates;
+            printf("\nState number %d: ", countOfStates);
+            for (int j = 0; j < graph->sizeOfAdjacencyMatrix; ++j)
+            {
+                if (matrixOfRelationsBetweenStatesAndCities[i][j])
+                {
+                    printf("%d", j + 1);
+                }
+            }
+            printf("cities");
+        }
+    }
 }
