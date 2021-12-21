@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdbool.h>
-
 #include <stdio.h>
 
 typedef struct List List;
