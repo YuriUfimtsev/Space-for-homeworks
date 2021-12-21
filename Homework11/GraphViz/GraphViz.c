@@ -64,5 +64,5 @@ int main()
     fclose(fileWithAdjacencyMatrix);
     FILE* fileForGraphViz = makeDotFile(adjacencyMatrix, matrixHeight, matrixWidth);
     system("dot FileForGraphViz.dot -Tpng -o SpectacularGraph.png");
-    system("C:\Users\Home\source\repos\Space - for - homeworks\Homework 11\GraphViz\SpectacularGraph.png");
+    system(".\\SpectacularGraph.png");
 }
