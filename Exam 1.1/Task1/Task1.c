@@ -1,3 +1,5 @@
+#pragma warning (disable: 4996)
+
 #define MAX_SIZE_OF_ARRAY 1000
 
 #include <stdio.h>
@@ -46,7 +48,7 @@ void sortArray(int* arrayForSorting, const int sizeOfArrayForSorting)
     for (int j = 1; j < sizeOfArrayForSorting; ++j)
     {
         bool isSort = false;
-        for (int i = 0; i < sizeOfArrayForSorting - j; ++i)
+        for (int i = 0; i < sizeOfArrayForSorting - j -1; ++i)
         {
             if (arrayForSorting[i] > arrayForSorting[i + 1])
             {
@@ -71,7 +73,7 @@ int main()
     sortArray(arrayOfNumbers, sizeOfArray);
     for (int i = 0; i < sizeOfArray; ++i)
     {
-        printf(" number %d appears %d times,", )
+        printf(" number %d appears %d times,", arrayOfNumbers[i], arrayOfCounting[i]);
     }
 
 }
