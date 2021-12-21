@@ -141,11 +141,16 @@
   <ItemGroup>
     <ClCompile Include="Main.c" />
     <ClCompile Include="SubstringSearch.c" />
+    <ClCompile Include="TestsForSubstringSearch.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SubstringSearch.h" />
+    <ClInclude Include="TestsForSubstringSearch.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="DataForStandartTest.txt" />
+    <Text Include="DataForTestWithSmallString.txt" />
+    <Text Include="EmptyFileForTest.txt" />
     <Text Include="Text.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

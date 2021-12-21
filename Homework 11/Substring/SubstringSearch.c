@@ -1,4 +1,4 @@
-#pragma warning(disable: 4996 6011 6031)
+#pragma warning(disable: 4996)
 
 #include "SubstringSearch.h"
 
@@ -9,7 +9,7 @@
 #define SIMPLE_NUMBER_FOR_HASH 19
 #define MODULE_FOR_HASH 109
 
-int calculateHashForString(char* substring)
+int calculateHashForString(const char* substring)
 {
     unsigned int substringLength = (unsigned int)strlen(substring);
     int resultHash = 0;
@@ -43,13 +43,17 @@ int calculateHashForNewSubstring(const int wrongHash, char* outdatedSubstring,
     return resultHash % MODULE_FOR_HASH;
 }
 
-int findIndexOfStringInFile(FILE* data, char* patternString)
+int findIndexOfStringInFile(FILE* data, const char* patternString)
 {
     const unsigned int patternStringLength = (unsigned int)strlen(patternString);
     int patternStringHash = calculateHashForString(patternString);
     unsigned int indexInFile = 0;
     char symbolFromFile = ' ';
     char* substring = (char*)calloc(patternStringLength + 1, sizeof(char));
+    if (substring == NULL)
+    {
+        return -1;
+    }
     while (indexInFile < patternStringLength && fscanf(data, "%c", &symbolFromFile) > 0)
     {
         substring[indexInFile] = symbolFromFile;
@@ -57,6 +61,7 @@ int findIndexOfStringInFile(FILE* data, char* patternString)
     }
     if (indexInFile < patternStringLength - 1)
     {
+        free(substring);
         return -1;
     }
     int currentHash = calculateHashForString(substring);
@@ -64,6 +69,7 @@ int findIndexOfStringInFile(FILE* data, char* patternString)
     {
         if (strcmp(patternString, substring) == 0)
         {
+            free(substring);
             return indexInFile - patternStringLength;
         }
     }

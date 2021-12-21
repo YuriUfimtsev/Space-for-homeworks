@@ -3,9 +3,15 @@
 #include <stdio.h>
 
 #include "SubstringSearch.h"
+#include "TestsForSubstringSearch.h"
 
 int main()
 {
+    if (!areTestsPassing())
+    {
+        printf("Tests failed");
+        return -1;
+    }
     printf("Enter the pattern string (less than 50 symbols): ");
     char patternString[51] = { '\0' };
     scanf("%s", &patternString);

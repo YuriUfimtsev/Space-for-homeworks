@@ -2,4 +2,5 @@
 
 #include <stdio.h>
 
-int findIndexOfStringInFile(FILE* data, char* patternString);
+// Функция возвращает позицию первого вхождения строки patternString в файле data.
+int findIndexOfStringInFile(FILE* data, const char* patternString);
