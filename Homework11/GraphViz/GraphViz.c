@@ -3,15 +3,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 int** getAdjacencyMatrixFromFile(FILE* data, int* matrixHeight, int* matrixWidth)
 {
     fscanf(data, "%d", matrixHeight);
     fscanf(data, "%d", matrixWidth);
     int** adjacencyMatrix = calloc(*matrixHeight, sizeof(int*));
+    if (adjacencyMatrix == NULL)
+    {
+        return NULL;
+    }
     for (int i = 0; i < *matrixHeight; ++i)
     {
         adjacencyMatrix[i] = calloc(*matrixWidth, sizeof(int));
+        if (adjacencyMatrix[i] == NULL)
+        {
+            return NULL;
+        }
     }
     for (int i = 0; i < *matrixHeight; ++i)
     {
@@ -61,8 +70,16 @@ int main()
     int matrixHeight = 0;
     int matrixWidth = 0;
     int** adjacencyMatrix = getAdjacencyMatrixFromFile(fileWithAdjacencyMatrix, &matrixHeight, &matrixWidth);
+    if (adjacencyMatrix == NULL)
+    {
+        fclose(fileWithAdjacencyMatrix);
+        printf("Error with calloc");
+        return -1;
+    }
     fclose(fileWithAdjacencyMatrix);
     FILE* fileForGraphViz = makeDotFile(adjacencyMatrix, matrixHeight, matrixWidth);
+    const char* string = getenv("GraphViz");
     system("dot FileForGraphViz.dot -Tpng -o SpectacularGraph.png");
     system(".\\SpectacularGraph.png");
+    deleteMatrix(adjacencyMatrix, matrixHeight);
 }
