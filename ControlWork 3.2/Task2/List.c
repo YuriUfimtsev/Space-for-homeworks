@@ -48,7 +48,6 @@ int calculateHashFunction(const char* word)
         result += word[i] * numberForHashFunctionInDegree;
         numberForHashFunctionInDegree *= SIMPLE_NUMBER_FOR_HASH;
     }
-    result = abs(result);
     return result % MODULE_FOR_HASH;
 }
 
