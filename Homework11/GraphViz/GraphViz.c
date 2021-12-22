@@ -78,8 +78,10 @@ int main()
     }
     fclose(fileWithAdjacencyMatrix);
     FILE* fileForGraphViz = makeDotFile(adjacencyMatrix, matrixHeight, matrixWidth);
-    const char* string = getenv("GraphViz");
-    system("dot FileForGraphViz.dot -Tpng -o SpectacularGraph.png");
-    system(".\\SpectacularGraph.png");
+    char string[100] = { '\0' };
+    strcpy(string, getenv("GraphViz"));
+    strcat(string, " FileForGraphViz.dot -Tpng -o SpectacularGraph1.png");
+    system(string);
+    system(".\\SpectacularGraph1.png");
     deleteMatrix(adjacencyMatrix, matrixHeight);
 }
