@@ -25,11 +25,6 @@ bool isDigit(char symbol)
     return symbol >= '0' && symbol <= '9';
 }
 
-bool isPointOrE(char symbol)
-{
-    return symbol == 'E' || symbol == '.';
-}
-
 bool isCorrect(const char* string)
 {
     enum States state;
@@ -96,14 +91,51 @@ bool isCorrect(const char* string)
     return state == admittingState;
 }
 
-bool testWithInteger()
+bool lexerTests(const char* string, const bool expectedResult)
 {
+    return isCorrect(string) == expectedResult;
+}
 
+bool testOfInteger()
+{
+    return lexerTests("567567567576\0", true);
+}
+
+bool testWithPointAndE()
+{
+    return lexerTests("78778.899E7\0", true);
+}
+
+bool testWithPlusMinus()
+{
+    return lexerTests("78778899E+7\0", true);
+}
+
+bool falseTest()
+{
+    return lexerTests("657,6E6687A\0", false);
+}
+
+bool areTestsPassing()
+{
+    return testOfInteger() && testWithPointAndE() && testWithPlusMinus() && falseTest();
 }
 
 int main()
 {
-    char string[30] = "7676.0E+897\0";
-    isCorrect(string);
+    if (!areTestsPassing())
+    {
+        printf("Tests failed");
+        return -1;
+    }
+    printf("Enter the string (less than 40 symbols):");
+    char string[41] = { '\0' };
+    scanf("%s", &string);
+    if (isCorrect(string))
+    {
+        printf("\nIt is a real number");
+        return 0;
+    }
+    printf("It isn't a real number :(");
 }
 
