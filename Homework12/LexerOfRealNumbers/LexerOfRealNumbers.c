@@ -11,6 +11,8 @@ enum States {
     seenE,
     seenPlusOrMinus,
     seenDigitAfterE,
+    fail,
+    admittingState,
 };
 
 char nextSymbol(const char* string, int* indexOfString)
@@ -20,115 +22,88 @@ char nextSymbol(const char* string, int* indexOfString)
 
 bool isDigit(char symbol)
 {
-    return symbol >= '0' || symbol <= '9';
+    return symbol >= '0' && symbol <= '9';
+}
+
+bool isPointOrE(char symbol)
+{
+    return symbol == 'E' || symbol == '.';
 }
 
 bool isCorrect(const char* string)
 {
-    enum states state;
+    enum States state;
     char symbol = ' ';
-    state = zero;
+    state = startState;
     int indexOFString = 0;
-    while (state != fail && state != eleven)
+    while (state != fail && state != admittingState)
     {
         symbol = nextSymbol(string, &indexOFString);
         ++indexOFString;
         switch (state)
         {
-        case zero:
-            if (isDigit(symbol))
-            {
-                state = first;
-            }
-            else
-            {
-                state = false;
-            }
+        case startState:
+            state = isDigit(symbol) ? seenDigit : fail;
             break;
-        case first:
-            if (isDigit(symbol))
+        case seenDigit:
+            state = isDigit(symbol) ? seenDigit : fail;
+            if (symbol == 'E')
             {
-                state = second;
+                state = seenE;
             }
-            else
-            {
-                state = fail;
-            }
-            break;
-        case second:
             if (symbol == '.')
             {
-                state = third;
+                state = seenPoint;
             }
-            else
+            if (symbol == '\0')
             {
-                state = fail;
+                state = admittingState;
             }
             break;
-        case third:
-            if (symbol == 'B')
+        case seenPoint:
+            state = isDigit(symbol) ? seenDigitAfterPoint : fail;
+            break;
+        case seenDigitAfterPoint:
+            state = isDigit(symbol) ? seenDigitAfterPoint : fail;
+            if (symbol == 'E')
             {
-                state = fourth;
+                state = seenE;
             }
-            else if (symbol == 'M')
+            if (symbol == '\0')
             {
-                state = fifth;
-            }
-            else if (symbol == 'S')
-            {
-                state = sixth;
-            }
-            else
-            {
-                state = fail;
+                state = admittingState;
             }
             break;
-        case fourth:
-            if (isDigit(symbol))
+        case seenE:
+            state = isDigit(symbol) ? seenDigitAfterE : fail;
+            if (symbol == '+' || symbol == '-')
             {
-                state = seventh;
-            }
-            else
-            {
-                state = fail;
+                state = seenPlusOrMinus;
             }
             break;
-        case fifth:
-            if (isDigit(symbol))
+        case seenPlusOrMinus:
+            state = isDigit(symbol) ? seenDigitAfterE : fail;
+            break;
+        case seenDigitAfterE:
+            state = isDigit(symbol) ? seenDigitAfterE : fail;
+            if (symbol == '\0')
             {
-                state = seventh;
-            }
-            else
-            {
-                state = fail;
+                state = admittingState;
             }
             break;
-        case sixth:
-            if (isDigit(symbol))
-            {
-                state = seventh;
-            }
-            else
-            {
-                state = fail;
-            }
-            break;
-        case seventh:
-            if (isDigit(symbol))
-            {
-                state = eighth;
-            }
-            else
-            {
-                state = fail;
-            }
-            break;
-        case eighth:
-            state = symbol == '-' ? nineth : fail;
+        }
+    }
+    return state == admittingState;
+}
+
+bool testWithInteger()
+{
+
 }
 
 int main()
 {
-
+    char string[30] = "7676.0E+897\0";
+    isCorrect(string);
 }
 
