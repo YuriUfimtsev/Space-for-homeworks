@@ -16,6 +16,7 @@ int main()
     }
     FILE* data = fopen("Data.txt", "r");
     HashTable* table = fillInHashTableFromFile(data);
+    fclose(data);
     printf("The load factor of hash table = %f.\n", getLoadFactorOfHashTable(table));
     printf("Max lentgth of list from hash table = %d.\n", getMaxLengthOfListFromHashTable(table));
     printf("Average length of list from hash table = %f.\n", getAverageLengthOfListFromHashTable(table));

@@ -1,5 +1,7 @@
 #pragma warning(disable: 4996)
 
+#define NUMBER_FOR_HASH_FUNCTION 113
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,7 +12,6 @@
 
 typedef struct HashTable
 {
-    int numberForHashFunction;
     int countOfElements;
     int countOfBuckets;
     List** array;
@@ -27,7 +28,7 @@ char* dataToInsert(const char* data)
     return dataForHashTable;
 }
 
-int calculateHashFunction(const char* word, const int moduleForHash, int numberForHashFunction)
+int calculateHashFunction(const char* word, const int moduleForHash)
 {
     int result = 0;
     unsigned int wordLength = (unsigned int)strlen(word);
@@ -35,7 +36,7 @@ int calculateHashFunction(const char* word, const int moduleForHash, int numberF
     for (unsigned int i = 0; i < wordLength; ++i)
     {
         result += word[i] * numberForHashFunctionInDegree;
-        numberForHashFunctionInDegree *= numberForHashFunction;
+        numberForHashFunctionInDegree *= NUMBER_FOR_HASH_FUNCTION;
     }
     result = abs(result);
     return result % moduleForHash;
@@ -53,6 +54,15 @@ bool increaseHashTable(HashTable* table)
     for (int i = 0; i < newSize; ++i)
     {
         List* newList = createList();
+        if (newList == NULL)
+        {
+            for (int j = 0; j < i; ++j)
+            {
+                free(newArray[j]);
+                free(newArray);
+            }
+            return false;
+        }
         newArray[i] = newList;
     }
     for (int i = 0; i < currentSizeOfArray; ++i)
@@ -63,8 +73,8 @@ bool increaseHashTable(HashTable* table)
             {
                 const int numberOfRepetitions = getNumberOfRepetitionsByPosition(j);
                 const char* data = dataToInsert(getData(j));
-                const int hashFinction = calculateHashFunction(data, newSize, table->numberForHashFunction);
-                addTheDataInList(newArray[hashFinction], numberOfRepetitions, data);
+                const int hashFunction = calculateHashFunction(data, newSize);
+                addTheDataInList(newArray[hashFunction], numberOfRepetitions, data);
             }
         }
         deleteList(table->array[i]);
@@ -75,33 +85,32 @@ bool increaseHashTable(HashTable* table)
     return true;
 }
 
-HashTable* createHashTable(int numberForHashFunction)
+HashTable* createHashTable()
 {
     HashTable* newTable = calloc(1, sizeof(HashTable));
     if (newTable == NULL)
     {
         return NULL;
     }
-    newTable->numberForHashFunction = numberForHashFunction;
-    List** array = calloc(numberForHashFunction, sizeof(List*));
+    List** array = calloc(NUMBER_FOR_HASH_FUNCTION, sizeof(List*));
     if (array == NULL)
     {
         return NULL;
     }
-    for (int i = 0; i < numberForHashFunction; ++i)
+    for (int i = 0; i < NUMBER_FOR_HASH_FUNCTION; ++i)
     {
         List* newList = createList();
         array[i] = newList;
     }
     newTable->array = array;
-    newTable->countOfBuckets = numberForHashFunction;
+    newTable->countOfBuckets = NUMBER_FOR_HASH_FUNCTION;
     return newTable;
 }
 
 void insertToHashTable(const char* data, HashTable* table)
 {
     const char* requiredData = dataToInsert(data);
-    const int key = calculateHashFunction(requiredData, table->countOfBuckets, table->numberForHashFunction);
+    const int key = calculateHashFunction(requiredData, table->countOfBuckets);
     if (addTheDataInList(table->array[key], 1, requiredData))
     {
         ++table->countOfElements;
@@ -115,7 +124,7 @@ void insertToHashTable(const char* data, HashTable* table)
 
 void removeElementFromHashTable(const char* data, HashTable* table)
 {
-    const int key = calculateHashFunction(data, table->countOfBuckets, table->numberForHashFunction);
+    const int key = calculateHashFunction(data, table->countOfBuckets);
     if (delete(table->array[key], data))
     {
         --table->countOfElements;
@@ -140,7 +149,7 @@ int getNumberOfElements(HashTable* table)
 
 int getNumberOfRepetitons(const char* data, HashTable* table)
 {
-    const int key = calculateHashFunction(data, table->countOfBuckets, table->numberForHashFunction);
+    const int key = calculateHashFunction(data, table->countOfBuckets);
     return getNumberOfRepetitionsByHash(data, table->array[key]);
 }
 
@@ -160,8 +169,7 @@ void printWordsWithNumbersOfRepetitions(HashTable* table)
 
 float getLoadFactorOfHashTable(HashTable* table)
 {
-    float result = (float) table->countOfElements / table->countOfBuckets;
-    return result;
+    return (float)table->countOfElements / table->countOfBuckets;;
 }
 
 int getMaxLengthOfListFromHashTable(HashTable* table)

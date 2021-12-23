@@ -2,11 +2,11 @@
 
 #include <stdbool.h>
 
+// Структура задает список.
 typedef struct List List;
 
+// Структура предназначена для обращения к элементам списка.
 typedef struct Position Position;
-
-typedef struct ListElement ListElement;
 
 // Функция возвращает число элементов, лежащих в списке.
 // Принимает указатель на голову списка.

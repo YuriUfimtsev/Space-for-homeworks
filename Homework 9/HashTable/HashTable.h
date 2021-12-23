@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+// Структура задает хеш-таблицу
 typedef struct HashTable HashTable;
 
 // Функция удаляет хеш-таблицу.
