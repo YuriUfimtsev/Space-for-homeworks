@@ -1,43 +1,44 @@
 #pragma once
 
+#define valueAndKeySize 30
+
 #include <stdbool.h>
 
+// Структура задает словарь
 typedef struct Node Node;
 
-// Функция создает пустое дерево. Возвращает указатель на данный узел.
-Node* createEmptyNode();
+// Функция создает пустой словарь.
+Node* createEmptyDictionary();
 
-// Функция создает дерево с ключем key и значением value в корне.
-Node* createNode(const int key, const char* value);
+// Функция создает словарь с элементом: ключ key и значение value.
+// Владение переданной памятью(value) словарь не принимает.
+Node* createDictionary(const char* key, const char* value);
 
-// Функция удаляет все дерево.
-// Принимает указатель на корень дерева.
-void deleteAVLTree(Node* parent);
+// Функция удаляет словарь
+// Принимает указатель на словарь.
+void deleteDictionary(Node* dictionary);
 
-// Функция возвращает значение элемента с ключом key, лежащего в дереве tree.
-// Функция принимает указатель на корень дерева root и ключ key.
-// Вовращает NULL, если элемент с данным ключом в дереве не найден.
-const char* advancedGetValue(Node* root, const int key);
+// Функция возвращает значение элемента с ключом key, лежащего в словаре.
+// Функция принимает указатель на словарь, ключ key и bool переменную для проверки существования ключа в словаре.
+// Вовращает NULL, если элемент с данным ключом в словаре не найден.
+const char* getValueFromDictionary(Node* dictionary, const char* key, bool* isKeyInDictionary);
 
-// Функция добавляет элемент в АВЛ дерево. Принимает адрес указателя на корень дерева,
-// ключ key, значениу value, которое необходимо добавить
-void advancedInsertToAVLTree(Node** root, const int key, const char* value);
+// Функция добавляет элемент в словарь. Принимает адрес указателя на словарь,
+// ключ key, значение value, которое необходимо добавить.
+// Владение переданной памятью(value) словарь не принимает.
+void insertToDictionary(Node** dictionary, const char* key, const char* value);
 
-// Функция проверяет, есть ли в дереве tree элемент с ключом key.
-// Принимает указатель на корень дерева, ключ key.
+// Функция проверяет, есть ли в словаре элемент с ключом key.
+// Принимает указатель на словарь, ключ key.
 // Возвращает true, если элемент найден, false иначе.
-bool isKeyInAVLTree(Node* currentNode, const int key);
+bool isKeyInDictionary(Node* currentNode, const char* key);
 
-// Функция удаляет из дерева элемент с ключом key.
-// Принимает указатель на корень дерева root, ключ key.
-void advancedRemoveFromAVLTree(Node* root, const int key);
+// Функция удаляет из словаря элемент с ключом key.
+// Принимает указатель на словарь, ключ key.
+void removeFromDictionary(Node* dictionary, const char* key);
 
-// Функция принимает указатель на корень дерева и ключ.
-// Возвращет значение, соответствующее этому ключу.
-const char* getValueFromAVLTree(Node* currentNode, const int key);
-
-// Функция возвращает ключ данного узла.
-const int getKeyFromAVLTree(Node* currentNode);
+// Функция возвращает ключ данного элемента словаря.
+const char* getKeyFromDictionary(Node* dictionaryValue);
 
 // Функция возвращает указатель на правого сына данного узла.
 Node* getRightChild(Node* currentNode);
@@ -45,5 +46,12 @@ Node* getRightChild(Node* currentNode);
 // Функция возвращает указатель на левого сына данного узла.
 Node* getLeftChild(Node* currentNode);
 
-// Функция возвращает значение баланса данного узла.
+// Функция возвращает значение баланса данного элемента словаря.
 char getBalanceFromAVLTree(Node* currentNode);
+
+// Функция проверяет, выполнен ли баланс в каждом узле.
+bool checkBalance(Node* currentNode);
+
+// Функция возвращает размер словаря.
+// И проверяет, выполнен ли инвариант двоичного дерева у Словаря.
+int returnSize(Node* currentNode, int* size);
