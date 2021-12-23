@@ -5,6 +5,15 @@
 #include <stdbool.h>
 #include <string.h>
 
+void deleteMatrix(int** matrix, int const matrixHeight)
+{
+    for (int i = 0; i < matrixHeight; ++i)
+    {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
 int** getAdjacencyMatrixFromFile(FILE* data, int* matrixHeight, int* matrixWidth)
 {
     fscanf(data, "%d", matrixHeight);
@@ -19,6 +28,7 @@ int** getAdjacencyMatrixFromFile(FILE* data, int* matrixHeight, int* matrixWidth
         adjacencyMatrix[i] = calloc(*matrixWidth, sizeof(int));
         if (adjacencyMatrix[i] == NULL)
         {
+            deleteMatrix(adjacencyMatrix, i);
             return NULL;
         }
     }
@@ -30,15 +40,6 @@ int** getAdjacencyMatrixFromFile(FILE* data, int* matrixHeight, int* matrixWidth
         }
     }
     return adjacencyMatrix;
-}
-
-void deleteMatrix(int** matrix, int const matrixHeight)
-{
-    for (int i = 0; i < matrixHeight; ++i)
-    {
-        free(matrix[i]);
-    }
-    free(matrix);
 }
 
 FILE* makeDotFile(int** adjacencyMatrix, const int matrixHeight, const int matrixWidth)
@@ -70,13 +71,12 @@ int main()
     int matrixHeight = 0;
     int matrixWidth = 0;
     int** adjacencyMatrix = getAdjacencyMatrixFromFile(fileWithAdjacencyMatrix, &matrixHeight, &matrixWidth);
+    fclose(fileWithAdjacencyMatrix);
     if (adjacencyMatrix == NULL)
     {
-        fclose(fileWithAdjacencyMatrix);
         printf("Error with calloc");
         return -1;
     }
-    fclose(fileWithAdjacencyMatrix);
     FILE* fileForGraphViz = makeDotFile(adjacencyMatrix, matrixHeight, matrixWidth);
     char string[100] = { '\0' };
     strcpy(string, getenv("GraphViz"));
