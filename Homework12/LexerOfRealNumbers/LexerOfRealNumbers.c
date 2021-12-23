@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-enum States {
+enum States
+{
     startState,
     seenDigit,
     seenPoint,
@@ -12,12 +13,12 @@ enum States {
     seenPlusOrMinus,
     seenDigitAfterE,
     fail,
-    admittingState,
+    acceptingState,
 };
 
-char nextSymbol(const char* string, int* indexOfString)
+char nextSymbol(const char* string, int indexOfString)
 {
-    return string[*indexOfString];
+    return string[indexOfString];
 }
 
 bool isDigit(char symbol)
@@ -27,14 +28,13 @@ bool isDigit(char symbol)
 
 bool isCorrect(const char* string)
 {
-    enum States state;
+    enum States state = startState;
     char symbol = ' ';
-    state = startState;
-    int indexOFString = 0;
-    while (state != fail && state != admittingState)
+    int indexOfString = 0;
+    while (state != fail && state != acceptingState)
     {
-        symbol = nextSymbol(string, &indexOFString);
-        ++indexOFString;
+        symbol = nextSymbol(string, indexOfString);
+        ++indexOfString;
         switch (state)
         {
         case startState:
@@ -52,7 +52,7 @@ bool isCorrect(const char* string)
             }
             if (symbol == '\0')
             {
-                state = admittingState;
+                state = acceptingState;
             }
             break;
         case seenPoint:
@@ -66,7 +66,7 @@ bool isCorrect(const char* string)
             }
             if (symbol == '\0')
             {
-                state = admittingState;
+                state = acceptingState;
             }
             break;
         case seenE:
@@ -83,12 +83,12 @@ bool isCorrect(const char* string)
             state = isDigit(symbol) ? seenDigitAfterE : fail;
             if (symbol == '\0')
             {
-                state = admittingState;
+                state = acceptingState;
             }
             break;
         }
     }
-    return state == admittingState;
+    return state == acceptingState;
 }
 
 bool lexerTests(const char* string, const bool expectedResult)
