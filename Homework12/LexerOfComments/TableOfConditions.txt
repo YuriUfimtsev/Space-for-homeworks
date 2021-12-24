@@ -1,0 +1,5 @@
+Conditions / * newSymbol
+startState seenSlash startState startState
+seenSlash startState seenFirstStar startState
+seenFirstStar seenFirstStar seenSecondStar seenFirstStar
+seenSecondStar startState seenSecondStar seenFirstStar
