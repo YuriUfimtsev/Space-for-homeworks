@@ -5,18 +5,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define SIMPLE_NUMBER_FOR_HASH 19
 #define MODULE_FOR_HASH 109
 
-int calculateHashForString(const char* substring)
+int calculateHashForString(const char* data, const int startIndex, const int stopIndex)
 {
-    unsigned int substringLength = (unsigned int)strlen(substring);
+    unsigned int substringLength = stopIndex - startIndex + 1;
     int resultHash = 0;
     int currentNumberForHash = 1;
     for (unsigned int i = 0; i < substringLength; ++i)
     {
-        resultHash += substring[substringLength - i - 1] * currentNumberForHash;
+        resultHash += data[stopIndex - i] * currentNumberForHash;
         currentNumberForHash *= SIMPLE_NUMBER_FOR_HASH;
     }
     return resultHash % MODULE_FOR_HASH;
@@ -32,70 +33,70 @@ int calculateMultiplierForNewSubstringSymbol(int lengthOfPatternString)
     return result;
 }
 
-int calculateHashForNewSubstring(const int wrongHash, char* outdatedSubstring,
-    const char newSymbol, const unsigned int lengthOfSubstring, int multiplierForNewSubstringSymbol)
+int calculateHashForNewSubstring(const int wrongHash, const int startNewStringIndex,
+    const int stopNewStringIndex, int multiplierForNewSubstringSymbol, const char* data)
 {
     int resultHash = wrongHash;
-    resultHash -= (outdatedSubstring[0] * multiplierForNewSubstringSymbol) % MODULE_FOR_HASH;
+    resultHash -= (data[startNewStringIndex - 1] * multiplierForNewSubstringSymbol) % MODULE_FOR_HASH;
     resultHash *= SIMPLE_NUMBER_FOR_HASH;
     resultHash %= MODULE_FOR_HASH;
-    resultHash += newSymbol;
+    resultHash += data[stopNewStringIndex];
     return resultHash % MODULE_FOR_HASH;
 }
 
-int findIndexOfStringInFile(FILE* data, const char* patternString)
+bool isStringsEqual(const char* patternString, const char* data, const int startIndex, const int stopIndex)
 {
-    const unsigned int patternStringLength = (unsigned int)strlen(patternString);
-    int patternStringHash = calculateHashForString(patternString);
-    unsigned int indexInFile = 0;
-    char symbolFromFile = ' ';
-    char* substring = (char*)calloc(patternStringLength + 1, sizeof(char));
-    if (substring == NULL)
+    int indexForPatternString = 0;
+    for (int i = startIndex; i < stopIndex; ++i)
+    {
+        if (patternString[indexForPatternString] != data[i])
+        {
+            return false;
+        }
+        ++indexForPatternString;
+    }
+    return true;
+}
+
+int findIndexOfStringInFile(const char* patternString, const char* dataFromFile)
+{
+    const int patternStringLength = (unsigned int)strlen(patternString);
+    int patternStringHash = calculateHashForString(patternString, 0, patternStringLength - 1);
+    int dataFromFileLength = strlen(dataFromFile);
+    int startIndexOfData = 0;
+    if (dataFromFile == NULL)
     {
         return -1;
     }
-    while (indexInFile < patternStringLength && fscanf(data, "%c", &symbolFromFile) > 0)
+    if (dataFromFileLength < patternStringLength)
     {
-        substring[indexInFile] = symbolFromFile;
-        ++indexInFile;
-    }
-    if (indexInFile < patternStringLength - 1)
-    {
-        free(substring);
         return -1;
     }
-    int currentHash = calculateHashForString(substring);
+    int currentHash = calculateHashForString(dataFromFile, startIndexOfData, startIndexOfData + patternStringLength - 1);
     if (patternStringHash == currentHash)
     {
-        if (strcmp(patternString, substring) == 0)
+        if (isStringsEqual(patternString, dataFromFile, startIndexOfData, startIndexOfData + patternStringLength - 1))
         {
-            free(substring);
-            return indexInFile - patternStringLength;
+            return startIndexOfData;
         }
     }
     int resultIndex = -2;
     int multiplierForNewSymbol = calculateMultiplierForNewSubstringSymbol(patternStringLength);
-    while (fscanf(data, "%c", &symbolFromFile) > 0)
+    int i = 0;
+    while (startIndexOfData + i + patternStringLength - 1 <= dataFromFileLength)
     {
-        ++indexInFile;
-        int hjjjhash = calculateHashForString(substring);
-        currentHash = calculateHashForNewSubstring(currentHash, substring, symbolFromFile,
-            patternStringLength, multiplierForNewSymbol);
-        for (unsigned int i = 0; i < patternStringLength - 1; ++i)
-        {
-            substring[i] = substring[i + 1];
-        }
-        substring[patternStringLength - 1] = symbolFromFile;
-        int hhash = calculateHashForString(substring);
+        ++startIndexOfData;
+        currentHash = calculateHashForNewSubstring(currentHash, startIndexOfData,
+            startIndexOfData + patternStringLength - 1, multiplierForNewSymbol, dataFromFile);
         if (patternStringHash == currentHash)
         {
-            if (strcmp(patternString, substring) == 0)
+            if (isStringsEqual(patternString, dataFromFile,
+                startIndexOfData, startIndexOfData + patternStringLength - 1))
             {
-                resultIndex = indexInFile - patternStringLength;
+                resultIndex = startIndexOfData;
                 break;
             }
         }
     }
-    free(substring);
     return resultIndex;
 }

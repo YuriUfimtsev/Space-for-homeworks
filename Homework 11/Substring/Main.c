@@ -13,11 +13,13 @@ int main()
         return -1;
     }
     printf("Enter the pattern string (less than 50 symbols): ");
-    char patternString[51] = { '\0' };
-    scanf("%s", &patternString);
+    char patternString[MAX_SIZE_OF_STRING] = { '\0' };
+    scanf_s("%s", patternString, MAX_SIZE_OF_STRING);
+    char dataFromFile[MAX_SIZE_OF_STRING] = { '\0' };
     FILE* data = fopen("Text.txt", "r");
-    const int resultIndex = findIndexOfStringInFile(data, patternString);
+    fscanf_s(data, "%s", dataFromFile, MAX_SIZE_OF_STRING);
     fclose(data);
+    const int resultIndex = findIndexOfStringInFile(patternString, dataFromFile);
     if (resultIndex == -1)
     {
         printf("\nFile doesn't contain such number of characters\n");

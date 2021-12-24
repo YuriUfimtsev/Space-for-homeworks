@@ -7,19 +7,23 @@
 
 bool standartTest()
 {
-    char patternString[10] = "past";
+    char patternString[MAX_SIZE_OF_STRING] = "past";
     FILE* data = fopen("DataForStandartTest.txt", "r");
-    const int resultIndex = findIndexOfStringInFile(data, patternString);
+    char buffer[MAX_SIZE_OF_STRING] = { '\0' };
+    fscanf_s(data, "%s", buffer, MAX_SIZE_OF_STRING);
     fclose(data);
-    return resultIndex == 62;
+    const int resultIndex = findIndexOfStringInFile(patternString, buffer);
+    return resultIndex == 53;
 }
 
 bool testWithEmptyFile()
 {
     char patternString[10] = "SGU";
     FILE* data = fopen("EmptyFileForTest.txt", "r");
-    const int resultIndex = findIndexOfStringInFile(data, patternString);
+    char buffer[MAX_SIZE_OF_STRING] = { '\0' };
+    fscanf_s(data, "%s", buffer, MAX_SIZE_OF_STRING);
     fclose(data);
+    const int resultIndex = findIndexOfStringInFile(patternString, buffer);
     return resultIndex == -1;
 }
 
@@ -27,8 +31,10 @@ bool testWithSmallString()
 {
     char patternString[10] = "SPBU";
     FILE* data = fopen("DataForTestWithSmallString.txt", "r");
-    const int resultIndex = findIndexOfStringInFile(data, patternString);
+    char buffer[MAX_SIZE_OF_STRING] = { '\0' };
+    fscanf_s(data, "%s", buffer, MAX_SIZE_OF_STRING);
     fclose(data);
+    const int resultIndex = findIndexOfStringInFile(patternString, buffer);
     return resultIndex == -1;
 }
 
