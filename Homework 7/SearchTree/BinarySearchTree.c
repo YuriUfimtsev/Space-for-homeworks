@@ -4,16 +4,13 @@
 
 #include "BinarySearchTree.h"
 
-typedef struct Node {
+typedef struct Node 
+{
     int key;
     const char* value;
     struct Node* leftChild;
     struct Node* rightChild;
 } Node;
-
-typedef struct Tree {
-    struct Node* root;
-} Tree;
 
 Node* createNode(const int key, const char* value)
 {
@@ -195,6 +192,8 @@ void removeFromTree(Node* currentNode, Node* parent, const int key)
                 currentNode = currentNode->leftChild;
             }
             parent->key = currentNode->leftChild->key;
+            const char* buffer = parent->value;
+            currentNode->leftChild->value = buffer;
             parent->value = currentNode->leftChild->value;
             removeFromTree(currentNode->leftChild, currentNode, key);
         }
