@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_SIZE_OF_STRING 30
+
 typedef struct Node Dictionary;
 
 // Функция создает словарь. Возвращает указатель на первый элемент словаря.

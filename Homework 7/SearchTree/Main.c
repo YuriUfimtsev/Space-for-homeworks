@@ -34,7 +34,7 @@ int main()
         printf("\nEnter the next command: ");
         scanf("%d", &command);
         int key = 0;
-        char value[30] = "";
+        char value[MAX_SIZE_OF_STRING] = "";
         bool keyInDictionary = true;
         if (command != 5)
         {
@@ -46,7 +46,7 @@ int main()
         case 1:
             printf("Enter the value: ");
             getc(stdin);
-            gets_s(value, 25);
+            gets_s(value, MAX_SIZE_OF_STRING);
             addToDictionary(dictionary, key, value);
             printf("The new entry has been created\n");
             break;

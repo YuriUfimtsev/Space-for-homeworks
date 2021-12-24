@@ -37,7 +37,7 @@ bool checkOfGettingValueFromDictionary()
     addToDictionary(dictionary, 0, "ccchhh");
     bool keyInDictionary = true;
     if (strcmp(getValueFromDictionary(dictionary, 0, &keyInDictionary), "ccchhh") != 0
-        || strcmp(getValueFromDictionary(dictionary, 5, &keyInDictionary), "NULL") != 0
+        || getValueFromDictionary(dictionary, 5, &keyInDictionary) != NULL
         || keyInDictionary)
     {
         deleteDictionary(dictionary);

@@ -15,7 +15,7 @@ Dictionary* createDictionary()
 
 void addToDictionary(Dictionary* currentNode, const int key, const char* value)
 {
-    char* valueForDictionary = malloc(30);
+    char* valueForDictionary = malloc(MAX_SIZE_OF_STRING);
     strcpy(valueForDictionary, value);
     insertToTree(currentNode, key, valueForDictionary);
 }
@@ -25,8 +25,7 @@ const char* getValueFromDictionary(Dictionary* currentNode, const int key, bool*
     if (!isKeyInTree(currentNode, key))
     {
         *keyInTree = false;
-        char* value = "NULL";
-        return value;
+        return NULL;
     }
     const char* resultString = findInTree(currentNode, key);
     return resultString;
