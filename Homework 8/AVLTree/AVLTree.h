@@ -50,7 +50,7 @@ Node* getLeftChild(Node* currentNode);
 char getBalanceFromAVLTree(Node* currentNode);
 
 // Функция проверяет, выполнен ли баланс в каждом узле.
-bool checkBalance(Node* currentNode);
+int checkBalance(Node* currentNode, bool* isCorrect);
 
 // Функция возвращает размер словаря.
 // И проверяет, выполнен ли инвариант двоичного дерева у Словаря.

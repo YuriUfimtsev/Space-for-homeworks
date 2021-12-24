@@ -623,21 +623,20 @@ const char* getKeyFromDictionary(Node* dictionaryValue)
     return getKeyFromAVLTree(dictionaryValue);
 }
 
-bool checkBalance(Node* currentNode)
+int checkBalance(Node* currentNode, bool* isCorrect)
 {
     if (currentNode == NULL)
     {
-        return true;
+        return 0;
     }
-    if (currentNode->balance < -1 || currentNode->balance > 1)
+    const int leftHeight = currentNode->leftChild != NULL ? checkBalance(currentNode->leftChild, isCorrect) : 0;
+    const int rightHeight = currentNode->rightChild != NULL ? checkBalance(currentNode->rightChild, isCorrect) : 0;
+    *isCorrect = *isCorrect ? abs(leftHeight - rightHeight) < 2 : false;
+    if (rightHeight >= leftHeight)
     {
-        return false;
+        return rightHeight + 1;
     }
-    else
-    {
-        checkBalance(currentNode->leftChild);
-        checkBalance(currentNode->rightChild);
-    }
+    return leftHeight + 1;
 }
 
 bool checkOfDifferenceBetweenChildren(Node* currentNode)

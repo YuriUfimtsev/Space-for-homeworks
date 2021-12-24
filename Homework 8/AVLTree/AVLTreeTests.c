@@ -79,11 +79,13 @@ bool testOfLargeTree()
     char buffer[valueAndKeySize] = { '\0' };
     for (int i = 0; i < 1000; ++i)
     {
-        _itoa(i, buffer, 10);
+        itoa(i, buffer, 10);
         insertToDictionary(&tree, buffer, buffer);
     }
     int size = 0;
-    bool const result = returnSize(tree, &size) == 1000 && checkBalance(tree);
+    bool isCorrect = true;
+    checkBalance(tree, &isCorrect);
+    bool const result = returnSize(tree, &size) == 1000 && isCorrect;
     deleteDictionary(tree);
     return result;
 }
