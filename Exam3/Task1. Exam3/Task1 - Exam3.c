@@ -19,7 +19,7 @@ void deleteArray(const char** array, const int sizeOfArray)
 
 char** makeArrayFromFile(FILE* data, int* sizeOfArray)
 {
-    char buffer[50] = { '\0' };
+    char buffer[MAX_SIZE_OF_STRING] = { '\0' };
     char** array = calloc(MAX_SIZE_OF_ARRAY, sizeof(char*));
     if (array == NULL)
     {
@@ -38,7 +38,7 @@ char** makeArrayFromFile(FILE* data, int* sizeOfArray)
         }
         if (!isInArray)
         {
-            char* newString = calloc(50, sizeof(char));
+            char* newString = calloc(MAX_SIZE_OF_STRING, sizeof(char));
             if (newString == NULL)
             {
                 deleteArray(array, *sizeOfArray);
@@ -61,10 +61,9 @@ void bubbleSort(char** array, const int lengthOfArray)
         {
             if (strcmp(array[j], array[j + 1]) > 0)
             {
-                char buffer[MAX_SIZE_OF_STRING] = { '\0' };
-                strcpy_s(buffer, MAX_SIZE_OF_STRING, array[j]);
-                strcpy_s(array[j], MAX_SIZE_OF_STRING, array[j + 1]);
-                strcpy_s(array[j + 1], MAX_SIZE_OF_STRING, buffer);
+                char* buffer = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = buffer;
                 isSorting = true;
             }
         }
@@ -88,11 +87,12 @@ bool standartTest()
     FILE* data = fopen("FileForStandartTest.txt", "r");
     int sizeOfArray = 0;
     char** array = makeArrayFromFile(data, &sizeOfArray);
+    fclose(data);
     if (array == NULL)
     {
         return false;
     }
-    fclose(data);
+
     bubbleSort(array, sizeOfArray);
     bool const result = strcmp(array[0], "000") == 0 && strcmp(array[1], "111") == 0
         && strcmp(array[2], "222") == 0 && sizeOfArray == 3;
@@ -128,6 +128,7 @@ int main()
     char** array = makeArrayFromFile(data, &sizeOfArray);
     if (array == NULL)
     {
+        fclose(data);
         printf("Error with array making");
         return -1;
     }
