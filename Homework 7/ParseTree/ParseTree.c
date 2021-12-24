@@ -44,8 +44,7 @@ bool isOperator(const char symbol)
 
 bool isDigit(const char symbol)
 {
-    return symbol == '0' || symbol == '1' || symbol == '2' || symbol == '3' || symbol == '4'
-        || symbol == '5' || symbol == '6' || symbol == '7' || symbol == '8' || symbol == '9';
+    return symbol >= '0' && symbol <= '9';
 }
 
 bool isBracketOrSpace(const char symbol)
@@ -116,12 +115,9 @@ void prefixTraverse(const Tree* parseTree, char* stringForResult, unsigned int* 
         char stringForNumber[30] = { "\0" };
         sprintf(stringForNumber, "%d", parseTree->number);
         int indexOfStringForNumber = 0;
+        const int lengthOfStringForResult = strlen(stringForNumber);
         strcat(stringForResult, stringForNumber);
-        ++(*indexForString);
-        if (parseTree->number < 0)
-        {
-            ++(*indexForString);
-        }
+        *indexForString += lengthOfStringForResult;
         symbolToAdd(stringForResult, indexForString, ' ', false);
     }
     else
