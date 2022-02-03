@@ -1,2 +1,2 @@
 # Space-for-homeworks
-For homeworks, SPBGU
+For homeworks, SPBU
