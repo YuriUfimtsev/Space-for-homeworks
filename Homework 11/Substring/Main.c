@@ -1,12 +1,17 @@
 #pragma warning(disable: 4996 6031)
 
 #include <stdio.h>
+#include <string.h>
 
 #include "SubstringSearch.h"
 #include "TestsForSubstringSearch.h"
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc == 2 && strcmp(argv[1], "tests_only") == 0)
+    {
+        return areTestsPassing() ? "tests are successful" : "tests_failed";
+    }
     if (!areTestsPassing())
     {
         printf("Tests failed");

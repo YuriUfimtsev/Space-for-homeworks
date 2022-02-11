@@ -11,7 +11,7 @@ bool standartTest()
     FILE* data = fopen("DataForStandartTest.txt", "r");
     const int resultIndex = findIndexOfStringInFile(data, patternString);
     fclose(data);
-    return resultIndex == 62;
+    return resultIndex == 63;
 }
 
 bool testWithEmptyFile()
