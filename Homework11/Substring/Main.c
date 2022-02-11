@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     if (argc == 2 && strcmp(argv[1], "tests_only") == 0)
     {
-        return areTestsPassing() ? "tests are successful" : "tests_failed";
+        return areTestsPassing() ? 0 : -2;
     }
     if (!areTestsPassing())
     {
@@ -21,7 +21,11 @@ int main(int argc, char* argv[])
     char patternString[MAX_SIZE_OF_STRING] = { '\0' };
     scanf_s("%s", patternString, MAX_SIZE_OF_STRING);
     char dataFromFile[MAX_SIZE_OF_STRING] = { '\0' };
-    FILE* data = fopen("Text.txt", "r");
+    FILE* data = fopen("../../Text.txt", "r");
+    if (data == NULL)
+    {
+        return -1;
+    }
     fscanf_s(data, "%s", dataFromFile, MAX_SIZE_OF_STRING);
     fclose(data);
     const int resultIndex = findIndexOfStringInFile(patternString, dataFromFile);
