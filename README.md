@@ -1,2 +1,2 @@
 # Space-for-homeworks
-For homeworks, SPBU
+For homeworks in the first semester, SPBU
